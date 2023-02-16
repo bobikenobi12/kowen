@@ -1,6 +1,6 @@
 # kowen
 
-![main](https://github.com/bobikenobi12/kowen/actions/workflows/main.yml/badge.svg)
+![main](https://github.com/bobikenobi12/kowen/actions/workflows/main.yml/badge.svg?branch=feature-1)
 
 kowen is a simple, fast, and secure document management system. It is
 designed to be easy to use and easy to deploy, and to provide a simple
