@@ -1,6 +1,6 @@
 # kowen
 
-[![Build Status](https://github.com/bobikenobi12/kowen/blob/main/.github/workflows/main.yml/badge.svg?branch=main)](https://github.com/bobikenobi12/kowen/)
+![main](https://github.com/bobikenobi12/kowen/actions/workflows/main.yml/badge.svg)
 
 kowen is a simple, fast, and secure document management system. It is
 designed to be easy to use and easy to deploy, and to provide a simple
@@ -35,7 +35,7 @@ Technologies used include:
 - Documents can be tagged with keywords
 - Documents can be organized into folders
 
-## Screenshots
+<!-- ## Screenshots
 
 ### Login
 
@@ -59,7 +59,7 @@ to be added
 
 ### Admin
 
-to be added
+to be added -->
 
 ## Installation
 
