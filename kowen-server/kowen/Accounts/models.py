@@ -88,3 +88,80 @@ class Membership(models.Model):
 
     def __str__(self):
         return self.user.username
+
+
+# anythign else to be added copilot?
+class Adminship(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    group = models.ForeignKey(UserGroup, on_delete=models.CASCADE)
+    date_joined = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.user.username
+
+
+class GroupRole(models.Model):
+    group = models.ForeignKey(UserGroup, on_delete=models.CASCADE)
+    role = models.ForeignKey(Role, on_delete=models.CASCADE)
+    date_created = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.role.name
+
+# what does grouprole do?
+#  it is a model that links a group to a role
+
+
+class GroupPermission(models.Model):
+    name = models.CharField(max_length=30, unique=True)
+    description = models.TextField(max_length=500, blank=True)
+    group_permission_picture = models.ImageField(
+        upload_to='group_permission_pictures/', blank=True)
+    group_permission_color = models.CharField(max_length=30, blank=True)
+    group_permission_icon = models.CharField(max_length=30, blank=True)
+    GROUP_PERMISSIONS = (
+        ('can_view', 'can_view'),
+        ('can_edit', 'can_edit'),
+        ('can_delete', 'can_delete'),
+        ('can_create', 'can_create'),
+        ('can_share', 'can_share'),
+        ('can_download', 'can_download'),
+        ('can_upload', 'can_upload'),
+    )
+    group_permission = models.CharField(
+        max_length=30, blank=True, choices=GROUP_PERMISSIONS)
+
+    def __str__(self):
+        return self.name
+
+
+class GroupPermissionRole(models.Model):
+    group = models.ForeignKey(UserGroup, on_delete=models.CASCADE)
+    role = models.ForeignKey(Role, on_delete=models.CASCADE)
+    group_permission = models.ForeignKey(
+        GroupPermission, on_delete=models.CASCADE)
+    date_created = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.group_permission.name
+
+
+class GroupPermissionUser(models.Model):
+    group = models.ForeignKey(UserGroup, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    group_permission = models.ForeignKey(
+        GroupPermission, on_delete=models.CASCADE)
+    date_created = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.group_permission.name
+
+# 1. User model - this model is used to create a user
+# 2. Role model - this model is used to create a role
+# 3. UserGroup model - this model is used to create a group
+# 4. Membership model - this model is used to create a membership
+# 5. Adminship model - this model is used to create an adminship for a user in a group. What does this mean? It means that a user can be an admin in a group
+# 6. GroupRole model - this model is used to create a group role. What does this mean? It means that a group can have a role
+# 7. GroupPermission model - this model is used to create a group permission. What does this mean? It means that a group can have a permission. a group needs to have many permissions, not just one
+# 8. GroupPermissionRole model - this model is used to create a group permission role. What does this mean? It means that a group permission can have a role
+# 9. GroupPermissionUser model - this model is used to create a group permission user. What does this mean? It means that a group permission can have a user
