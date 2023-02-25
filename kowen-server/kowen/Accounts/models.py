@@ -66,7 +66,7 @@ class UserGroup(models.Model):
     group_picture = models.ImageField(upload_to='group_pictures/', blank=True)
     group_color = models.CharField(max_length=30, blank=True)
     group_icon = models.CharField(max_length=30, blank=True)
-    group_members = models.ManyToManyField(User, through='Membership')
+    group_members = models.ManyToManyField("self", through='Membership')
     group_owner = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='group_owner')
     group_admins = models.ManyToManyField(User, through='Adminship')
