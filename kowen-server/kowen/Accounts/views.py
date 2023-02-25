@@ -53,74 +53,23 @@ from .models import GroupPermissionUser
 # Create your views here.
 
 
-def index(request):
-    return HttpResponse("Hello, world. You're at the Accounts index.")
+def login_view(request):
+    title = "Login"
 
-# use django rest api createa login, logout, register, and profile page
+    if request.method == 'POST':
 
+        form = LoginForm(data=request.POST)
+        email = request.POST.get('email', '')
+        password = request.POST.get('password', '')
+        user = auth.authenticate(username=email, password=password)
+        if form.is_valid():
+            auth.login(request, user)
+            user_type = form.cleaned_data['Label']
+            if user.is_active:
+                return HttpResponseRedirect('/post_load/')
+            elif user_type == 'Company':
+                return HttpResponseRedirect('/live_deal/')
+    else:
+        form = LoginForm()
 
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-
-class UserViewSetWithToken(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserSerializerWithToken
-    permission_classes = [permissions.IsAuthenticated]
-
-
-class RoleViewSet(viewsets.ModelViewSet):
-    queryset = Role.objects.all()
-    serializer_class = RoleSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-
-class UserGroupViewSet(viewsets.ModelViewSet):
-    queryset = UserGroup.objects.all()
-    serializer_class = UserGroupSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-
-class MembershipViewSet(viewsets.ModelViewSet):
-    queryset = Membership.objects.all()
-    serializer_class = MembershipSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-
-class AdminshipViewSet(viewsets.ModelViewSet):
-    queryset = Adminship.objects.all()
-    serializer_class = AdminshipSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-
-class GroupRoleViewSet(viewsets.ModelViewSet):
-    queryset = GroupRole.objects.all()
-    serializer_class = GroupRoleSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-
-class GroupPermissionViewSet(viewsets.ModelViewSet):
-    queryset = GroupPermission.objects.all()
-    serializer_class = GroupPermissionSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-
-class GroupPermissionRoleViewSet(viewsets.ModelViewSet):
-    queryset = GroupPermissionRole.objects.all()
-    serializer_class = GroupPermissionRoleSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-
-class GroupPermissionUserViewSet(viewsets.ModelViewSet):
-    queryset = GroupPermissionUser.objects.all()
-    serializer_class = GroupPermissionUserSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-# use djangorestframework to create a login, logout, register, and profile page
-# class LoginView(ObtainAuthToken):
-
-
-# switch branch from main to accounts-app command
-# git checkout -b accounts-app
+    return render(request, 'registration/login.html', {'form' : form, 'title': title})
