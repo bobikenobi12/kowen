@@ -90,7 +90,6 @@ class Membership(models.Model):
         return self.user.username
 
 
-# anythign else to be added copilot?
 class Adminship(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     group = models.ForeignKey(UserGroup, on_delete=models.CASCADE)
@@ -107,9 +106,6 @@ class GroupRole(models.Model):
 
     def __str__(self):
         return self.role.name
-
-# what does grouprole do?
-#  it is a model that links a group to a role
 
 
 class GroupPermission(models.Model):
