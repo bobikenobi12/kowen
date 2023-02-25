@@ -120,3 +120,7 @@ class GroupPermissionUserViewSet(viewsets.ModelViewSet):
 
 # use djangorestframework to create a login, logout, register, and profile page
 # class LoginView(ObtainAuthToken):
+
+
+# switch branch from main to accounts-app command
+# git checkout -b accounts-app
