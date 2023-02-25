@@ -117,6 +117,9 @@ AUTH_PASSWORD_VALIDATORS = [
 
 AUTH_USER_MODEL = "Accounts.User"
 
+
+SECRET_KEY = '8lu*6g0lg)9z!ba+a$ehk)xt)x%rxgb$i1&amp;022shmi1jcgihb*'
+
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 

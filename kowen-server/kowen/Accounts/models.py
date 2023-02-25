@@ -35,6 +35,7 @@ class User(AbstractUser):
     username = models.CharField(max_length=30, unique=True)
     email = models.EmailField(_('email address'), unique=True)
     first_name = models.CharField(max_length=30, blank=True)
+    password = models.CharField(max_length=30, blank=True)
     last_name = models.CharField(max_length=30, blank=True)
     role = models.ForeignKey(Role, on_delete=models.CASCADE, default=1)
     is_active = models.BooleanField(default=True)
@@ -54,7 +55,7 @@ class User(AbstractUser):
     # add a birth date field
     birth_date = models.DateField(null=True, blank=True)
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
+    REQUIRED_FIELDS = ['username', "password"]
 
     def __str__(self):
         return self.email
