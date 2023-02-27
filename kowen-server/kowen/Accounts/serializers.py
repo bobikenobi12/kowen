@@ -6,8 +6,8 @@ from rest_framework.authtoken.models import Token
 class RoleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Role
-        fields = ('id', 'username', 'email', 'password')
-        extra_kwargs = {'password': {'write_only': True, 'required': True}}
+        fields = ('id', 'name', 'description', 'role_permissions')
+        extra_kwargs = {'role_permissions': {'write_only': True, 'required': True}}
 
     def create(self, validated_data):
         role = Role.objects.create(**validated_data)
