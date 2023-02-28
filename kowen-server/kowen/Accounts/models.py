@@ -21,7 +21,7 @@ class Role(models.Model):
         ('can_delete', 'can_delete'),
         ('can_create', 'can_create'),
         ('can_share', 'can_share'),
-        ('can_download', 'can_download'),
+        ('can_download', 'can_download'), 
         ('can_upload', 'can_upload'),
     )
     role_permissions = models.CharField(
