@@ -1,7 +1,9 @@
 from rest_framework import generics
 from .serializers import *
-from .forms import RegistrationForm
-import json
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from .serializers import UserSerializer
 
 
 class CreateUserView(generics.CreateAPIView):
@@ -12,8 +14,10 @@ class CreateRoleView(generics.CreateAPIView):
     serializer_class = RoleSerializer
 
 
-def signup(request):
-    if request.method == 'POST':
-        json.parse(request.body)
-    else:
-        form = RegistrationForm()
+@api_view(['POST'])
+def register_user(request):
+    serializer = UserSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
