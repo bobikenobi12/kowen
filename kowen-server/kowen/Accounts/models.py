@@ -9,7 +9,27 @@ from django.dispatch import receiver
 from django.contrib.auth.models import Group
 import base64
 
-# create a document model that holds information about a document liek type, metadata, etc. The document is stored in the database
+
+class Role(models.Model):
+    name = models.CharField(max_length=30, unique=True)
+    description = models.TextField(max_length=500, blank=True)
+    role_picture = models.ImageField(upload_to='role_pictures/', blank=True)
+    role_color = models.CharField(max_length=30, blank=True)
+    role_icon = models.CharField(max_length=30, blank=True)
+    ROLE_PERMISSIONS = (
+        ('can_view', 'can_view'),
+        ('can_edit', 'can_edit'),
+        ('can_delete', 'can_delete'),
+        ('can_create', 'can_create'),
+        ('can_share', 'can_share'),
+        ('can_download', 'can_download'),
+        ('can_upload', 'can_upload'),
+    )
+    role_permissions = models.CharField(
+        max_length=30, blank=True, choices=ROLE_PERMISSIONS)
+
+    def __str__(self):
+        return self.name
 
 
 class User(AbstractUser):
@@ -43,5 +63,11 @@ class Document(models.Model):
     def get_document(self):
         return base64.b64decode(self._document)
 
+    email = models.TextField(max_length=30, blank=False)
+    password = models.TextField(max_length=30, blank=False)
+    first_name = models.TextField(max_length=30, blank=False)
+    last_name = models.TextField(max_length=30, blank=False)
+    roles = models.ManyToManyField(Role, blank=True)
+
     def __str__(self):
-        return self.title
+        return self.email

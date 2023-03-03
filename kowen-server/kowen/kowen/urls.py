@@ -28,6 +28,8 @@ urlpatterns = [
     path('', include('django.contrib.auth.urls')),
     path('roles/', CreateRoleView.as_view(), name='create_role'),
     path('register/', register_user, name='register_user'),
+    path('roles/', CreateRoleView.as_view(), name='create_role'),
+    path('register/', register_user, name='register_user'),
     path('api/login/', LoginView.as_view(), name='login'),
     path('api/token-auth/', obtain_auth_token, name='api-token-auth')
     # path('api/login/user/', )
