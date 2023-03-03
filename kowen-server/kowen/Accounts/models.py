@@ -4,7 +4,7 @@ from django.utils.translation import gettext_lazy as _
 
 
 class Role(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, blank=False)
     description = models.TextField(blank=True)
 
     def __str__(self):

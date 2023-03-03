@@ -16,8 +16,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 # from Accounts.views import CreateUserView
-from django.urls import path
 from Accounts.views import *
+from rest_framework.authtoken.views import obtain_auth_token
+from Accounts.views import LoginView
+
+
+
+
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -25,4 +31,6 @@ urlpatterns = [
     path('', include('django.contrib.auth.urls')),
     path('roles/', CreateRoleView.as_view(), name='create_role'),
     path('register/', register_user, name='register_user'),
+    path('api/login/', LoginView.as_view(), name='login'),
+    path('api/token-auth/', obtain_auth_token, name='api-token-auth'),
 ]
