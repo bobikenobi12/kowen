@@ -5,16 +5,6 @@ from rest_framework.views import APIView
 from django.contrib.auth import authenticate, login
 from rest_framework import generics
 from .serializers import *
-from rest_framework import status
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from .serializers import UserSerializer
-from django.contrib.auth import authenticate
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework.authtoken.models import Token
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-import bcrypt
 
 
 class CreateUserView(generics.CreateAPIView):
@@ -23,6 +13,14 @@ class CreateUserView(generics.CreateAPIView):
 
 class CreateRoleView(generics.CreateAPIView):
     serializer_class = RoleSerializer
+
+
+<< << << < HEAD
+== == == =
+<< << << < HEAD
+
+
+>>>>>> > 97701ef(parsing info)
 
 
 @api_view(['POST'])
