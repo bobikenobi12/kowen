@@ -1,3 +1,8 @@
+from Accounts.models import User
+from rest_framework.authtoken.views import ObtainAuthToken
+from django.db.models import Q
+from rest_framework.views import APIView
+from django.contrib.auth import authenticate, login
 from rest_framework import generics
 from .serializers import *
 from rest_framework import status
@@ -11,17 +16,21 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 import bcrypt
 
+import json
+
 
 class CreateUserView(generics.CreateAPIView):
-    serializer_class = UserSerializer 
+    serializer_class = UserSerializer
+
 
 class CreateRoleView(generics.CreateAPIView):
     serializer_class = RoleSerializer
 
+
 @api_view(['POST'])
 def register_user(request):
     serializer = UserSerializer(data=request.data)
-    
+
     if serializer.is_valid():
 
         password = serializer.validated_data.get("password").encode('utf-8')
@@ -32,8 +41,6 @@ def register_user(request):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
 
 
 @csrf_exempt
@@ -51,18 +58,7 @@ def login(request):
     return Response({'token': token.key})
 
 
-from django.contrib.auth import authenticate, login
 # from django.contrib.auth.models import User
-from rest_framework import status
-from rest_framework.authtoken.models import Token
-from rest_framework.response import Response
-from rest_framework.views import APIView
-
-from django.db.models import Q
-from rest_framework.authtoken.views import ObtainAuthToken
-from rest_framework.authtoken.models import Token
-from rest_framework.response import Response
-from Accounts.models import User
 
 
 class LoginView(APIView):
@@ -73,7 +69,8 @@ class LoginView(APIView):
             return Response({'error': 'Please provide both username/email and password'},
                             status=status.HTTP_400_BAD_REQUEST)
         # check if the username/email exists in the User table
-        user = User.objects.filter(Q(username=username) | Q(email=username)).first()
+        user = User.objects.filter(
+            Q(username=username) | Q(email=username)).first()
         if user is None:
             return Response({'error': 'Invalid username/email or password'},
                             status=status.HTTP_400_BAD_REQUEST)
@@ -88,4 +85,3 @@ class LoginView(APIView):
         login(request, user)
         # return the token
         return Response({'token': token.key})
-
