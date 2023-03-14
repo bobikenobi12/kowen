@@ -15,14 +15,6 @@ class CreateRoleView(generics.CreateAPIView):
     serializer_class = RoleSerializer
 
 
-<< << << < HEAD
-== == == =
-<< << << < HEAD
-
-
->>>>>> > 97701ef(parsing info)
-
-
 @api_view(['POST'])
 def register_user(request):
     serializer = UserSerializer(data=request.data)
