@@ -15,8 +15,6 @@ import bcrypt
 class CreateUserView(generics.CreateAPIView):
     serializer_class = UserSerializer 
 
-class CreateRoleView(generics.CreateAPIView):
-    serializer_class = RoleSerializer
 
 @api_view(['POST'])
 def register_user(request):
@@ -73,7 +71,7 @@ class LoginView(APIView):
             return Response({'error': 'Please provide both username/email and password'},
                             status=status.HTTP_400_BAD_REQUEST)
         # check if the username/email exists in the User table
-        user = User.objects.filter(Q(username=username) | Q(email=username)).first()
+        user = User.objects.filter(Q(username=username) | Q(password=password)).first()
         if user is None:
             return Response({'error': 'Invalid username/email or password'},
                             status=status.HTTP_400_BAD_REQUEST)
@@ -88,4 +86,20 @@ class LoginView(APIView):
         login(request, user)
         # return the token
         return Response({'token': token.key})
+    
+
+
+    from django.contrib.auth import authenticate, login
+from django.http import JsonResponse
+@csrf_exempt
+def login_view(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return JsonResponse({'message': 'Login successful.'})
+        else:
+            return JsonResponse({'message': 'Invalid login credentials.'}, status=400)
 

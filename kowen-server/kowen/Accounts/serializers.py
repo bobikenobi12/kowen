@@ -1,22 +1,22 @@
 from rest_framework import serializers
-from .models import User, Role
+from .models import User
 from rest_framework.authtoken.models import Token
 
 
 from rest_framework import serializers
-from .models import User, Role
+from .models import User
 
-class RoleSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Role
-        fields = '__all__'
+def login_user():
+    pass
+
+
 
 class UserSerializer(serializers.ModelSerializer):
-    roles = RoleSerializer(many=True, read_only=True)
+
 
     class Meta:
         model = User
-        fields = ('id', 'username','password', 'email', 'first_name', 'last_name', 'roles', 'created_at')
+        fields = ('id', 'username','password', 'email', 'first_name', 'last_name')
 
 
 
