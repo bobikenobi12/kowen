@@ -29,11 +29,6 @@ def register_user(request):
         serializer.validated_data["password"] = hashedPassword
         print(serializer.validated_data.get("password"))
 
-
-
-
-
-
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -46,7 +41,8 @@ def register_user(request):
 def login(request):
     username = request.data.get('username')
     password = request.data.get('password')
-    user = authenticate(username=username, password=password)
+    hashedPassword = bcrypt.hashpw(password, bcrypt.gensalt())
+    user = authenticate(username=username, password=hashedPassword)
 
     if user is None:
         return Response({'error': 'Invalid credentials'}, status=400)
