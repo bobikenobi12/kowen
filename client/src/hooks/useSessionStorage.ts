@@ -16,7 +16,6 @@ export const useSessionStorage = <T>(key: string, initialValue: T) => {
   const setValue = (value: T | ((val: T) => T)) => {
     const valueToStore = value instanceof Function ? value(storedValue) : value;
     try {
-      const valueToStoreString = JSON.stringify(valueToStore);
       setStoredValue(valueToStore);
     } catch (error) {
       console.log(error);
