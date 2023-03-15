@@ -1,9 +1,15 @@
+from Accounts.models import User
+from rest_framework.authtoken.views import ObtainAuthToken
+from django.db.models import Q
+from rest_framework.views import APIView
+from django.contrib.auth import authenticate, login
 from rest_framework import generics
 from .serializers import *
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import UserSerializer
+
 from django.contrib.auth import authenticate
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.authtoken.models import Token
@@ -17,24 +23,33 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.exceptions import AuthenticationFailed
 
 
+import json
+
+
+
 class CreateUserView(generics.CreateAPIView):
-    serializer_class = UserSerializer 
+    serializer_class = UserSerializer
+
+
 
 
 
 @api_view(['POST'])
 def register_api(request):
     serializer = UserSerializer(data=request.data)
+
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+
 @api_view(['POST'])
 def login_api(request):
     username = request.data.get('username')
     password = request.data.get('password')
+
     user = authenticate(request, username=username, password=password)
     if user is not None:
         token, created = Token.objects.get_or_create(user=user)
@@ -50,4 +65,20 @@ def printing(request):
 
     return Response({"msg", "success"}, status=status.HTTP_201_CREATED)
     
+
+
+    hashedPassword = bcrypt.hashpw(password, bcrypt.gensalt())
+    user = authenticate(username=username, password=hashedPassword)
+
+    if user is None:
+        return Response({'error': 'Invalid credentials'}, status=400)
+
+    token, created = Token.objects.get_or_create(user=user)
+    return Response({'token': token.key})
+
+
+
+
+
+
 
