@@ -1,13 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-
-interface User {
-  id: string;
-  first_name: string;
-  last_name: string;
-  email: string;
-  avatar: string;
-  _token: string;
-}
+import { User } from "../../app/api/types/index";
 
 const initialState: User = JSON.parse(localStorage.getItem("user") || "{}");
 
