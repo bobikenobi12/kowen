@@ -7,7 +7,6 @@ interface User {
   email: string;
   avatar: string;
   _token: string;
-  _documents: never[];
 }
 
 const initialState: User = JSON.parse(localStorage.getItem("user") || "{}");
