@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { useLocalStorage } from "../../hooks/useLocalStorage";
 
 interface User {
   id: string;
@@ -6,31 +7,33 @@ interface User {
   last_name: string;
   email: string;
   avatar: string;
-  _documents: string[];
+  _token: string;
+  _documents: never[];
 }
 
-interface AuthState {
-  user: User | null;
-  token: string | null;
-}
+const [storedValue, setStoredValue] = useLocalStorage<User>("user", {
+  id: "",
+  first_name: "",
+  last_name: "",
+  email: "",
+  avatar: "",
+  _token: "",
+  _documents: [],
+});
 
-const initialState: AuthState = {
-  user: null,
-  token: null,
-};
+const initialState: User = storedValue;
 
-const authSlice = createSlice({
+export const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    setCredentials(state, action) {
-      const { user, token } = action.payload;
-      state.user = user;
-      state.token = token;
+    setCredentials: (state, action) => {
+      state = action.payload;
+      setStoredValue(state);
     },
-    logOut(state) {
-      state.user = null;
-      state.token = null;
+    logOut: (state) => {
+      state = initialState;
+      setStoredValue(state);
     },
   },
 });
@@ -39,5 +42,5 @@ export const { setCredentials, logOut } = authSlice.actions;
 
 export default authSlice.reducer;
 
-export const selectUser = (state: { auth: AuthState }) => state.auth.user;
-export const selectToken = (state: { auth: AuthState }) => state.auth.token;
+export const selectUser = (state: { auth: User }) => state.auth;
+export const selectToken = (state: { auth: User }) => state.auth._token;
