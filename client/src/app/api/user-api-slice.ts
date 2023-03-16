@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { User } from "./types/index";
 
-export const userApi = createApi({
+export const userApiSlice = createApi({
     reducerPath: "userApi",
     tagTypes: ["User"],
     baseQuery: fetchBaseQuery({
@@ -46,6 +46,7 @@ export const userApi = createApi({
     }),
 });
 
+export const { useLoginMutation, useLogoutMutation, useRegisterMutation, useGetUserQuery } = userApiSlice;
 
 
 
