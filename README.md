@@ -6,17 +6,17 @@ kowen is a simple, fast, and secure document management system. It is
 designed to be easy to use and easy to deploy, and to provide a simple
 and secure way to store and share documents.
 
-Technologies used include:
+Used technologies include:
 
 - [Python](https://www.python.org/) 3.5+
 - [Django](https://www.djangoproject.com/) 1.11+
 - [MySQL](https://www.mysql.com/) 5.7+
-- [Bootstrap](http://getbootstrap.com/) 3.3+
+- [ChakraUI](https://chakra-ui.com/) +2.5.1
 - [React](https://facebook.github.io/react/) 15.6+
 - [TypeScript](https://www.typescriptlang.org/) 2.6+
 - [Docker](https://www.docker.com/) 17.06+
 - [Docker Compose](https://docs.docker.com/compose/) 1.14+
-- [Github](https://github.com) 2.9+
+- [Redux](https://redux.js.org/) +1.9.3
 
 ## Features
 
