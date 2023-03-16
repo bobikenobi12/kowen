@@ -11,9 +11,9 @@ export const useLocalStorage = <T>(key: string, initialValue: T) => {
     }
   });
 
-  const setValue = (value: T | ((val: T) => T)) => {
-    const valueToStore = value instanceof Function ? value(storedValue) : value;
+  const setValue = (value: T) => {
     try {
+      const valueToStore = value;
       setStoredValue(valueToStore);
     } catch (error) {
       console.log(error);
@@ -29,5 +29,5 @@ export const useLocalStorage = <T>(key: string, initialValue: T) => {
     };
   }, [storedValue]);
 
-  return [storedValue, setValue];
+  return [storedValue, setValue] as const;
 };
