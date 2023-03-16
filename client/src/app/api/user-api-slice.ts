@@ -16,33 +16,33 @@ export const userApiSlice = createApi({
         },
     }),
     endpoints: (builder) => ({
-        login: builder.mutation<User, { email: string; password: string }>({
-            query: (body) => ({
-                url: "/auth/login",
-                method: "POST",
-                body,
+            login: builder.mutation<User, { email: string; password: string }>({
+                query: (body) => ({
+                    url: "/auth/login",
+                    method: "POST",
+                    body,
+                }),
+                invalidatesTags: ["User"],
             }),
-            invalidatesTags: ["User"],
-        }),
-        logout: builder.mutation<User, void>({
-            query: () => ({
-                url: "/auth/logout",
-                method: "POST",
+            logout: builder.mutation<User, void>({
+                query: () => ({
+                    url: "/auth/logout",
+                    method: "POST",
+                }),
+                invalidatesTags: ["User"],
             }),
-            invalidatesTags: ["User"],
-        }),
-        register: builder.mutation<User, User>({
-            query: (body) => ({
-                url: "/auth/register",
-                method: "POST",
-                body,
+            register: builder.mutation<User, User>({
+                query: (body) => ({
+                    url: "/auth/register",
+                    method: "POST",
+                    body,
+                }),
+                invalidatesTags: ["User"],
             }),
-            invalidatesTags: ["User"],
-        }),
-        getUser: builder.query<User, void>({
-            query: () => "/auth/user",
-            providesTags: ["User"],
-        }),
+            getUser: builder.query<User, void>({
+                query: () => "/auth/user",
+                providesTags: ["User"],
+            }),
     }),
 });
 

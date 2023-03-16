@@ -7,7 +7,6 @@ export interface User {
     email: string;
     avatar: string;
     _token: string;
-    _documents: never[];
 }
 
 
