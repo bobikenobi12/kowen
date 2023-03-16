@@ -1,5 +1,4 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import authReducer from "../features/auth/authSlice";
 
 export const store = configureStore({
@@ -12,3 +11,6 @@ export const store = configureStore({
     }),
   devTools: true,
 });
+
+export type AppDispatch = typeof store.dispatch;
+export type RootState = ReturnType<typeof store.getState>;
