@@ -21,6 +21,7 @@ from django.http import JsonResponse
 from django.contrib.auth import login
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.exceptions import AuthenticationFailed
+from datetime import datetime 
 
 
 import json
@@ -52,6 +53,8 @@ def login_api(request):
 
     user = authenticate(request, username=username, password=password)
     if user is not None:
+        user.last_login = datetime.now()
+        user.save(update_fields=['last_login'])
         token, created = Token.objects.get_or_create(user=user)
         return JsonResponse({'token': token.key})
     else:

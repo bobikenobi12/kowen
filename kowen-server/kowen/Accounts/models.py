@@ -8,6 +8,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.auth.models import Group
 import base64
+from datetime import datetime 
 
 class User(AbstractUser):
     email = models.EmailField(_('email address'), unique=True)
@@ -15,4 +16,5 @@ class User(AbstractUser):
     username = models.CharField(max_length=30, unique=True)
     first_name = models.CharField(max_length=30, blank=True)
     last_name = models.CharField(max_length=30, blank=True)
+    last_login = models.DateTimeField(default=datetime.now)
 

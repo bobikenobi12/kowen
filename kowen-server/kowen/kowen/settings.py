@@ -142,7 +142,7 @@ SECRET_KEY = '8lu*6g0lg)9z!ba+a$ehk)xt)x%rxgb$i1&amp;022shmi1jcgihb*'
 LANGUAGE_CODE = 'en-us'
 # set your timezone to your local timezone to the correct time-Bulgarian tinme zone
 
-TIME_ZONE = 'Europe/Sofia'
+TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
