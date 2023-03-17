@@ -64,17 +64,7 @@ def printing(request):
         return Response({"msg", "no no no"}, status=status.HTTP_201_CREATED)
 
     return Response({"msg", "success"}, status=status.HTTP_201_CREATED)
-    
 
-
-    hashedPassword = bcrypt.hashpw(password, bcrypt.gensalt())
-    user = authenticate(username=username, password=hashedPassword)
-
-    if user is None:
-        return Response({'error': 'Invalid credentials'}, status=400)
-
-    token, created = Token.objects.get_or_create(user=user)
-    return Response({'token': token.key})
 
 
 
