@@ -32,6 +32,15 @@ class CreateUserView(generics.CreateAPIView):
     serializer_class = UserSerializer
 
 
+@api_view(['POST'])
+def save_role(request):
+    serializer = RoleSerializer(data=request.data)
+
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 
@@ -53,9 +62,11 @@ def login_api(request):
 
     user = authenticate(request, username=username, password=password)
     if user is not None:
+        print(user.pk, '\n')
         user.last_login = datetime.now()
         user.save(update_fields=['last_login'])
         token, created = Token.objects.get_or_create(user=user)
+        
         return JsonResponse({'token': token.key})
     else:
         return Response({'message': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)

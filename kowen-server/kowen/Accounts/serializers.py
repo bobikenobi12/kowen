@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User
+from .models import User, Role
 from rest_framework.authtoken.models import Token
 
 
@@ -9,7 +9,13 @@ from .models import User
 def login_user():
     pass
 
-
+class RoleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Role
+        fields = ('id', 'name')
+    def create(self, validated_data):
+        role = Role.objects.create(**validated_data)
+        return role
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:

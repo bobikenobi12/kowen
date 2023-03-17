@@ -10,6 +10,14 @@ from django.contrib.auth.models import Group
 import base64
 from datetime import datetime 
 
+
+class Role(models.Model):
+    name = models.CharField(max_length=15, blank=False, unique=True)
+
+
+
+
+
 class User(AbstractUser):
     email = models.EmailField(_('email address'), unique=True)
     password = models.CharField(max_length=100)
@@ -17,4 +25,5 @@ class User(AbstractUser):
     first_name = models.CharField(max_length=30, blank=True)
     last_name = models.CharField(max_length=30, blank=True)
     last_login = models.DateTimeField(default=datetime.now)
+    roles = models.ManyToManyField(Role)
 
