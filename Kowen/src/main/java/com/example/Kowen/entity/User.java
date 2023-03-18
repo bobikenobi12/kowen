@@ -22,16 +22,19 @@ public class User {
     @Column
     private Long id;
 
-    @Column
+    @Column(nullable = true)
     private String password;
 
-    @Column
+    @Column(unique = true, nullable = false)
     private String username;
 
-    @Column
+    @Column(unique = true, nullable = false)
+    private String email;
+
+    @Column(nullable = false)
     private String firstName;
 
-    @Column
+    @Column(nullable = false)
     private String lastName;
 
     @JsonIgnore
