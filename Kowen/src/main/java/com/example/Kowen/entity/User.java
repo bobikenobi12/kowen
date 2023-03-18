@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +37,9 @@ public class User {
 
     @Column(nullable = false)
     private String lastName;
+
+    @Column(nullable = true)
+    private LocalDateTime lastLogin;
 
     @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY)

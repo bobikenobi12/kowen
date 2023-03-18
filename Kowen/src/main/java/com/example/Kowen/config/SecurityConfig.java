@@ -23,7 +23,7 @@ public class SecurityConfig {
         http.csrf().disable();
 //        http.cors().disable();
         http.authorizeRequests()
-                .requestMatchers("/user/**", "/role/**").authenticated()
+                .requestMatchers("/user/**", "/roles/**", "/test/test").authenticated()
                 .anyRequest().permitAll();
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
@@ -32,6 +32,6 @@ public class SecurityConfig {
 
     @Bean
     WebSecurityCustomizer webSecurityCustomizer(){
-        return web -> web.ignoring().requestMatchers("/roles/**", "/user/register");
+        return web -> web.ignoring().requestMatchers("/roles/**", "/user/register", "/user/login");
     }
 }
