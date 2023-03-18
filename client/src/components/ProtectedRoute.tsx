@@ -1,23 +1,13 @@
-import { Route, Navigate } from "react-router-dom";
+import { Outlet, Navigate, useLocation, Location } from "react-router-dom";
 import { useAppSelector } from "../app/hooks";
 
-export default function ProtectedRoute({ children, ...rest }: any) {
+export default function ProtectedRoute() {
 	const user = useAppSelector(state => state.auth);
+	const location = useLocation();
 
-	return (
-		<Route
-			{...rest}
-			render={() =>
-				user ? (
-					children
-				) : (
-					<Navigate
-						to={{
-							pathname: "/login",
-						}}
-					/>
-				)
-			}
-		/>
-	);
+	if (!user._token) {
+		return <Navigate to={{ pathname: "/login" }} />;
+	}
+
+	return <Outlet />;
 }
