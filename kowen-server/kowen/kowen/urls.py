@@ -33,5 +33,4 @@ urlpatterns = [
     path("print/", printing, name='printing'),
     path('saveRole/', save_role, name='save_role')
 
-
 ]

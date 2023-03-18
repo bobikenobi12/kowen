@@ -61,10 +61,10 @@ def login_api(request):
     password = request.data.get('password')
 
     user = authenticate(request, username=username, password=password)
+
     if user is not None:
-        print(user.pk, '\n')
         user.last_login = datetime.now()
-        user.save(update_fields=['last_login'])
+        user.save(update_fields=['last_login', 'roles'])
         token, created = Token.objects.get_or_create(user=user)
         
         return JsonResponse({'token': token.key})
@@ -78,6 +78,7 @@ def printing(request):
         return Response({"msg", "no no no"}, status=status.HTTP_201_CREATED)
 
     return Response({"msg", "success"}, status=status.HTTP_201_CREATED)
+
 
 
 

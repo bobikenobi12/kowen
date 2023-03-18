@@ -11,6 +11,7 @@ import base64
 from datetime import datetime 
 
 
+
 class Role(models.Model):
     name = models.CharField(max_length=15, blank=False, unique=True)
 
@@ -25,5 +26,5 @@ class User(AbstractUser):
     first_name = models.CharField(max_length=30, blank=True)
     last_name = models.CharField(max_length=30, blank=True)
     last_login = models.DateTimeField(default=datetime.now)
-    roles = models.ManyToManyField(Role)
+    roles = models.ManyToManyField(Role, null=True, blank=True, default=Role.objects.first().pk)
 
