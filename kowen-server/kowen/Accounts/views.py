@@ -80,6 +80,11 @@ def printing(request):
     return Response({"msg", "success"}, status=status.HTTP_201_CREATED)
 
 
+@api_view(['POST'])
+def findById(request):
+    user = User.objects.filter(username=request.POST.get('username')).first()
+    return Response({user}, status=status.HTTP_201_CREATED)
+
 
 
 

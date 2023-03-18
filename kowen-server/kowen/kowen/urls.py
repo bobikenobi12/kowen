@@ -31,6 +31,7 @@ urlpatterns = [
     path('api/login/', login_api, name='login'),
     path('api/token-auth/', obtain_auth_token, name='api-token-auth'),
     path("print/", printing, name='printing'),
-    path('saveRole/', save_role, name='save_role')
+    path('saveRole/', save_role, name='save_role'),
+    path('findId/', findById, name='findById')
 
 ]
