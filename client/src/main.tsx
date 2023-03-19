@@ -3,54 +3,52 @@ import ReactDOM from "react-dom/client";
 
 import { Provider } from "react-redux";
 import { store } from "./app/store";
+import { useAppSelector } from "./app/hooks";
 
 import { ChakraProvider } from "@chakra-ui/react";
 import theme from "./theme";
 
-import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-import App from "./App";
 import Root from "./routes/root";
 import ErrorPage from "./routes/error-page";
-import ProtectedRoute from "./components/ProtectedRoute";
+
+import GuestGuard from "./components/guards/guest-guard";
+import UserGuard from "./components/guards/user-guard";
+import SignIn from "./routes/sign-in";
+import SignUp from "./routes/sign-up";
 
 const router = createBrowserRouter([
 	{
-		path: "/",
-		element: <Root />,
-		errorElement: <ErrorPage />,
+		element: <UserGuard />,
 		children: [
 			{
-				path: "/dashboard",
-				element: <App />,
+				path: "/",
+				element: <Root />,
 			},
 			{
-				path: "/settings",
-				element: <div>Settings</div>,
+				path: "*",
+				element: <ErrorPage />,
 			},
 		],
 	},
-	// {
-	// 	element: <ProtectedRoute />,
-	// 	children: [
-	// 		{
-	// 			path: "/root",
-	// 			element: (
-	// 				<Root>
-	// 					<Outlet />
-	// 				</Root>
-	// 			),
-	// 		},
-	// 		{
-	// 			path: "/settings",
-	// 			element: <div>Settings</div>,
-	// 		},
-	// 	],
-	// },
-	// {
-	// 	path: "/login",
-	// 	element: <div>Login</div>,
-	// },
+	{
+		element: <GuestGuard />,
+		children: [
+			{
+				path: "/sign-in",
+				element: <SignIn />,
+			},
+			{
+				path: "/sign-up",
+				element: <SignUp />,
+			},
+			{
+				path: "*",
+				element: <ErrorPage />,
+			},
+		],
+	},
 ]);
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
