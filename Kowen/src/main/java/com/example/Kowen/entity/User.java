@@ -62,6 +62,9 @@ public class User {
     private List<UserGroup> groups;
 
 
+    @Column
+    private LocalDateTime dateJoined;
+
 
 
 }

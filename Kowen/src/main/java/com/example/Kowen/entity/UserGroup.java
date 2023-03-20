@@ -33,4 +33,8 @@ public class UserGroup {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "creator_id")
     private User creator;
+
+
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<RoleInGroup> roleInGroup;
 }
