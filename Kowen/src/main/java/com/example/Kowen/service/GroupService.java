@@ -13,4 +13,8 @@ public interface GroupService {
 
     UserGroup setUserGroupRole(Long userId, Long groupId, String role) throws Exception;
     UserGroup addUserToGroup(User user, Long groupId) throws Exception;
+
+    UserGroup requestGroup(User user, Long groupId) throws Exception;
+
+    UserGroup acceptUser(Long userId, Long groupId) throws Exception;
 }

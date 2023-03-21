@@ -4,5 +4,6 @@ import lombok.Getter;
 
 @Getter
 public class Id {
-    Long id;
+    Long userId;
+    Long groupId;
 }

@@ -29,6 +29,10 @@ public class UserGroup {
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "userGroups")
     private List<User> users;
 
+    @ElementCollection
+    @Column(nullable = true)
+    private List<Long> waitingUsersId;
+
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "creator_id")

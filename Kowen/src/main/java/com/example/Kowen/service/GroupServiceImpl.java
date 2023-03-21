@@ -66,4 +66,26 @@ public class GroupServiceImpl implements GroupService{
         users.add(user);
         return groupRepo.save(group);
     }
+
+    @Override
+    public UserGroup requestGroup(User user, Long groupId) throws Exception {
+        UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
+        List<Long> userIds = group.getWaitingUsersId();
+        userIds.add(user.getId());
+        group.setWaitingUsersId(userIds);
+        return groupRepo.save(group);
+    }
+
+    @Override
+    public UserGroup acceptUser(Long userId, Long groupId) throws Exception {
+        UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
+        if (group.getWaitingUsersId().contains(userId)){
+            List<Long> waitingIds = group.getWaitingUsersId();
+            waitingIds.remove(userId);
+            group.setWaitingUsersId(waitingIds);
+            User user = userRepository.findById(userId).orElseThrow(Exception::new);
+            return addUserToGroup(user, groupId);
+        }
+        else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no such user in waiting!");
+    }
 }

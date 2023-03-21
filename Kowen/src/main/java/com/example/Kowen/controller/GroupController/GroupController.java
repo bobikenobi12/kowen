@@ -12,6 +12,7 @@ import com.example.Kowen.service.GroupRepo;
 import com.example.Kowen.service.GroupService;
 import com.example.Kowen.service.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -79,6 +80,37 @@ public class GroupController {
         UserDetails principal = (UserDetails) authentication.getPrincipal();
         User user =  userRepository.findByEmail(principal.getUsername()).get(0);
 
-        return groupService.addUserToGroup(user, groupId.getId());
+        User userToAdd = userRepository.findById(groupId.getUserId()).orElseThrow(Exception::new);
+        UserGroup group = groupRepo.findById(groupId.getGroupId()).orElseThrow(Exception::new);
+
+        if (user == group.getCreator()){
+            return groupService.addUserToGroup(userToAdd, groupId.getGroupId());
+        }
+        else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not creator of this group to add users!");
+
+
+
+    }
+
+    @PostMapping("/requestGroup")
+    public UserGroup requestGroup(@RequestBody Id id) throws Exception {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        User user =  userRepository.findByEmail(principal.getUsername()).get(0);
+
+        return  groupService.requestGroup(user, id.getGroupId());
+    }
+
+    @PostMapping("/acceptUser")
+    public UserGroup acceptUser(@RequestBody Id id) throws Exception {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        User user =  userRepository.findByEmail(principal.getUsername()).get(0);
+        UserGroup group = groupRepo.findById(id.getGroupId()).orElseThrow(Exception::new);
+
+        if (user == group.getCreator()){
+            return groupService.acceptUser(id.getUserId(), group.getId());
+        }
+        else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not creator of this group!");
     }
 }
