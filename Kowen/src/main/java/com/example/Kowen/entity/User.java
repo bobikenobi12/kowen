@@ -50,11 +50,8 @@ public class User {
     private List<Role> roles = new ArrayList<>();
 
     @JsonIgnore
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "user_group",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "userGroups_id"))
-    private List<UserGroup> userGroups;
+    @ManyToMany(mappedBy = "users")
+    private List<UserGroup> userGroups = new ArrayList<>();
 
 
     @JsonIgnore

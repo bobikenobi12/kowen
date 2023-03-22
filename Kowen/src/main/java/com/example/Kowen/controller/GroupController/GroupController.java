@@ -20,6 +20,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+
 @RestController
 @CrossOrigin
 @RequestMapping("/group")
@@ -112,5 +114,24 @@ public class GroupController {
             return groupService.acceptUser(id.getUserId(), group.getId());
         }
         else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not creator of this group!");
+    }
+
+    @GetMapping("/getWaiting/{groupId}")
+    public List<User> getWaitingUsers(@PathVariable Long groupId) throws Exception {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        User user =  userRepository.findByEmail(principal.getUsername()).get(0);
+        UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
+
+        if (user == group.getCreator()){
+            return groupService.getWaitingUsers(groupId);
+        }
+        else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not creator of this group!");
+    }
+
+    @GetMapping("/getUsersInGroup/{groupId}")
+    public List<User> getUsersInGroup(@PathVariable Long groupId) throws Exception {
+        UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
+        return groupService.getUsersInGroup(groupId);
     }
 }

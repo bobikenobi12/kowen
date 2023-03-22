@@ -6,6 +6,8 @@ import com.example.Kowen.entity.User;
 import com.example.Kowen.entity.UserGroup;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public interface GroupService {
     UserGroup create(String name, String description, User user);
@@ -17,4 +19,8 @@ public interface GroupService {
     UserGroup requestGroup(User user, Long groupId) throws Exception;
 
     UserGroup acceptUser(Long userId, Long groupId) throws Exception;
+
+    List<User> getWaitingUsers(Long groupId) throws Exception;
+
+    List<User> getUsersInGroup(Long groupId) throws Exception;
 }
