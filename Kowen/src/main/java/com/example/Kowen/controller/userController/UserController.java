@@ -48,6 +48,7 @@ public class UserController {
         roles.add(role);
         user.setRoles(roles);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setDateJoined(LocalDateTime.now());
         return userRepository.save(user);
     }
 
