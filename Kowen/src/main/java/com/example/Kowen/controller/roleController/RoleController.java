@@ -2,7 +2,7 @@ package com.example.Kowen.controller.roleController;
 
 
 import com.example.Kowen.entity.Role;
-import com.example.Kowen.service.RoleRepository;
+import com.example.Kowen.service.role.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
