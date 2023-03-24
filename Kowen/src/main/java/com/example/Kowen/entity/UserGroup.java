@@ -16,7 +16,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@Table(name = "groupsOfUsers")
+@Table(name = "kowen")
 public class UserGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,7 +28,7 @@ public class UserGroup {
 
 
     @ManyToMany
-    @JoinTable(name = "user_group",
+    @JoinTable(name = "user_kowen",
             joinColumns = @JoinColumn(name = "group_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id"))
     private List<User> users = new ArrayList<>();
@@ -45,6 +45,7 @@ public class UserGroup {
 
     @OneToMany(cascade = CascadeType.ALL)
     private List<RoleInGroup> roleInGroup;
+
 
     @OneToMany(cascade = CascadeType.ALL)
     private List<Document> documents;

@@ -8,7 +8,11 @@ import com.example.Kowen.service.group.RoleInGroupRepo;
 import com.example.Kowen.service.role.RoleRepository;
 import com.example.Kowen.service.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -47,12 +51,13 @@ public class DocumentController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails principal = (UserDetails) authentication.getPrincipal();
         User user =  userRepository.findByEmail(principal.getUsername()).get(0);
+        byte[] fileBytes = file.getBytes();
 
         Document document = new Document();
         document.setName(file.getOriginalFilename());
         document.setPublisher(user);
 //        document.setPublishingDate(new Date());
-        document.setDocumentContent(file.getBytes());
+        document.setDocumentContent(fileBytes);
         document.setDocumentExtension(file.getContentType());
         List<RoleInGroup> roles = new ArrayList<>();
         UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
@@ -69,5 +74,26 @@ public class DocumentController {
 
 
         return documentRepo.save(document);
+    }
+
+    @GetMapping("/download/{id}")
+    public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable Long id) throws Exception {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        User user =  userRepository.findByEmail(principal.getUsername()).get(0);
+
+        byte[] fileBytes = documentRepo.findById(id).orElseThrow(Exception::new).getDocumentContent();
+        ByteArrayResource resource = new ByteArrayResource(fileBytes);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentLength(fileBytes.length);
+
+        headers.setContentDispositionFormData("attachment", "file-" + id + ".bin");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentLength(fileBytes.length)
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(resource);
     }
 }

@@ -4,6 +4,7 @@ import com.example.Kowen.controller.AuthRequest;
 import com.example.Kowen.controller.AuthResponse;
 import com.example.Kowen.entity.Role;
 import com.example.Kowen.entity.User;
+import com.example.Kowen.enums.PermissionsEnum;
 import com.example.Kowen.jwt.JwtTokenService;
 import com.example.Kowen.service.role.RoleRepository;
 import com.example.Kowen.service.user.UserRepository;
@@ -41,9 +42,16 @@ public class UserController {
 
     @PostMapping("/register")
     public User register(@RequestBody User user){
-        Role role = roleRepository.findByName("USER").get(0);
+        if(roleRepository.findByName("USER").isEmpty()){
+            Role role = new Role();
+            List<PermissionsEnum> permissionsEnums = new ArrayList<>();
+            permissionsEnums.add(PermissionsEnum.can_add);
+            role.setPermissions(permissionsEnums);
+            role.setName("USER");
+            roleRepository.save(role);
+        }
         List<Role> roles = new ArrayList<>();
-        roles.add(role);
+        roles.add(roleRepository.findByName("USER").get(0));
         user.setRoles(roles);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setDateJoined(LocalDateTime.now());
