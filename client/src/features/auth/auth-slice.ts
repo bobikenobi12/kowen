@@ -4,8 +4,8 @@ import { User } from "../../app/api/types/index";
 const initialState: User = {
 	id: "",
 	username: "",
-	first_name: "",
-	last_name: "",
+	firstName: "",
+	lastName: "",
 	email: "",
 	avatar: "",
 	_token: "",
@@ -16,19 +16,12 @@ const authSlice = createSlice({
 	initialState,
 	reducers: {
 		setCredentials(state, action) {
-			const {
-				id,
-				username,
-				first_name,
-				last_name,
-				email,
-				avatar,
-				_token,
-			} = action.payload;
+			const { id, username, firstName, lastName, email, avatar, _token } =
+				action.payload;
 			state.id = id;
 			state.username = username;
-			state.first_name = first_name;
-			state.last_name = last_name;
+			state.firstName = firstName;
+			state.lastName = lastName;
 			state.email = email;
 			state.avatar = avatar;
 			state._token = _token;
@@ -37,8 +30,8 @@ const authSlice = createSlice({
 		logout(state) {
 			state.id = "";
 			state.username = "";
-			state.first_name = "";
-			state.last_name = "";
+			state.firstName = "";
+			state.lastName = "";
 			state.email = "";
 			state.avatar = "";
 			state._token = "";

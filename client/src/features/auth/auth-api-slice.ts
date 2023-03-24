@@ -17,7 +17,7 @@ export const authApi = createApi({
 		},
 	}),
 	endpoints: builder => ({
-		login: builder.mutation<User, { email: string; password: string }>({
+		login: builder.mutation<User, Partial<User> & { password: string }>({
 			query: body => ({
 				url: "/login",
 				method: "POST",
@@ -34,16 +34,7 @@ export const authApi = createApi({
 				});
 			},
 		}),
-		register: builder.mutation<
-			User,
-			{
-				first_name: string;
-				last_name: string;
-				username: string;
-				email: string;
-				password: string;
-			}
-		>({
+		register: builder.mutation<User, Partial<User> & { password: string }>({
 			query: body => ({
 				url: "/register",
 				method: "POST",

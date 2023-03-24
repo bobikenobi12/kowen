@@ -12,7 +12,7 @@ import Home from "./routes/home";
 import ErrorPage from "./routes/error-page";
 import UserGuard from "./features/auth/user-guard";
 import GuestGuard from "./features/auth/guest-guard";
-import Login from "./routes/login";
+import Register from "./features/auth/register";
 
 const router = createBrowserRouter([
 	{
@@ -39,8 +39,8 @@ const router = createBrowserRouter([
 				element: <GuestGuard />,
 				children: [
 					{
-						path: "login",
-						element: <Login />,
+						path: "register",
+						element: <Register />,
 					},
 				],
 			},

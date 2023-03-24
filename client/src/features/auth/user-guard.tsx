@@ -8,6 +8,6 @@ export default function UserGuard() {
 	return token ? (
 		<Outlet />
 	) : (
-		<Navigate to="auth/login" state={{ from: location }} replace />
+		<Navigate to="auth/register" state={{ from: location }} replace />
 	);
 }
