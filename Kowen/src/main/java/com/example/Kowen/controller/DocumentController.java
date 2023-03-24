@@ -47,12 +47,13 @@ public class DocumentController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails principal = (UserDetails) authentication.getPrincipal();
         User user =  userRepository.findByEmail(principal.getUsername()).get(0);
+        byte[] fileBytes = file.getBytes();
 
         Document document = new Document();
         document.setName(file.getOriginalFilename());
         document.setPublisher(user);
 //        document.setPublishingDate(new Date());
-        document.setDocumentContent(file.getBytes());
+        document.setDocumentContent(fileBytes);
         document.setDocumentExtension(file.getContentType());
         List<RoleInGroup> roles = new ArrayList<>();
         UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);

@@ -34,7 +34,8 @@ public class Document {
     @JoinColumn(name = "creator_id")
     private User publisher; //
 
-    @Column(columnDefinition="longblob", nullable = false)
+    @Lob
+    @Column(columnDefinition="BLOB", nullable = false)
     private byte[] documentContent; //
 
     @Column
