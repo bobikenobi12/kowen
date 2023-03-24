@@ -1,59 +1,34 @@
-import { Provider } from "react-redux";
-import { store } from "./app/store";
+import { Routes, Route } from "react-router-dom";
+import { Box, Center, VStack } from "@chakra-ui/react";
 
-import { ChakraProvider } from "@chakra-ui/react";
-import theme from "./theme";
+import { Login } from "./features/auth/Login";
+import { PrivateOutlet } from "./utils/PrivateOutlet";
+import { ProtectedComponent } from "./features/auth/ProtectedComponent";
 
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-
-import Layout from "./components/layout";
-import Root from "./routes/root";
-import Home from "./routes/home";
-import ErrorPage from "./routes/error-page";
-import UserGuard from "./features/auth/user-guard";
-import GuestGuard from "./features/auth/guest-guard";
-import Register from "./features/auth/register";
-
-const router = createBrowserRouter([
-	{
-		path: "/",
-		element: <Layout />,
-		errorElement: <ErrorPage />,
-		children: [
-			{
-				path: "/",
-				element: <UserGuard />,
-				children: [
-					{
-						path: "/",
-						element: <Root />,
-					},
-					{
-						path: "home",
-						element: <Home />,
-					},
-				],
-			},
-			{
-				path: "auth/",
-				element: <GuestGuard />,
-				children: [
-					{
-						path: "register",
-						element: <Register />,
-					},
-				],
-			},
-		],
-	},
-]);
-
-export default function App() {
+function Hooray() {
 	return (
-		<Provider store={store}>
-			<ChakraProvider theme={theme}>
-				<RouterProvider router={router} />
-			</ChakraProvider>
-		</Provider>
+		<Center h="500px">
+			<VStack>
+				<Box>Hooray you logged in!</Box>
+				<Box>
+					<ProtectedComponent />
+				</Box>
+			</VStack>
+		</Center>
 	);
 }
+
+function App() {
+	return (
+		<Box>
+			<Routes>
+				<Route path="/login" element={<Login />} />
+				<Route path="/" element={<PrivateOutlet />}>
+					<Route index element={<Hooray />} />
+				</Route>
+			</Routes>
+		</Box>
+	);
+}
+
+export default App;
