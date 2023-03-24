@@ -8,5 +8,13 @@
 	"trailingComma": "es5",
 	"bracketSameLine": true,
 	"jsxSingleQuote": false,
-	"quoteProps": "consistent"
+	"quoteProps": "consistent",
+	"overrides": [
+		{
+			"files": "*.json",
+			"options": {
+				"tabWidth": 2
+			}
+		}
+	]
 }

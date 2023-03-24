@@ -29,12 +29,12 @@ import { Link as RouterLink } from "react-router-dom";
 
 import ThemeToggle from "../components/theme-toggle";
 
-import { useAppSelector } from "../app/hooks";
+import { useAppSelector, useAppDispatch } from "../app/hooks";
 import {
 	useLoginMutation,
 	useRegisterMutation,
 	useLogoutMutation,
-} from "../app/api/user-api-slice";
+} from "../features/auth/auth-api-slice";
 
 export default function Navbar() {
 	const { isOpen, onOpen, onClose } = useDisclosure();

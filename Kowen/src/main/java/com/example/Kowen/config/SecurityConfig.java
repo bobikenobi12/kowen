@@ -19,11 +19,10 @@ public class SecurityConfig {
     @Autowired
     private JwtRequestFilter jwtRequestFilter;
 
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf().disable();
-//        http.cors().disable();
+        // http.cors().disable();
         http.authorizeRequests()
                 .requestMatchers("/user/**", "/roles/**", "/test/test", "/group/**").authenticated()
                 .anyRequest().permitAll();
@@ -31,9 +30,8 @@ public class SecurityConfig {
         return http.build();
     }
 
-
     @Bean
-    WebSecurityCustomizer webSecurityCustomizer(){
+    WebSecurityCustomizer webSecurityCustomizer() {
         return web -> web.ignoring().requestMatchers("/roles/**", "/user/register", "/user/login");
     }
 
@@ -42,7 +40,7 @@ public class SecurityConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**").allowedOrigins("http://localhost:3000/%22");
+                registry.addMapping("/**").allowedOrigins("http://localhost:5173/");
             }
         };
     }
