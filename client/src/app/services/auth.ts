@@ -20,7 +20,7 @@ export interface LoginRequest {
 
 export const api = createApi({
 	baseQuery: fetchBaseQuery({
-		baseUrl: "/",
+		baseUrl: "https://localhost:8081/user/",
 		prepareHeaders: (headers, { getState }) => {
 			// By default, if we have a token in the store, let's use that for authenticated requests
 			const token = (getState() as RootState).auth.token;
