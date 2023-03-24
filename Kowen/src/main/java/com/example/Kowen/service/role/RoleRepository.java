@@ -1,4 +1,4 @@
-package com.example.Kowen.service;
+package com.example.Kowen.service.role;
 
 import com.example.Kowen.entity.Role;
 import com.example.Kowen.entity.User;

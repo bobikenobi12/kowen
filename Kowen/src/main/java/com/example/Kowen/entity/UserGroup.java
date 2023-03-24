@@ -45,4 +45,7 @@ public class UserGroup {
 
     @OneToMany(cascade = CascadeType.ALL)
     private List<RoleInGroup> roleInGroup;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Document> documents;
 }
