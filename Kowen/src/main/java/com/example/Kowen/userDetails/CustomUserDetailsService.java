@@ -2,7 +2,7 @@ package com.example.Kowen.userDetails;
 
 
 import com.example.Kowen.entity.User;
-import com.example.Kowen.service.UserRepository;
+import com.example.Kowen.service.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

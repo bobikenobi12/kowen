@@ -1,5 +1,6 @@
 package com.example.Kowen.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,6 +22,10 @@ public class RoleInGroup {
     @ElementCollection
     @Column(nullable = true)
     private List<Long> userId;
+
+    @JsonIgnore
+    @ManyToMany(mappedBy = "roles")
+    private List<Document> documents;
 
     @OneToOne(cascade = CascadeType.ALL)
     private RoleInGroupEntity roleUser;

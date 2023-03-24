@@ -1,7 +1,8 @@
-package com.example.Kowen.service;
+package com.example.Kowen.service.group;
 
 
 import com.example.Kowen.entity.*;
+import com.example.Kowen.service.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
-public class GroupServiceImpl implements GroupService{
+public class GroupServiceImpl implements GroupService {
 
     @Autowired
     private GroupRepo groupRepo;
