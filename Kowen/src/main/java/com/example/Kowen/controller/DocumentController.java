@@ -81,14 +81,14 @@ public class DocumentController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails principal = (UserDetails) authentication.getPrincipal();
         User user =  userRepository.findByEmail(principal.getUsername()).get(0);
-
-        byte[] fileBytes = documentRepo.findById(id).orElseThrow(Exception::new).getDocumentContent();
+        Document document = documentRepo.findById(id).orElseThrow(Exception::new);
+        byte[] fileBytes = document.getDocumentContent();
         ByteArrayResource resource = new ByteArrayResource(fileBytes);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
         headers.setContentLength(fileBytes.length);
 
-        headers.setContentDispositionFormData("attachment", "file-" + id + ".bin");
+        headers.setContentDispositionFormData("attachment", document.getName());
 
         return ResponseEntity.ok()
                 .headers(headers)
