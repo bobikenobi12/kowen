@@ -5,6 +5,7 @@ import com.example.Kowen.controller.GroupRequest;
 import com.example.Kowen.controller.Id;
 import com.example.Kowen.controller.RoleInGroupRequest;
 import com.example.Kowen.controller.SettingRoleRequest;
+import com.example.Kowen.entity.Document;
 import com.example.Kowen.entity.User;
 import com.example.Kowen.entity.UserGroup;
 import com.example.Kowen.service.group.GroupRepo;
@@ -131,5 +132,19 @@ public class GroupController {
     public List<User> getUsersInGroup(@PathVariable Long groupId) throws Exception {
         UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
         return groupService.getUsersInGroup(groupId);
+    }
+
+    @GetMapping("/getDocumentsInGroup/{groupId}")
+    public List<Document> getDocumentsInGroup(@PathVariable Long groupId) throws Exception {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        User user =  userRepository.findByEmail(principal.getUsername()).get(0);
+
+        UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
+        if (group.getUsers().contains(user) || group.getCreator() == user){
+            return groupService.getDocumentsInGroup(groupId);
+        }
+        else throw new ResponseStatusException(HttpStatus.NOT_FOUND, "You are not in this group!");
+
     }
 }

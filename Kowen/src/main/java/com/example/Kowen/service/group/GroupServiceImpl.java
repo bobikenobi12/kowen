@@ -110,4 +110,10 @@ public class GroupServiceImpl implements GroupService {
         UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
         return group.getUsers();
     }
+
+    @Override
+    public List<Document> getDocumentsInGroup(Long groupId) throws Exception {
+        UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
+        return group.getDocuments();
+    }
 }

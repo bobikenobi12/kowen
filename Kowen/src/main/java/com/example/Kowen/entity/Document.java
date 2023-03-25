@@ -1,5 +1,6 @@
 package com.example.Kowen.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,6 +31,7 @@ public class Document {
 //    @Temporal(TemporalType.TIMESTAMP)
 //    private Date publishingDate;//
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "creator_id")
     private User publisher; //
