@@ -71,9 +71,12 @@ public class DocumentController {
 
         }
         document.setRoles(roles);
-
-
-        return documentRepo.save(document);
+        documentRepo.save(document);
+        List<Document> docs = group.getDocuments();
+        docs.add(document);
+        group.setDocuments(docs);
+        groupRepo.save(group);
+        return document;
     }
 
     @GetMapping("/download/{id}")
@@ -82,18 +85,42 @@ public class DocumentController {
         UserDetails principal = (UserDetails) authentication.getPrincipal();
         User user =  userRepository.findByEmail(principal.getUsername()).get(0);
         Document document = documentRepo.findById(id).orElseThrow(Exception::new);
-        byte[] fileBytes = document.getDocumentContent();
-        ByteArrayResource resource = new ByteArrayResource(fileBytes);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        headers.setContentLength(fileBytes.length);
 
-        headers.setContentDispositionFormData("attachment", document.getName());
+        for (int i = 0; i < user.getUserGroups().size(); i++){
+            if (user.getUserGroups().get(i).getDocuments().contains(document)){
+                byte[] fileBytes = document.getDocumentContent();
+                ByteArrayResource resource = new ByteArrayResource(fileBytes);
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+                headers.setContentLength(fileBytes.length);
 
-        return ResponseEntity.ok()
-                .headers(headers)
-                .contentLength(fileBytes.length)
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .body(resource);
+                headers.setContentDispositionFormData("attachment", document.getName());
+
+                return ResponseEntity.ok()
+                        .headers(headers)
+                        .contentLength(fileBytes.length)
+                        .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                        .body(resource);
+            }
+        }
+        for (int i = 0; i < user.getGroups().size(); i++){
+            if (user.getGroups().get(i).getDocuments().contains(document)){
+                byte[] fileBytes = document.getDocumentContent();
+                ByteArrayResource resource = new ByteArrayResource(fileBytes);
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+                headers.setContentLength(fileBytes.length);
+
+                headers.setContentDispositionFormData("attachment", document.getName());
+
+                return ResponseEntity.ok()
+                        .headers(headers)
+                        .contentLength(fileBytes.length)
+                        .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                        .body(resource);
+            }
+        }
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "There is no document!");
+
     }
 }

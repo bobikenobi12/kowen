@@ -1,9 +1,6 @@
 package com.example.Kowen.service.group;
 
-import com.example.Kowen.entity.Role;
-import com.example.Kowen.entity.RoleInGroupEntity;
-import com.example.Kowen.entity.User;
-import com.example.Kowen.entity.UserGroup;
+import com.example.Kowen.entity.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,4 +20,6 @@ public interface GroupService {
     List<User> getWaitingUsers(Long groupId) throws Exception;
 
     List<User> getUsersInGroup(Long groupId) throws Exception;
+
+    List<Document> getDocumentsInGroup(Long groupId) throws Exception;
 }
