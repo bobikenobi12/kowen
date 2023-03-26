@@ -51,7 +51,7 @@ export const Login = () => {
 	const toast = useToast();
 
 	const [formState, setFormState] = React.useState<LoginRequest>({
-		username: "",
+		email: "",
 		password: "",
 	});
 
@@ -59,9 +59,10 @@ export const Login = () => {
 
 	const handleChange = ({
 		target: { name, value },
-	}: React.ChangeEvent<HTMLInputElement>) =>
+	}: React.ChangeEvent<HTMLInputElement>) => {
 		setFormState(prev => ({ ...prev, [name]: value }));
-
+		console.log(formState);
+	};
 	return (
 		<Center h="500px">
 			<VStack spacing="4">
@@ -69,7 +70,7 @@ export const Login = () => {
 				<InputGroup>
 					<Input
 						onChange={handleChange}
-						name="username"
+						name="email"
 						type="text"
 						placeholder="Email"
 					/>
