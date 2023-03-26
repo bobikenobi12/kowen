@@ -2,6 +2,7 @@ package com.example.Kowen.controller;
 
 import com.example.Kowen.entity.*;
 import com.example.Kowen.service.document.DocumentRepo;
+import com.example.Kowen.service.document.VersionRepo;
 import com.example.Kowen.service.group.GroupRepo;
 import com.example.Kowen.service.group.GroupService;
 import com.example.Kowen.service.group.RoleInGroupRepo;
@@ -46,6 +47,9 @@ public class DocumentController {
     @Autowired
     private DocumentRepo documentRepo;
 
+    @Autowired
+    private VersionRepo versionRepo;
+
     @PostMapping("/save")
     public Document save(@RequestParam(name = "file") MultipartFile file,@RequestParam Long groupId,@RequestParam List<Long> roleIds) throws Exception {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -57,7 +61,20 @@ public class DocumentController {
         document.setName(file.getOriginalFilename());
         document.setPublisher(user);
 //        document.setPublishingDate(new Date());
-        document.setDocumentContent(fileBytes);
+
+
+//        document.setDocumentContent(fileBytes);
+        DocumentVersion version = new DocumentVersion();
+        version.setDocumentContent(fileBytes);
+        version.setVersion(1L);
+        version.setDocument(document);
+
+
+        List<DocumentVersion> versions = new ArrayList<>();
+        versions.add(version);
+        document.setVersions(versions);
+
+
         document.setDocumentExtension(file.getContentType());
         List<RoleInGroup> roles = new ArrayList<>();
         UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
@@ -79,16 +96,16 @@ public class DocumentController {
         return document;
     }
 
-    @GetMapping("/download/{id}")
-    public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable Long id) throws Exception {
+    @GetMapping("/download/{id}/{version}")
+    public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable("id") Long id, @PathVariable("version") Long version) throws Exception {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails principal = (UserDetails) authentication.getPrincipal();
         User user =  userRepository.findByEmail(principal.getUsername()).get(0);
         Document document = documentRepo.findById(id).orElseThrow(Exception::new);
 
         for (int i = 0; i < user.getUserGroups().size(); i++){
-            if (user.getUserGroups().get(i).getDocuments().contains(document)){
-                byte[] fileBytes = document.getDocumentContent();
+            if (user.getUserGroups().get(i).getDocuments().contains(document)){//TODO: download if you have permissions
+                byte[] fileBytes = document.getVersions().get((int)(version - 1)).getDocumentContent();
                 ByteArrayResource resource = new ByteArrayResource(fileBytes);
                 HttpHeaders headers = new HttpHeaders();
                 headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
@@ -105,7 +122,7 @@ public class DocumentController {
         }
         for (int i = 0; i < user.getGroups().size(); i++){
             if (user.getGroups().get(i).getDocuments().contains(document)){
-                byte[] fileBytes = document.getDocumentContent();
+                byte[] fileBytes = document.getVersions().get((int)(version - 1)).getDocumentContent();
                 ByteArrayResource resource = new ByteArrayResource(fileBytes);
                 HttpHeaders headers = new HttpHeaders();
                 headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
@@ -121,6 +138,41 @@ public class DocumentController {
             }
         }
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "There is no document!");
-
     }
+
+    @PostMapping("/saveNewVersion")
+    public DocumentVersion saveNewVersion(@RequestParam(name = "file") MultipartFile file,@RequestParam Long groupId, @RequestParam Long documentId) throws Exception {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        User user =  userRepository.findByEmail(principal.getUsername()).get(0);
+        byte[] fileBytes = file.getBytes();
+
+        Document document = documentRepo.findById(documentId).orElseThrow(Exception::new);
+//        document.setPublishingDate(new Date());
+
+
+//        document.setDocumentContent(fileBytes);
+        DocumentVersion version = new DocumentVersion();
+        version.setDocumentContent(fileBytes);
+        version.setVersion(document.getVersions().get(document.getVersions().size() - 1).getVersion() + 1);
+        version.setDocument(document);
+
+
+        List<DocumentVersion> versions = document.getVersions();
+        versions.add(version);
+        versionRepo.save(version);
+        document.setVersions(versions);
+        documentRepo.save(document);
+
+
+//        UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
+//
+//
+//        List<Document> docs = group.getDocuments();
+//        docs.add(document);
+//        group.setDocuments(docs);
+//        groupRepo.save(group);
+        return version;
+    }
+
 }

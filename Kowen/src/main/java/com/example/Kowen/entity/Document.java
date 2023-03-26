@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -36,9 +37,10 @@ public class Document {
     @JoinColumn(name = "creator_id")
     private User publisher; //
 
-    @Lob
-    @Column(columnDefinition="BLOB", nullable = false)
-    private byte[] documentContent; //
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "document", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DocumentVersion> versions = new ArrayList<>();
 
     @Column
     private String documentExtension; //
