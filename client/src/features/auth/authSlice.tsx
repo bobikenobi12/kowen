@@ -6,16 +6,20 @@ type AuthState = {
 	token: string | null;
 };
 
+const initialState: AuthState = {
+	token: localStorage.getItem("token") || null,
+};
+
 const slice = createSlice({
 	name: "auth",
-	initialState: { token: null } as AuthState,
+	initialState,
 	reducers: {},
 	extraReducers: builder => {
 		builder.addMatcher(
 			api.endpoints.login.matchFulfilled,
 			(state, { payload }) => {
 				state.token = payload.token;
-				// state.user = payload.user;
+				localStorage.setItem("token", payload.token);
 			}
 		);
 	},
