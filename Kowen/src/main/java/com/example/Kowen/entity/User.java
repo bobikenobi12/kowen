@@ -7,6 +7,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +27,7 @@ public class User {
     @Column
     private Long id;
 
-    @Column(nullable = true)
+    @Column(nullable = false)
     private String password;
 
     @Column(unique = true, nullable = false)
