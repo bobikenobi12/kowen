@@ -29,7 +29,7 @@ export interface RegisterRequest {
 
 export const api = createApi({
 	baseQuery: fetchBaseQuery({
-		baseUrl: "http://localhost:8081/user/",
+		baseUrl: "http://localhost:8080/user/",
 		prepareHeaders: (headers, { getState }) => {
 			const token = (getState() as RootState).auth.token;
 			if (token) {

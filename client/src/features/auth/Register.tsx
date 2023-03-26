@@ -3,13 +3,13 @@
 
 import * as React from "react";
 import {
+	FormControl,
+	FormLabel,
+	FormErrorMessage,
+	FormHelperText,
 	Input,
-	InputGroup,
-	InputRightElement,
 	VStack,
 	Button,
-	Divider,
-	Center,
 	Box,
 	useToast,
 } from "@chakra-ui/react";
@@ -23,6 +23,7 @@ import { useRegisterMutation } from "../../app/services/auth";
 import type { RegisterRequest } from "../../app/services/auth";
 
 // import validateField from "../../utils/validateField";
+import { RegisterSchema } from "../../utils/ValidationSchemas";
 
 export default function Register() {
 	const navigate = useNavigate();
@@ -40,10 +41,11 @@ export default function Register() {
 					password: "",
 					confirmPassword: "",
 				}}
+				validationSchema={RegisterSchema}
 				onSubmit={async (values, { setErrors }) => {
 					const { confirmPassword, ...rest } = values;
 					try {
-						const response = await register(rest).unwrap();
+						await register(rest).unwrap();
 						toast({
 							title: "Account created.",
 							description: "We've created your account for you.",
@@ -70,67 +72,143 @@ export default function Register() {
 				) => (
 					<form onSubmit={props.handleSubmit}>
 						<VStack spacing={4}>
-							<InputGroup size="md">
+							<FormControl
+								isInvalid={
+									(props.errors
+										.username as unknown as boolean) &&
+									(props.touched
+										.username as unknown as boolean)
+								}>
+								<FormLabel htmlFor="username">
+									Username
+								</FormLabel>
 								<Input
-									pr="4.5rem"
-									type="text"
-									placeholder="Enter username"
+									id="username"
+									placeholder="Username"
 									name="username"
 									onChange={props.handleChange}
+									value={props.values.username}
 								/>
-							</InputGroup>
-							<InputGroup size="md">
+								{/* <FormHelperText
+									textAlign="right"
+									color="gray.500">
+									{props.values.username.length}/50
+								</FormHelperText> */}
+								<FormErrorMessage>
+									{props.errors.username}
+								</FormErrorMessage>
+							</FormControl>
+							<FormControl
+								isInvalid={
+									(props.errors
+										.email as unknown as boolean) &&
+									(props.touched.email as unknown as boolean)
+								}>
+								<FormLabel htmlFor="email">Email</FormLabel>
 								<Input
-									pr="4.5rem"
-									type="email"
-									placeholder="Enter email"
+									id="email"
+									placeholder="Email"
 									name="email"
 									onChange={props.handleChange}
+									value={props.values.email}
 								/>
-							</InputGroup>
-							<InputGroup size="md">
+								<FormErrorMessage>
+									{props.errors.email}
+								</FormErrorMessage>
+							</FormControl>
+							<FormControl
+								isInvalid={
+									(props.errors
+										.firstName as unknown as boolean) &&
+									(props.touched
+										.firstName as unknown as boolean)
+								}>
+								<FormLabel htmlFor="firstName">
+									First Name
+								</FormLabel>
 								<Input
-									pr="4.5rem"
-									type="text"
-									placeholder="Enter first name"
+									id="firstName"
+									placeholder="First Name"
 									name="firstName"
 									onChange={props.handleChange}
+									value={props.values.firstName}
 								/>
-							</InputGroup>
-							<InputGroup size="md">
+								<FormErrorMessage>
+									{props.errors.firstName}
+								</FormErrorMessage>
+							</FormControl>
+							<FormControl
+								isInvalid={
+									(props.errors
+										.lastName as unknown as boolean) &&
+									(props.touched
+										.lastName as unknown as boolean)
+								}>
+								<FormLabel htmlFor="lastName">
+									Last Name
+								</FormLabel>
 								<Input
-									pr="4.5rem"
-									type="text"
-									placeholder="Enter last name"
+									id="lastName"
+									placeholder="Last Name"
 									name="lastName"
 									onChange={props.handleChange}
+									value={props.values.lastName}
 								/>
-							</InputGroup>
-							<InputGroup size="md">
+								<FormErrorMessage>
+									{props.errors.lastName}
+								</FormErrorMessage>
+							</FormControl>
+							<FormControl
+								isInvalid={
+									(props.errors
+										.password as unknown as boolean) &&
+									(props.touched
+										.password as unknown as boolean)
+								}>
+								<FormLabel htmlFor="password">
+									Password
+								</FormLabel>
 								<Input
-									pr="4.5rem"
-									type="password"
-									placeholder="Enter password"
+									id="password"
+									placeholder="Password"
 									name="password"
-									onChange={props.handleChange}
-								/>
-							</InputGroup>
-							<InputGroup size="md">
-								<Input
-									pr="4.5rem"
 									type="password"
-									placeholder="Confirm password"
-									name="confirmPassword"
 									onChange={props.handleChange}
+									value={props.values.password}
 								/>
-							</InputGroup>
+								<FormErrorMessage>
+									{props.errors.password}
+								</FormErrorMessage>
+							</FormControl>
+							<FormControl
+								isInvalid={
+									(props.errors
+										.confirmPassword as unknown as boolean) &&
+									(props.touched
+										.confirmPassword as unknown as boolean)
+								}>
+								<FormLabel htmlFor="confirmPassword">
+									Confirm Password
+								</FormLabel>
+								<Input
+									id="confirmPassword"
+									placeholder="Confirm Password"
+									name="confirmPassword"
+									type="password"
+									onChange={props.handleChange}
+									value={props.values.confirmPassword}
+								/>
+								<FormErrorMessage>
+									{props.errors.confirmPassword}
+								</FormErrorMessage>
+							</FormControl>
 							<Button
 								isLoading={isLoading}
 								loadingText="Submitting"
 								colorScheme="teal"
 								variant="outline"
 								type="submit">
-								Sign
+								Register
 							</Button>
 						</VStack>
 					</form>
