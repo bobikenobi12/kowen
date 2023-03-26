@@ -40,6 +40,9 @@ public class GroupController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails principal = (UserDetails) authentication.getPrincipal();
 
+        if (groupRequest.getName().length() < 3 || groupRequest.getName().length() > 15) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Group name must contain characters between 3 and 15!");
+        if (groupRequest.getDescription().length() < 10 || groupRequest.getDescription().length() > 150) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Group description must contain characters between 10 and 150!");
+
         if (userRepository.findByEmail(principal.getUsername()).isEmpty()) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not loged in!");
         else{
             User creator =  userRepository.findByEmail(principal.getUsername()).get(0);

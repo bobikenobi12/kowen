@@ -10,10 +10,12 @@ import com.example.Kowen.service.role.RoleRepository;
 import com.example.Kowen.service.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -53,6 +55,22 @@ public class UserController {
             role.setName("USER");
             roleRepository.save(role);
         }
+
+        //Validators
+        if (!user.getEmail().contains("@") || !user.getEmail().contains(".") || user.getEmail().indexOf(0) == '@' || user.getEmail().length() < 7)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email address is not valid!");
+        if (user.getPassword().length() < 6 || user.getPassword().length() > 16)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password must contain characters between 6 and 16!");
+        if (user.getFirstName().length() < 3 || user.getFirstName().length() > 16)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "First name must contain characters between 3 and 16!");
+        if (user.getLastName().length() < 3 || user.getLastName().length() > 16)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Last name must contain characters between 3 and 16!");
+        if (user.getUsername().length() < 3 || user.getUsername().length() > 16)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username must contain characters between 3 and 16!");
+        //end of validators
+
+
+
         List<Role> roles = new ArrayList<>();
         roles.add(roleRepository.findByName("USER").get(0));
         user.setRoles(roles);
@@ -68,7 +86,11 @@ public class UserController {
                         .findByEmail(authRequest.getEmail())
                         .get(0)
                         .getPassword()))
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no user with this email!");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid email or password!");
+        else if (!authRequest.getEmail().contains("@") || !authRequest.getEmail().contains(".") || authRequest.getEmail().indexOf(0) == '@' || authRequest.getEmail().length() < 7)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email address is not valid!");
+        else if (authRequest.getPassword().length() < 6 || authRequest.getPassword().length() > 16)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password must contain characters between 6 and 16!");
         else {
             User user = userRepository.findByEmail(authRequest.getEmail()).get(0);
             String token = jwtTokenService.generateToken(user.getEmail());
@@ -77,6 +99,7 @@ public class UserController {
             return new AuthResponse("token", token);
         }
     }
+
 
     @GetMapping("/getMe")
     public User showMyData(){
