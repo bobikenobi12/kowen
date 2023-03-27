@@ -134,6 +134,7 @@ public class GroupController {
     @GetMapping("/getUsersInGroup/{groupId}")
     public List<User> getUsersInGroup(@PathVariable Long groupId) throws Exception {
         UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
+        group.getUsers().add(group.getCreator());
         return groupService.getUsersInGroup(groupId);
     }
 

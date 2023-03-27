@@ -1,6 +1,7 @@
 package com.example.Kowen.controller;
 
 import com.example.Kowen.entity.*;
+import com.example.Kowen.enums.PermissionsEnum;
 import com.example.Kowen.service.document.DocumentRepo;
 import com.example.Kowen.service.document.VersionRepo;
 import com.example.Kowen.service.group.GroupRepo;
@@ -78,6 +79,22 @@ public class DocumentController {
         document.setDocumentExtension(file.getContentType());
         List<RoleInGroup> roles = new ArrayList<>();
         UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
+        Boolean continueFlag = Boolean.FALSE;
+
+        if(!group.getUsers().contains(user) && group.getCreator() != user) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tou are not in this group!");
+        if (group.getCreator() == user){
+            continueFlag = Boolean.TRUE;
+        }
+        else {
+            for (int i = 0; i < group.getRoleInGroup().size(); i++){
+                if (group.getRoleInGroup().get(i).getRoleUser().getPermissions().contains(PermissionsEnum.can_add) && group.getRoleInGroup().get(i).getUserId().contains(user.getId())){
+                    continueFlag = Boolean.TRUE;
+                    break;
+                }
+            }
+            if (continueFlag == Boolean.FALSE) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You don't have permissions to save add new document!");
+        }
+
 
         for(Long id : roleIds){
             RoleInGroup role = roleInGroupRepo.findById(id).orElseThrow(Exception::new);
@@ -87,6 +104,8 @@ public class DocumentController {
             else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no such role!");
 
         }
+
+
         document.setRoles(roles);
         documentRepo.save(document);
         List<Document> docs = group.getDocuments();
@@ -96,29 +115,35 @@ public class DocumentController {
         return document;
     }
 
-    @GetMapping("/download/{id}/{version}")
-    public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable("id") Long id, @PathVariable("version") Long version) throws Exception {
+    @GetMapping("/download/{documentId}/{version}")
+    public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable("documentId") Long documentId, @PathVariable("version") Long version) throws Exception {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails principal = (UserDetails) authentication.getPrincipal();
         User user =  userRepository.findByEmail(principal.getUsername()).get(0);
-        Document document = documentRepo.findById(id).orElseThrow(Exception::new);
+        Document document = documentRepo.findById(documentId).orElseThrow(Exception::new);
 
         for (int i = 0; i < user.getUserGroups().size(); i++){
             if (user.getUserGroups().get(i).getDocuments().contains(document)){//TODO: download if you have permissions
-                byte[] fileBytes = document.getVersions().get((int)(version - 1)).getDocumentContent();
-                ByteArrayResource resource = new ByteArrayResource(fileBytes);
-                HttpHeaders headers = new HttpHeaders();
-                headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-                headers.setContentLength(fileBytes.length);
+                for (int j = 0; j < document.getRoles().size(); j++){
+                    if (document.getRoles().get(j).getUserId().contains(user.getId())){
+                        byte[] fileBytes = document.getVersions().get((int)(version - 1)).getDocumentContent();
+                        ByteArrayResource resource = new ByteArrayResource(fileBytes);
+                        HttpHeaders headers = new HttpHeaders();
+                        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+                        headers.setContentLength(fileBytes.length);
 
-                headers.setContentDispositionFormData("attachment", document.getName());
+                        headers.setContentDispositionFormData("attachment", document.getName());
 
-                return ResponseEntity.ok()
-                        .headers(headers)
-                        .contentLength(fileBytes.length)
-                        .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                        .body(resource);
+                        return ResponseEntity.ok()
+                                .headers(headers)
+                                .contentLength(fileBytes.length)
+                                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                                .body(resource);
+                    }
+                }
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You don't have permissions to download this document!");
             }
+            else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no suck document in this group!");
         }
         for (int i = 0; i < user.getGroups().size(); i++){
             if (user.getGroups().get(i).getDocuments().contains(document)){
