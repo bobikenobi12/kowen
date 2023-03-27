@@ -18,7 +18,7 @@ import {
 	HStack,
 	InputGroup,
 	InputRightElement,
-	useBoolean,
+	Tooltip,
 } from "@chakra-ui/react";
 import ThemeToggle from "../../components/common/ThemeToggle";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
@@ -247,22 +247,31 @@ export default function Register() {
 														props.values.password
 													}
 												/>
-												<InputRightElement h="full">
-													<Button
-														variant="ghost"
-														onClick={() => {
-															setShowPassword(
-																showPassword =>
-																	!showPassword
-															);
-														}}>
-														{showPassword ? (
-															<ViewIcon />
-														) : (
-															<ViewOffIcon />
-														)}
-													</Button>
-												</InputRightElement>
+												<Tooltip
+													label={
+														showPassword
+															? "Hide Password"
+															: "Show Password"
+													}
+													aria-label="Show/Hide Password"
+													placement="top">
+													<InputRightElement h="full">
+														<Button
+															variant="ghost"
+															onClick={() => {
+																setShowPassword(
+																	showPassword =>
+																		!showPassword
+																);
+															}}>
+															{showPassword ? (
+																<ViewIcon />
+															) : (
+																<ViewOffIcon />
+															)}
+														</Button>
+													</InputRightElement>
+												</Tooltip>
 											</InputGroup>
 											<FormErrorMessage>
 												{props.errors.password}

@@ -1,8 +1,11 @@
 import { Routes, Route } from "react-router-dom";
 import { Box, Center, VStack, Text } from "@chakra-ui/react";
 
+import Hero from "./components/Hero";
+
 import Login from "./features/auth/Login";
 import Register from "./features/auth/Register";
+
 import NotFound from "./components/common/NotFound";
 
 import { PrivateOutlet } from "./utils/PrivateOutlet";
@@ -13,7 +16,8 @@ function App() {
 		<Box>
 			<Routes>
 				<Route element={<PublicOutlet />}>
-					<Route index path="/login" element={<Login />} />
+					<Route index path="/" element={<Hero />} />
+					<Route path="/login" element={<Login />} />
 					<Route path="/register" element={<Register />} />
 				</Route>
 				<Route path="/" element={<PrivateOutlet />}>
