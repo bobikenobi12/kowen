@@ -48,7 +48,10 @@ export default function Register() {
 					<Heading fontSize={"4xl"} textAlign={"center"}>
 						Sign up for an account
 					</Heading>
-					<Text fontSize={"lg"} color={"gray.600"}>
+					<Text
+						fontSize={"lg"}
+						color={"gray.600"}
+						textAlign={"center"}>
 						to enjoy all of our cool{" "}
 						<Link
 							as={ReactRouterLink}
@@ -260,7 +263,9 @@ export default function Register() {
 											loadingText="Submitting"
 											colorScheme="twitter"
 											variant="outline"
-											type="submit">
+											type="submit"
+											size="lg"
+											width="full">
 											Register
 										</Button>
 									</VStack>
