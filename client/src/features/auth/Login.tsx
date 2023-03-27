@@ -19,13 +19,13 @@ import {
 	InputGroup,
 	InputRightElement,
 } from "@chakra-ui/react";
+import ThemeToggle from "../../components/common/ThemeToggle";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { Formik, FormikProps } from "formik";
 
 import { useNavigate, Link as ReactRouterLink } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
-import { ProtectedComponent } from "./ProtectedComponent";
 import { useLoginMutation } from "../../app/services/auth";
 import type { LoginRequest } from "../../app/services/auth";
 
@@ -44,6 +44,7 @@ export default function Register() {
 			align={"center"}
 			justify={"center"}
 			bg={useColorModeValue("gray.50", "gray.800")}>
+			<ThemeToggle />
 			<Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
 				<Stack align={"center"}>
 					<Heading fontSize={"4xl"} textAlign={"center"}>
