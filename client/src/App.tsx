@@ -3,6 +3,7 @@ import { Box, Center, VStack, Text } from "@chakra-ui/react";
 
 import Login from "./features/auth/Login";
 import Register from "./features/auth/Register";
+import NotFound from "./components/common/NotFound";
 
 import { PrivateOutlet } from "./utils/PrivateOutlet";
 import { PublicOutlet } from "./utils/PublicOutlet";
@@ -18,6 +19,7 @@ function App() {
 				<Route path="/" element={<PrivateOutlet />}>
 					<Route index element={<Text>Home</Text>} />
 				</Route>
+				<Route path="*" element={<NotFound />} />
 			</Routes>
 		</Box>
 	);
