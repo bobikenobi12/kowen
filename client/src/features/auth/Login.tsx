@@ -83,13 +83,36 @@ export default function Register() {
 							});
 							navigate("/");
 						} catch (error: any) {
-							toast({
-								title: "Error",
-								description: error.data.message,
-								status: "error",
-								duration: 9000,
-								isClosable: true,
-							});
+							if (error.status === 400) {
+								setErrors({
+									email: "Email is not registered",
+									password: "Password is incorrect",
+								});
+								toast({
+									title: "Error",
+									description:
+										"Email or password is incorrect",
+									status: "error",
+									duration: 5000,
+									isClosable: true,
+								});
+							} else if (error.status === 500) {
+								toast({
+									title: "Error",
+									description: "Server error",
+									status: "error",
+									duration: 5000,
+									isClosable: true,
+								});
+							} else {
+								toast({
+									title: "Error",
+									description: "Something went wrong",
+									status: "error",
+									duration: 5000,
+									isClosable: true,
+								});
+							}
 						}
 					}}>
 					{(props: FormikProps<LoginRequest>) => (
