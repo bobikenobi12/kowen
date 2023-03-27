@@ -1,6 +1,3 @@
-// simple register page that takes username, email, first name, last name, password and confirm password
-// and sends a post request to the backend to create a new user.
-
 import * as React from "react";
 import {
 	FormControl,
@@ -19,7 +16,11 @@ import {
 	Text,
 	Link,
 	HStack,
+	InputGroup,
+	InputRightElement,
+	useBoolean,
 } from "@chakra-ui/react";
+import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { Formik, FormikProps } from "formik";
 
 import { useNavigate, Link as ReactRouterLink } from "react-router-dom";
@@ -33,6 +34,7 @@ import type { RegisterRequest } from "../../app/services/auth";
 import { RegisterSchema } from "../../utils/ValidationSchemas";
 
 export default function Register() {
+	const [showPassword, setShowPassword] = React.useState(false);
 	const navigate = useNavigate();
 	const toast = useToast();
 	const [register, { isLoading }] = useRegisterMutation();
@@ -115,10 +117,9 @@ export default function Register() {
 									<VStack spacing={4}>
 										<FormControl
 											isInvalid={
-												(props.errors
-													.username as unknown as boolean) &&
-												(props.touched
-													.username as unknown as boolean)
+												Boolean(
+													props.errors.username
+												) && props.touched.username
 											}>
 											<FormLabel htmlFor="username">
 												Username
@@ -128,13 +129,15 @@ export default function Register() {
 												placeholder="Username"
 												name="username"
 												onChange={props.handleChange}
+												onBlur={props.handleBlur}
 												value={props.values.username}
 											/>
-											{/* <FormHelperText
-									textAlign="right"
-									color="gray.500">
-									{props.values.username.length}/50
-								</FormHelperText> */}
+											<FormHelperText
+												textAlign="left"
+												color="gray.500">
+												{props.values.username.length}
+												/50
+											</FormHelperText>
 											<FormErrorMessage>
 												{props.errors.username}
 											</FormErrorMessage>
@@ -142,10 +145,9 @@ export default function Register() {
 										<HStack>
 											<FormControl
 												isInvalid={
-													(props.errors
-														.firstName as unknown as boolean) &&
-													(props.touched
-														.firstName as unknown as boolean)
+													Boolean(
+														props.errors.firstName
+													) && props.touched.firstName
 												}>
 												<FormLabel htmlFor="firstName">
 													First Name
@@ -157,6 +159,7 @@ export default function Register() {
 													onChange={
 														props.handleChange
 													}
+													onBlur={props.handleBlur}
 													value={
 														props.values.firstName
 													}
@@ -167,10 +170,9 @@ export default function Register() {
 											</FormControl>
 											<FormControl
 												isInvalid={
-													(props.errors
-														.lastName as unknown as boolean) &&
-													(props.touched
-														.lastName as unknown as boolean)
+													Boolean(
+														props.errors.lastName
+													) && props.touched.lastName
 												}>
 												<FormLabel htmlFor="lastName">
 													Last Name
@@ -182,6 +184,7 @@ export default function Register() {
 													onChange={
 														props.handleChange
 													}
+													onBlur={props.handleBlur}
 													value={
 														props.values.lastName
 													}
@@ -193,10 +196,8 @@ export default function Register() {
 										</HStack>
 										<FormControl
 											isInvalid={
-												(props.errors
-													.email as unknown as boolean) &&
-												(props.touched
-													.email as unknown as boolean)
+												Boolean(props.errors.email) &&
+												props.touched.email
 											}>
 											<FormLabel htmlFor="email">
 												Email
@@ -206,40 +207,72 @@ export default function Register() {
 												placeholder="Email"
 												name="email"
 												onChange={props.handleChange}
+												onBlur={props.handleBlur}
 												value={props.values.email}
 											/>
+											<FormHelperText
+												textAlign="left"
+												color="gray.500">
+												We'll never share your email.
+											</FormHelperText>
 											<FormErrorMessage>
 												{props.errors.email}
 											</FormErrorMessage>
 										</FormControl>
 										<FormControl
 											isInvalid={
-												(props.errors
-													.password as unknown as boolean) &&
-												(props.touched
-													.password as unknown as boolean)
+												Boolean(
+													props.errors.password
+												) && props.touched.password
 											}>
 											<FormLabel htmlFor="password">
 												Password
 											</FormLabel>
-											<Input
-												id="password"
-												placeholder="Password"
-												name="password"
-												type="password"
-												onChange={props.handleChange}
-												value={props.values.password}
-											/>
+											<InputGroup>
+												<Input
+													id="password"
+													placeholder="Password"
+													name="password"
+													type={
+														showPassword
+															? "text"
+															: "password"
+													}
+													onChange={
+														props.handleChange
+													}
+													onBlur={props.handleBlur}
+													value={
+														props.values.password
+													}
+												/>
+												<InputRightElement h="full">
+													<Button
+														variant="ghost"
+														onClick={() => {
+															setShowPassword(
+																showPassword =>
+																	!showPassword
+															);
+														}}>
+														{showPassword ? (
+															<ViewIcon />
+														) : (
+															<ViewOffIcon />
+														)}
+													</Button>
+												</InputRightElement>
+											</InputGroup>
 											<FormErrorMessage>
 												{props.errors.password}
 											</FormErrorMessage>
 										</FormControl>
 										<FormControl
 											isInvalid={
-												(props.errors
-													.confirmPassword as unknown as boolean) &&
-												(props.touched
-													.confirmPassword as unknown as boolean)
+												Boolean(
+													props.errors.confirmPassword
+												) &&
+												props.touched.confirmPassword
 											}>
 											<FormLabel htmlFor="confirmPassword">
 												Confirm Password
@@ -250,6 +283,7 @@ export default function Register() {
 												name="confirmPassword"
 												type="password"
 												onChange={props.handleChange}
+												onBlur={props.handleBlur}
 												value={
 													props.values.confirmPassword
 												}
@@ -266,7 +300,7 @@ export default function Register() {
 											type="submit"
 											size="lg"
 											width="full">
-											Register
+											Sign Up
 										</Button>
 									</VStack>
 								</form>
@@ -278,8 +312,9 @@ export default function Register() {
 								<Link
 									as={ReactRouterLink}
 									to="/login"
+									state={{ from: location }}
 									color={"twitter.400"}>
-									Login
+									Sign In
 								</Link>
 							</Text>
 						</Stack>
