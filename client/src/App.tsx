@@ -5,7 +5,7 @@ import { PrivateOutlet } from "./utils/PrivateOutlet";
 import { PublicOutlet } from "./utils/PublicOutlet";
 
 import Hero from "./components/Hero";
-import Navbar from "./components/Navbar";
+import Navbar from "./components/Navigation/Navbar";
 
 import Login from "./features/auth/Login";
 import Register from "./features/auth/Register";
