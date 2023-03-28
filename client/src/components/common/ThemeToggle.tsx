@@ -15,9 +15,9 @@ export default function ThemeToggle() {
 			marginLeft="2"
 			onClick={toggleColorMode}
 			icon={<SwitchIcon />}
-			position="absolute"
-			top="5"
-			right="5"
+			// position="absolute"
+			// top="5"
+			// right="5"
 		/>
 	);
 }
