@@ -46,9 +46,6 @@ export const api = createApi({
 				body: credentials,
 			}),
 		}),
-		protected: builder.mutation<{ message: string }, void>({
-			query: () => "protected",
-		}),
 		register: builder.mutation<void, RegisterRequest>({
 			query: credentials => ({
 				url: "register",
@@ -59,5 +56,4 @@ export const api = createApi({
 	}),
 });
 
-export const { useLoginMutation, useProtectedMutation, useRegisterMutation } =
-	api;
+export const { useLoginMutation, useRegisterMutation } = api;
