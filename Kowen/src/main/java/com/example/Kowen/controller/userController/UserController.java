@@ -5,9 +5,11 @@ import com.example.Kowen.controller.AuthResponse;
 import com.example.Kowen.entity.Role;
 import com.example.Kowen.entity.User;
 import com.example.Kowen.enums.PermissionsEnum;
+import com.example.Kowen.jwt.BlackListService;
 import com.example.Kowen.jwt.JwtTokenService;
 import com.example.Kowen.service.role.RoleRepository;
 import com.example.Kowen.service.user.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +38,12 @@ public class UserController {
 
     @Autowired
     private RoleRepository roleRepository;
+
+    @Autowired
+    private JwtTokenService jwtTokenUtil;
+
+    @Autowired
+    private BlackListService blackListService;
 
 
 
@@ -79,6 +87,8 @@ public class UserController {
         return userRepository.save(user);
     }
 
+
+
     @PostMapping("/login")
     public AuthResponse login(@RequestBody AuthRequest authRequest){
         if (userRepository.findByEmail(authRequest.getEmail()).isEmpty() ||
@@ -99,6 +109,18 @@ public class UserController {
             return new AuthResponse("token", token);
         }
     }
+
+
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(HttpServletRequest request) {
+        String authToken = jwtTokenUtil.getTokenFromRequest(request);
+        blackListService.addTokenToBlacklist(authToken);
+        return ResponseEntity.ok("Logout successful.");
+    }
+
+
+
+
 
 
     @GetMapping("/getMe")
