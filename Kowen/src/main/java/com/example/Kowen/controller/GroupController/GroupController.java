@@ -6,8 +6,10 @@ import com.example.Kowen.controller.Id;
 import com.example.Kowen.controller.RoleInGroupRequest;
 import com.example.Kowen.controller.SettingRoleRequest;
 import com.example.Kowen.entity.Document;
+import com.example.Kowen.entity.Folder;
 import com.example.Kowen.entity.User;
 import com.example.Kowen.entity.UserGroup;
+import com.example.Kowen.service.folder.FolderRepo;
 import com.example.Kowen.service.group.GroupRepo;
 import com.example.Kowen.service.group.GroupService;
 import com.example.Kowen.service.user.UserRepository;
@@ -34,6 +36,9 @@ public class GroupController {
 
     @Autowired
     private GroupRepo groupRepo;
+
+    @Autowired
+    private FolderRepo folderRepo;
 
     @PostMapping("/create")
     public UserGroup create(@RequestBody GroupRequest groupRequest){
@@ -138,15 +143,19 @@ public class GroupController {
         return groupService.getUsersInGroup(groupId);
     }
 
-    @GetMapping("/getDocumentsInGroup/{groupId}")
-    public List<Document> getDocumentsInGroup(@PathVariable Long groupId) throws Exception {
+    @GetMapping("/getDocumentsInGroup/{groupId}/{folderId}")
+    public List<Document> getDocumentsInGroup(@PathVariable Long groupId, @PathVariable Long folderId) throws Exception {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails principal = (UserDetails) authentication.getPrincipal();
         User user =  userRepository.findByEmail(principal.getUsername()).get(0);
 
+
         UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
+        Folder folder = folderRepo.findById(folderId).orElseThrow(Exception::new);
+
+        if (!group.getFolders().contains(folder)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no such folder!");
         if (group.getUsers().contains(user) || group.getCreator() == user){
-            return groupService.getDocumentsInGroup(groupId);
+            return groupService.getDocumentsInGroup(groupId, folderId);
         }
         else throw new ResponseStatusException(HttpStatus.NOT_FOUND, "You are not in this group!");
 

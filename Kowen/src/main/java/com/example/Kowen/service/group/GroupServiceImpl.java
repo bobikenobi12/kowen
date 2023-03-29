@@ -2,6 +2,7 @@ package com.example.Kowen.service.group;
 
 
 import com.example.Kowen.entity.*;
+import com.example.Kowen.service.folder.FolderRepo;
 import com.example.Kowen.service.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,9 @@ public class GroupServiceImpl implements GroupService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private FolderRepo folderRepo;
     @Override
     public UserGroup create(String name, String description, User user) {
         UserGroup userGroup = new UserGroup();
@@ -46,17 +50,21 @@ public class GroupServiceImpl implements GroupService {
         UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
         User user = userRepository.findById(userId).orElseThrow(Exception::new);
 
-
-        List<RoleInGroup> roles = group.getRoleInGroup();
-        for(RoleInGroup role : roles){
-            if(Objects.equals(role.getRoleUser().getName(), roleName)){
-                List<Long> ids = role.getUserId();
-                ids.add(userId);
-                role.setUserId(ids);
-                return groupRepo.save(group);
+        if (group.getUsers().contains(user)){
+            List<RoleInGroup> roles = group.getRoleInGroup();
+            for(RoleInGroup role : roles){
+                if(Objects.equals(role.getRoleUser().getName(), roleName)){
+                    List<Long> ids = role.getUserId();
+                    ids.add(userId);
+                    role.setUserId(ids);
+                    return groupRepo.save(group);
+                }
             }
+            throw new ResponseStatusException(HttpStatus.CREATED, "There is no such Role!");
         }
-        throw new ResponseStatusException(HttpStatus.CREATED, "There is no such Role!");
+        else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This user is not in your group!");
+
+
     }
 
 
@@ -112,8 +120,10 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public List<Document> getDocumentsInGroup(Long groupId) throws Exception {
+    public List<Document> getDocumentsInGroup(Long groupId, Long folderId) throws Exception {
         UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
-        return group.getDocuments();
+        Folder folder = folderRepo.findById(folderId).orElseThrow(Exception::new);
+        if (!group.getFolders().contains(folder)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no such folder in this group!");
+        return folder.getDocuments();
     }
 }

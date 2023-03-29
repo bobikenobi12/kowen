@@ -4,6 +4,7 @@ import com.example.Kowen.entity.*;
 import com.example.Kowen.enums.PermissionsEnum;
 import com.example.Kowen.service.document.DocumentRepo;
 import com.example.Kowen.service.document.VersionRepo;
+import com.example.Kowen.service.folder.FolderRepo;
 import com.example.Kowen.service.group.GroupRepo;
 import com.example.Kowen.service.group.GroupService;
 import com.example.Kowen.service.group.RoleInGroupRepo;
@@ -51,8 +52,11 @@ public class DocumentController {
     @Autowired
     private VersionRepo versionRepo;
 
+    @Autowired
+    private FolderRepo folderRepo;
+
     @PostMapping("/save")
-    public Document save(@RequestParam(name = "file") MultipartFile file,@RequestParam Long groupId,@RequestParam List<Long> roleIds) throws Exception {
+    public Document save(@RequestParam(name = "file") MultipartFile file,@RequestParam Long groupId,@RequestParam Long folderId, @RequestParam List<Long> roleIds) throws Exception {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails principal = (UserDetails) authentication.getPrincipal();
         User user =  userRepository.findByEmail(principal.getUsername()).get(0);
@@ -106,24 +110,31 @@ public class DocumentController {
         }
 
 
+        Folder folder = folderRepo.findById(folderId).orElseThrow(Exception::new);
+        if (!group.getFolders().contains(folder)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "there is no such folder in this group");
+
         document.setRoles(roles);
         documentRepo.save(document);
-        List<Document> docs = group.getDocuments();
+        List<Document> docs = folder.getDocuments();
         docs.add(document);
-        group.setDocuments(docs);
+        folder.setDocuments(docs);
+        folderRepo.save(folder);
         groupRepo.save(group);
         return document;
     }
 
-    @GetMapping("/download/{documentId}/{version}")
-    public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable("documentId") Long documentId, @PathVariable("version") Long version) throws Exception {
+    @GetMapping("/download/{folderId}/{documentId}/{version}")
+    public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable("documentId") Long documentId, @PathVariable("version") Long version, @PathVariable("folderId") Long folderId) throws Exception {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails principal = (UserDetails) authentication.getPrincipal();
         User user =  userRepository.findByEmail(principal.getUsername()).get(0);
         Document document = documentRepo.findById(documentId).orElseThrow(Exception::new);
+        Folder folder = folderRepo.findById(folderId).orElseThrow(Exception::new);
 
         for (int i = 0; i < user.getUserGroups().size(); i++){
-            if (user.getUserGroups().get(i).getDocuments().contains(document)){//TODO: download if you have permissions
+            if (!user.getUserGroups().get(i).getFolders().contains(folder) && i == user.getUserGroups().size() - 1) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no such folder");
+
+            if (user.getUserGroups().get(i).getFolders().get(user.getUserGroups().get(i).getFolders().indexOf(folder)).getDocuments().contains(document)){
                 for (int j = 0; j < document.getRoles().size(); j++){
                     if (document.getRoles().get(j).getUserId().contains(user.getId())){
                         byte[] fileBytes = document.getVersions().get((int)(version - 1)).getDocumentContent();
@@ -143,10 +154,10 @@ public class DocumentController {
                 }
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You don't have permissions to download this document!");
             }
-            else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no suck document in this group!");
+
         }
         for (int i = 0; i < user.getGroups().size(); i++){
-            if (user.getGroups().get(i).getDocuments().contains(document)){
+            if (user.getGroups().get(i).getFolders().get(user.getGroups().get(i).getFolders().indexOf(folder)).getDocuments().contains(document)){
                 byte[] fileBytes = document.getVersions().get((int)(version - 1)).getDocumentContent();
                 ByteArrayResource resource = new ByteArrayResource(fileBytes);
                 HttpHeaders headers = new HttpHeaders();
@@ -171,12 +182,23 @@ public class DocumentController {
         UserDetails principal = (UserDetails) authentication.getPrincipal();
         User user =  userRepository.findByEmail(principal.getUsername()).get(0);
         byte[] fileBytes = file.getBytes();
-
+        UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
         Document document = documentRepo.findById(documentId).orElseThrow(Exception::new);
-//        document.setPublishingDate(new Date());
+        Boolean continueFlag = Boolean.FALSE;
 
-
-//        document.setDocumentContent(fileBytes);
+        if(!group.getUsers().contains(user) && group.getCreator() != user) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tou are not in this group!");
+        if (group.getCreator() == user){
+            continueFlag = Boolean.TRUE;
+        }
+        else {
+            for (int i = 0; i < group.getRoleInGroup().size(); i++){
+                if (group.getRoleInGroup().get(i).getRoleUser().getPermissions().contains(PermissionsEnum.can_add) && group.getRoleInGroup().get(i).getUserId().contains(user.getId())){
+                    continueFlag = Boolean.TRUE;
+                    break;
+                }
+            }
+            if (continueFlag == Boolean.FALSE) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You don't have permissions to save new version if this document!");
+        }
         DocumentVersion version = new DocumentVersion();
         version.setDocumentContent(fileBytes);
         version.setVersion(document.getVersions().get(document.getVersions().size() - 1).getVersion() + 1);
@@ -190,13 +212,7 @@ public class DocumentController {
         documentRepo.save(document);
 
 
-//        UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
-//
-//
-//        List<Document> docs = group.getDocuments();
-//        docs.add(document);
-//        group.setDocuments(docs);
-//        groupRepo.save(group);
+
         return version;
     }
 

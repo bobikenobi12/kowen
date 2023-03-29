@@ -47,7 +47,7 @@ public class UserGroup {
     private List<RoleInGroup> roleInGroup;
 
 
-    @JsonIgnore
+
     @OneToMany(cascade = CascadeType.ALL)
-    private List<Document> documents;
+    private List<Folder> folders;
 }

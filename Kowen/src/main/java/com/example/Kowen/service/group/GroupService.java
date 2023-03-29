@@ -21,5 +21,5 @@ public interface GroupService {
 
     List<User> getUsersInGroup(Long groupId) throws Exception;
 
-    List<Document> getDocumentsInGroup(Long groupId) throws Exception;
+    List<Document> getDocumentsInGroup(Long groupId, Long folderId) throws Exception;
 }
