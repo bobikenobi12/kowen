@@ -24,7 +24,7 @@ public class SecurityConfig {
         http.csrf().disable();
         // http.cors().disable();
         http.authorizeRequests()
-                .requestMatchers("/user/**", "/roles/**", "/test/test", "/group/**", "/document/**").authenticated()
+                .requestMatchers("/user/**", "/roles/**", "/test/test", "/group/**", "/document/**", "/folder/**").authenticated()
                 .anyRequest().permitAll();
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

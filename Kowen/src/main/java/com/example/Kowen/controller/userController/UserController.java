@@ -5,11 +5,16 @@ import com.example.Kowen.controller.AuthResponse;
 import com.example.Kowen.entity.Role;
 import com.example.Kowen.entity.User;
 import com.example.Kowen.enums.PermissionsEnum;
+import com.example.Kowen.jwt.BlackListService;
 import com.example.Kowen.jwt.JwtTokenService;
 import com.example.Kowen.service.role.RoleRepository;
 import com.example.Kowen.service.user.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,8 +22,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +43,12 @@ public class UserController {
 
     @Autowired
     private RoleRepository roleRepository;
+
+    @Autowired
+    private JwtTokenService jwtTokenUtil;
+
+    @Autowired
+    private BlackListService blackListService;
 
 
 
@@ -79,6 +92,39 @@ public class UserController {
         return userRepository.save(user);
     }
 
+    @PostMapping("/setProfilePic")
+    public User setProfilePic(@RequestParam MultipartFile picture) throws IOException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        User user =  userRepository.findByEmail(principal.getUsername()).get(0);
+
+        user.setProfilePicture(picture.getBytes());
+        return userRepository.save(user);
+    }
+
+    @GetMapping("/downloadProfilePic")
+    public ResponseEntity<ByteArrayResource> downloadProfilePic(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        User user =  userRepository.findByEmail(principal.getUsername()).get(0);
+
+        byte[] fileBytes = user.getProfilePicture();
+        ByteArrayResource resource = new ByteArrayResource(fileBytes);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentLength(fileBytes.length);
+
+        headers.setContentDispositionFormData("attachment", user.getFirstName());
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentLength(fileBytes.length)
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(resource);
+    }
+
+
+
     @PostMapping("/login")
     public AuthResponse login(@RequestBody AuthRequest authRequest){
         if (userRepository.findByEmail(authRequest.getEmail()).isEmpty() ||
@@ -99,6 +145,18 @@ public class UserController {
             return new AuthResponse("token", token);
         }
     }
+
+
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(HttpServletRequest request) {
+        String authToken = jwtTokenUtil.getTokenFromRequest(request);
+        blackListService.addTokenToBlacklist(authToken);
+        return ResponseEntity.ok("Logout successful.");
+    }
+
+
+
+
 
 
     @GetMapping("/getMe")

@@ -21,6 +21,7 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "user")
+
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,6 +52,11 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private List<Role> roles = new ArrayList<>();
+
+
+    @Lob //TODO: JsonIgnore this field
+    @Column(columnDefinition="BLOB", nullable = true)
+    private byte[] profilePicture;
 
     @JsonIgnore
     @ManyToMany(mappedBy = "users")

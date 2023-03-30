@@ -6,23 +6,30 @@ import com.example.Kowen.controller.Id;
 import com.example.Kowen.controller.RoleInGroupRequest;
 import com.example.Kowen.controller.SettingRoleRequest;
 import com.example.Kowen.entity.Document;
+import com.example.Kowen.entity.Folder;
 import com.example.Kowen.entity.User;
 import com.example.Kowen.entity.UserGroup;
+import com.example.Kowen.service.folder.FolderRepo;
 import com.example.Kowen.service.group.GroupRepo;
 import com.example.Kowen.service.group.GroupService;
 import com.example.Kowen.service.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
 @RestController
-@CrossOrigin
+@CrossOrigin("http://localhost:5173/")
 @RequestMapping("/group")
 public class GroupController {
 
@@ -34,6 +41,9 @@ public class GroupController {
 
     @Autowired
     private GroupRepo groupRepo;
+
+    @Autowired
+    private FolderRepo folderRepo;
 
     @PostMapping("/create")
     public UserGroup create(@RequestBody GroupRequest groupRequest){
@@ -50,6 +60,40 @@ public class GroupController {
 
         }
 
+    }
+
+    @PostMapping("/addGroupPictire")
+    public UserGroup addGroupPic(@RequestParam MultipartFile picture, @RequestParam Long groupId) throws Exception {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        User creator =  userRepository.findByEmail(principal.getUsername()).get(0);
+        UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
+
+        if (group.getCreator() != creator) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You can't add group picture because you aren't the creator!");
+        group.setGroupPicture(picture.getBytes());
+        return groupRepo.save(group);
+    }
+
+    @PostMapping("/downloadGroupPic")
+    public ResponseEntity<ByteArrayResource> downloadGroupPic(@RequestParam Long groupId) throws Exception {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        User user =  userRepository.findByEmail(principal.getUsername()).get(0);
+        UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
+
+        byte[] fileBytes = group.getGroupPicture();
+        ByteArrayResource resource = new ByteArrayResource(fileBytes);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentLength(fileBytes.length);
+
+        headers.setContentDispositionFormData("attachment", group.getName());
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentLength(fileBytes.length)
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(resource);
     }
 
     @PostMapping("/saveGroupRole")
@@ -134,18 +178,28 @@ public class GroupController {
     @GetMapping("/getUsersInGroup/{groupId}")
     public List<User> getUsersInGroup(@PathVariable Long groupId) throws Exception {
         UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
-        return groupService.getUsersInGroup(groupId);
-    }
-
-    @GetMapping("/getDocumentsInGroup/{groupId}")
-    public List<Document> getDocumentsInGroup(@PathVariable Long groupId) throws Exception {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails principal = (UserDetails) authentication.getPrincipal();
         User user =  userRepository.findByEmail(principal.getUsername()).get(0);
 
+        if (!group.getUsers().contains(user) && group.getCreator() != user) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not in this group!");
+        group.getUsers().add(group.getCreator());
+        return groupService.getUsersInGroup(groupId);
+    }
+
+    @GetMapping("/getDocumentsInGroup/{groupId}/{folderId}")
+    public List<Document> getDocumentsInGroup(@PathVariable Long groupId, @PathVariable Long folderId) throws Exception {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        User user =  userRepository.findByEmail(principal.getUsername()).get(0);
+
+
         UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
+        Folder folder = folderRepo.findById(folderId).orElseThrow(Exception::new);
+
+        if (!group.getFolders().contains(folder)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no such folder!");
         if (group.getUsers().contains(user) || group.getCreator() == user){
-            return groupService.getDocumentsInGroup(groupId);
+            return groupService.getDocumentsInGroup(groupId, folderId);
         }
         else throw new ResponseStatusException(HttpStatus.NOT_FOUND, "You are not in this group!");
 
