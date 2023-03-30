@@ -7,12 +7,14 @@ export interface CreateGroupRequest {
 }
 
 export const api = createApi({
+	reducerPath: "groupsApi",
 	baseQuery: fetchBaseQuery({
 		baseUrl: "http://localhost:8080/group/",
 		prepareHeaders: (headers, { getState }) => {
 			const token = (getState() as RootState).auth.token;
 			if (token) {
 				headers.set("authorization", `Bearer ${token}`);
+				console.log(headers.get("authorization"));
 			}
 			return headers;
 		},
@@ -23,6 +25,7 @@ export const api = createApi({
 				url: "create",
 				method: "POST",
 				body: group,
+				mode: "no-cors",
 			}),
 		}),
 	}),

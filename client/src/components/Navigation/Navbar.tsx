@@ -17,11 +17,12 @@ import {
 	MenuDivider,
 	MenuItem,
 } from "@chakra-ui/react";
-import { HamburgerIcon, CloseIcon, AddIcon, BellIcon } from "@chakra-ui/icons";
+import { HamburgerIcon, CloseIcon, BellIcon } from "@chakra-ui/icons";
 
 import DesktopNav from "./DesktopNav";
 import MobileNav from "./MobileNav";
 import ThemeToggle from "../common/ThemeToggle";
+import GroupModal from "../../features/groups/GroupActions";
 
 export default function Navbar() {
 	const { isOpen, onToggle } = useDisclosure();
@@ -76,14 +77,7 @@ export default function Navbar() {
 					justify={"flex-end"}
 					direction={"row"}
 					spacing={6}>
-					<IconButton
-						size={"md"}
-						fontSize={"lg"}
-						variant={"ghost"}
-						color={"current"}
-						aria-label={"Create Group"}
-						icon={<AddIcon />}
-					/>
+					<GroupModal />
 					<IconButton
 						size={"md"}
 						fontSize={"lg"}

@@ -28,27 +28,21 @@ export interface RegisterRequest {
 }
 
 export const api = createApi({
+	reducerPath: "authApi",
 	baseQuery: fetchBaseQuery({
-		baseUrl: "http://localhost:8080/user/",
-		prepareHeaders: (headers, { getState }) => {
-			const token = (getState() as RootState).auth.token;
-			if (token) {
-				headers.set("authorization", `Bearer ${token}`);
-			}
-			return headers;
-		},
+		baseUrl: "http://localhost:8080/",
 	}),
 	endpoints: builder => ({
 		login: builder.mutation<UserResponse, LoginRequest>({
 			query: credentials => ({
-				url: "login",
+				url: "user/login",
 				method: "POST",
 				body: credentials,
 			}),
 		}),
 		register: builder.mutation<void, RegisterRequest>({
 			query: credentials => ({
-				url: "register",
+				url: "user/register",
 				method: "POST",
 				body: credentials,
 			}),
