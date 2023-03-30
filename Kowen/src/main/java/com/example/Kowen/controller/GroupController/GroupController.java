@@ -14,11 +14,16 @@ import com.example.Kowen.service.group.GroupRepo;
 import com.example.Kowen.service.group.GroupService;
 import com.example.Kowen.service.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -55,6 +60,40 @@ public class GroupController {
 
         }
 
+    }
+
+    @PostMapping("/addGroupPictire")
+    public UserGroup addGroupPic(@RequestParam MultipartFile picture, @RequestParam Long groupId) throws Exception {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        User creator =  userRepository.findByEmail(principal.getUsername()).get(0);
+        UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
+
+        if (group.getCreator() != creator) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You can't add group picture because you aren't the creator!");
+        group.setGroupPicture(picture.getBytes());
+        return groupRepo.save(group);
+    }
+
+    @PostMapping("/downloadGroupPic")
+    public ResponseEntity<ByteArrayResource> downloadGroupPic(@RequestParam Long groupId) throws Exception {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        User user =  userRepository.findByEmail(principal.getUsername()).get(0);
+        UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
+
+        byte[] fileBytes = group.getGroupPicture();
+        ByteArrayResource resource = new ByteArrayResource(fileBytes);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentLength(fileBytes.length);
+
+        headers.setContentDispositionFormData("attachment", group.getName());
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentLength(fileBytes.length)
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(resource);
     }
 
     @PostMapping("/saveGroupRole")

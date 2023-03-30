@@ -42,6 +42,10 @@ public class UserGroup {
     @JoinColumn(name = "creator_id")
     private User creator;
 
+    @Lob //TODO: JsonIgnore this field
+    @Column(columnDefinition="BLOB", nullable = true)
+    private byte[] groupPicture;
+
 
     @OneToMany(cascade = CascadeType.ALL)
     private List<RoleInGroup> roleInGroup;
