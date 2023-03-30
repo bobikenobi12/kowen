@@ -53,6 +53,11 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private List<Role> roles = new ArrayList<>();
 
+
+    @Lob //TODO: JsonIgnore this field
+    @Column(columnDefinition="BLOB", nullable = true)
+    private byte[] profilePicture;
+
     @JsonIgnore
     @ManyToMany(mappedBy = "users")
     private List<UserGroup> userGroups = new ArrayList<>();
