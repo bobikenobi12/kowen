@@ -34,7 +34,11 @@ public class FolderController {
 
     @PostMapping("/saveTo/group/{groupId}")
     public Folder saveFolder(@PathVariable Long groupId, @RequestParam String name) throws Exception {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        User user =  userRepository.findByEmail(principal.getUsername()).get(0);
         UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
+        if (!group.getUsers().contains(user) && group.getCreator() != user) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not in this group!");
         Folder folder = new Folder();
         folder.setName(name);
         List<Folder> folderList = group.getFolders();

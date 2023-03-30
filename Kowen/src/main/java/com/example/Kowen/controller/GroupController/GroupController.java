@@ -24,7 +24,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 @RestController
-@CrossOrigin
+@CrossOrigin("http://localhost:5173/")
 @RequestMapping("/group")
 public class GroupController {
 
@@ -139,6 +139,11 @@ public class GroupController {
     @GetMapping("/getUsersInGroup/{groupId}")
     public List<User> getUsersInGroup(@PathVariable Long groupId) throws Exception {
         UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        User user =  userRepository.findByEmail(principal.getUsername()).get(0);
+
+        if (!group.getUsers().contains(user) && group.getCreator() != user) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not in this group!");
         group.getUsers().add(group.getCreator());
         return groupService.getUsersInGroup(groupId);
     }
