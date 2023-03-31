@@ -22,6 +22,13 @@ const slice = createSlice({
 				localStorage.setItem("token", payload.token);
 			}
 		);
+		builder.addMatcher(
+			api.endpoints.logout.matchFulfilled,
+			(state, { payload }) => {
+				state.token = null;
+				localStorage.removeItem("token");
+			}
+		);
 	},
 });
 

@@ -6,7 +6,6 @@ import { PublicOutlet } from "./utils/PublicOutlet";
 
 import Hero from "./components/Hero";
 import Navbar from "./components/Navigation/Navbar";
-import TestingAxios from "./components/TestingAxios";
 
 import Login from "./features/auth/Login";
 import Register from "./features/auth/Register";
@@ -24,7 +23,6 @@ function App() {
 				</Route>
 				<Route path="/" element={<PrivateOutlet />}>
 					<Route path="home" element={<Navbar />} />
-					<Route path="test" element={<TestingAxios />} />
 				</Route>
 				<Route path="*" element={<NotFound />} />
 			</Routes>

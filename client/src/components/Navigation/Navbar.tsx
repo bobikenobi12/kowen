@@ -16,8 +16,11 @@ import {
 	MenuList,
 	MenuDivider,
 	MenuItem,
+	useToast,
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon, BellIcon } from "@chakra-ui/icons";
+
+import { useLogoutMutation } from "../../app/services/auth";
 
 import DesktopNav from "./DesktopNav";
 import MobileNav from "./MobileNav";
@@ -26,6 +29,7 @@ import GroupModal from "../../features/groups/GroupActions";
 
 export default function Navbar() {
 	const { isOpen, onToggle } = useDisclosure();
+	const toast = useToast();
 
 	return (
 		<Box>
@@ -114,7 +118,33 @@ export default function Navbar() {
 							<MenuDivider />
 							<MenuItem>Your Groups</MenuItem>
 							<MenuItem>Account Settings</MenuItem>
-							<MenuItem>Sign Out</MenuItem>
+							<MenuItem>
+								<Button
+									onClick={async () => {
+										try {
+											await useLogoutMutation();
+											toast({
+												title: "Logout Successful",
+												description:
+													"You have been logged out",
+												status: "loading",
+												duration: 5000,
+												isClosable: true,
+											});
+										} catch (error) {
+											toast({
+												title: "Logout Failed",
+												description:
+													"You have not been logged out",
+												status: "error",
+												duration: 5000,
+												isClosable: true,
+											});
+										}
+									}}>
+									Logout
+								</Button>
+							</MenuItem>
 						</MenuList>
 					</Menu>
 				</Stack>

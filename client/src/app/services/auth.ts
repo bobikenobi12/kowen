@@ -30,24 +30,30 @@ export interface RegisterRequest {
 export const api = createApi({
 	reducerPath: "authApi",
 	baseQuery: fetchBaseQuery({
-		baseUrl: "http://localhost:8080/",
+		baseUrl: "http://localhost:8080/user/",
 	}),
 	endpoints: builder => ({
 		login: builder.mutation<UserResponse, LoginRequest>({
 			query: credentials => ({
-				url: "user/login",
+				url: "login",
 				method: "POST",
 				body: credentials,
 			}),
 		}),
 		register: builder.mutation<void, RegisterRequest>({
 			query: credentials => ({
-				url: "user/register",
+				url: "register",
 				method: "POST",
 				body: credentials,
+			}),
+		}),
+		logout: builder.mutation<void, void>({
+			query: () => ({
+				url: "logout",
+				method: "POST",
 			}),
 		}),
 	}),
 });
 
-export const { useLoginMutation, useRegisterMutation } = api;
+export const { useLoginMutation, useRegisterMutation, useLogoutMutation } = api;
