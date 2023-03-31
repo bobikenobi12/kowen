@@ -25,7 +25,7 @@ export const api = createApi({
 				url: "create",
 				method: "POST",
 				body: group,
-				mode: "no-cors",
+				// mode: "no-cors",
 			}),
 		}),
 	}),
