@@ -221,4 +221,33 @@ public class GroupController {
         else throw new ResponseStatusException(HttpStatus.NOT_FOUND, "You are not in this group!");
 
     }
+
+    @PostMapping("/changeName/{groupId}")
+    public UserGroup changeName(@PathVariable Long groupId, @RequestParam String name) throws Exception {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        User user =  userRepository.findByEmail(principal.getUsername()).get(0);
+
+        UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
+
+        if (group.getCreator() == user){
+            return groupService.changeName(groupId, name);
+        }
+        else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not able to change group name!");
+    }
+
+    @PostMapping("/changeDescr/{groupId}")
+    public UserGroup changeDescr(@PathVariable Long groupId, @RequestParam String description) throws Exception {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        User user =  userRepository.findByEmail(principal.getUsername()).get(0);
+
+        UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
+
+        if (group.getCreator() == user){
+            return groupService.changeDescr(groupId, description);
+        }
+        else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not able to change group description!");
+    }
 }
+
