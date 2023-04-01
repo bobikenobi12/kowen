@@ -62,6 +62,12 @@ export const api = createApi({
 				body: group,
 			}),
 		}),
+		showGroups: builder.query<void, void>({
+			query: () => ({
+				url: "showGroups",
+				method: "GET",
+			}),
+		}),
 		setProfilePicture: builder.mutation<void, FormData>({
 			// groupId
 			query: formData => ({
