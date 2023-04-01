@@ -140,4 +140,17 @@ export const api = createApi({
 	}),
 });
 
-export const { useCreateGroupMutation } = api;
+export const {
+	useCreateGroupMutation,
+	useSetProfilePictureMutation,
+	useSaveGroupRoleMutation,
+	useSetGroupRoleToUserMutation,
+	useAddUserToGroupMutation,
+	useRequestToJoinToGroupQuery,
+	useAcceptUserToGroupMutation,
+	useDeclineUserToGroupMutation,
+	useRemoveUserFromGroupMutation,
+	useGetWaitingUsersQuery,
+	useGetGroupUsersQuery,
+	useGetDocumentsInGroupQuery,
+} = api;

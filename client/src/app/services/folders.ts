@@ -34,3 +34,6 @@ export const foldersApi = createApi({
 		}),
 	}),
 });
+
+export const { useSaveFolderToGroupMutation, useGetFoldersInGroupQuery } =
+	foldersApi;
