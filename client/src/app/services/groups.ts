@@ -41,6 +41,24 @@ export interface Documents {
 		};
 	};
 }
+
+export interface Group {
+	id: number;
+	name: string;
+	description: string;
+	users: User[];
+	waitingUsersId: number[];
+	groupPicture: string;
+	roleInGroup: {
+		id: number;
+		userId: number[];
+		roleUser: {
+			id: number;
+			name: string;
+		};
+	};
+}
+
 export const api = createApi({
 	reducerPath: "groupsApi",
 	baseQuery: fetchBaseQuery({
@@ -49,7 +67,6 @@ export const api = createApi({
 			const token = (getState() as RootState).auth.token;
 			if (token) {
 				headers.set("authorization", `Bearer ${token}`);
-				console.log(headers.get("authorization"));
 			}
 			return headers;
 		},
@@ -62,7 +79,7 @@ export const api = createApi({
 				body: group,
 			}),
 		}),
-		showGroups: builder.query<void, void>({
+		showGroups: builder.query<Group[], void>({
 			query: () => ({
 				url: "showGroups",
 				method: "GET",
@@ -148,6 +165,7 @@ export const api = createApi({
 
 export const {
 	useCreateGroupMutation,
+	useShowGroupsQuery,
 	useSetProfilePictureMutation,
 	useSaveGroupRoleMutation,
 	useSetGroupRoleToUserMutation,
@@ -159,4 +177,5 @@ export const {
 	useGetWaitingUsersQuery,
 	useGetGroupUsersQuery,
 	useGetDocumentsInGroupQuery,
+	usePrefetch,
 } = api;

@@ -12,6 +12,8 @@ import Register from "./features/auth/Register";
 
 import NotFound from "./components/common/NotFound";
 
+import Groups from "./features/groups/Groups";
+
 function App() {
 	return (
 		<Box>
@@ -23,6 +25,7 @@ function App() {
 				</Route>
 				<Route path="/" element={<PrivateOutlet />}>
 					<Route path="home" element={<Navbar />} />
+					<Route path="groups" element={<Groups />} />
 				</Route>
 				<Route path="*" element={<NotFound />} />
 			</Routes>

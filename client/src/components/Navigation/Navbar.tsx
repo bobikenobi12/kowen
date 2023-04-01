@@ -20,8 +20,6 @@ import {
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon, BellIcon } from "@chakra-ui/icons";
 
-import { useLogoutMutation } from "../../app/services/auth";
-
 import DesktopNav from "./DesktopNav";
 import MobileNav from "./MobileNav";
 import ThemeToggle from "../common/ThemeToggle";
