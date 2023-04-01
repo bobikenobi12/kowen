@@ -126,4 +126,18 @@ public class GroupServiceImpl implements GroupService {
         if (!group.getFolders().contains(folder)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no such folder in this group!");
         return folder.getDocuments();
     }
+
+    @Override
+    public UserGroup changeName(Long groupId, String name) throws Exception {
+        UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
+        group.setName(name);
+        return groupRepo.save(group);
+    }
+
+    @Override
+    public UserGroup changeDescr(Long groupId, String descr) throws Exception {
+        UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
+        group.setDescription(descr);
+        return groupRepo.save(group);
+    }
 }
