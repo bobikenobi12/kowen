@@ -216,4 +216,18 @@ public class DocumentController {
         return version;
     }
 
+    //==============================================================================================================
+
+//    @PostMapping("/changeName/{groupId}/{documentId}")
+//    public Document changeName(@PathVariable Long groupId, @PathVariable Long documentId, @RequestBody String name) throws Exception {
+//        UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
+//
+//        Document document = documentRepo.findById(documentId).orElseThrow(Exception::new);
+//        for (Folder folder : group.getFolders()){
+//            if (folder.getDocuments().contains(document)){
+//
+//            }
+//        }
+//    }
+
 }

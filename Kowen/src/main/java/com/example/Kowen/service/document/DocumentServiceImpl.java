@@ -14,4 +14,11 @@ public class DocumentServiceImpl implements DocumentService{
     public Document save(Document document) {
         return documentRepo.save(document);
     }
+
+    @Override
+    public Document changeName(Long id, String name) throws Exception {
+        Document document = documentRepo.findById(id).orElseThrow(Exception::new);
+        document.setName(name);
+        return documentRepo.save(document);
+    }
 }

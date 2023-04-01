@@ -2,11 +2,13 @@ package com.example.Kowen.controller.userController;
 
 import com.example.Kowen.controller.AuthRequest;
 import com.example.Kowen.controller.AuthResponse;
+import com.example.Kowen.dto.UserDto;
 import com.example.Kowen.entity.Role;
 import com.example.Kowen.entity.User;
 import com.example.Kowen.enums.PermissionsEnum;
 import com.example.Kowen.jwt.BlackListService;
 import com.example.Kowen.jwt.JwtTokenService;
+import com.example.Kowen.mapper.UserMapper;
 import com.example.Kowen.service.role.RoleRepository;
 import com.example.Kowen.service.user.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -142,7 +144,8 @@ public class UserController {
             String token = jwtTokenService.generateToken(user.getEmail());
             user.setLastLogin(LocalDateTime.now());
             userRepository.save(user);
-            return new AuthResponse("token", token);
+            UserMapper mapper = new UserMapper();
+            return new AuthResponse("token", token, user);
         }
     }
 
