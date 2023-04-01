@@ -13,7 +13,15 @@ const initialState: AuthState = {
 const slice = createSlice({
 	name: "auth",
 	initialState,
-	reducers: {},
+	reducers: {
+		login: (state, { payload }) => {
+			state.token = payload.token;
+		},
+		logout: state => {
+			state.token = null;
+			localStorage.removeItem("token");
+		},
+	},
 	extraReducers: builder => {
 		builder.addMatcher(
 			api.endpoints.login.matchFulfilled,

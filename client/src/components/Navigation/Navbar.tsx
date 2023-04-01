@@ -26,6 +26,7 @@ import DesktopNav from "./DesktopNav";
 import MobileNav from "./MobileNav";
 import ThemeToggle from "../common/ThemeToggle";
 import GroupModal from "../../features/groups/GroupActions";
+import Logout from "../../features/auth/Logout";
 
 export default function Navbar() {
 	const { isOpen, onToggle } = useDisclosure();
@@ -119,31 +120,7 @@ export default function Navbar() {
 							<MenuItem>Your Groups</MenuItem>
 							<MenuItem>Account Settings</MenuItem>
 							<MenuItem>
-								<Button
-									onClick={async () => {
-										try {
-											await useLogoutMutation();
-											toast({
-												title: "Logout Successful",
-												description:
-													"You have been logged out",
-												status: "loading",
-												duration: 5000,
-												isClosable: true,
-											});
-										} catch (error) {
-											toast({
-												title: "Logout Failed",
-												description:
-													"You have not been logged out",
-												status: "error",
-												duration: 5000,
-												isClosable: true,
-											});
-										}
-									}}>
-									Logout
-								</Button>
+								<Logout />
 							</MenuItem>
 						</MenuList>
 					</Menu>
