@@ -157,16 +157,27 @@ public class UserController {
         return ResponseEntity.ok("Logout successful.");
     }
 
-
-
-
-
-
     @GetMapping("/getMe")
     public User showMyData(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails principal = (UserDetails) authentication.getPrincipal();
         User user =  userRepository.findByEmail(principal.getUsername()).get(0);
         return user;
+    }
+
+
+    //=================================Changes===================================
+
+    @PostMapping("/changeUsername")
+    public User changeUsername(@RequestBody UserDto dto){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        User user =  userRepository.findByEmail(principal.getUsername()).get(0);
+
+        if (passwordEncoder.matches(dto.getPassword(), user.getPassword())){
+            user.setUsername(dto.getUsername());
+            return userRepository.save(user);
+        }
+        else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid password!");
     }
 }
