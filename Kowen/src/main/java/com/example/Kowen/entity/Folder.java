@@ -24,7 +24,7 @@ public class Folder {
     @Column(nullable = false)
     private String name;
 
-
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL)
     private List<Document> documents;
 }
