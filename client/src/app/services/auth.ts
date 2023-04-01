@@ -2,18 +2,19 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { RootState } from "../store";
 
 export interface User {
-	_id: string;
-	firstName: string;
-	lastName: string;
+	id: string;
+	password: string;
 	username: string;
 	email: string;
-	password: string;
-	lastLogin: Date;
+	firstName: string;
+	lastName: string;
+	lastLogin: string;
+	profilePicture: string | null;
+	createdAt: string;
 }
 
-export interface UserResponse {
-	// user: User;
-	message: string;
+export interface LoginResponse {
+	user: User;
 	token: string;
 }
 
@@ -43,7 +44,7 @@ export const api = createApi({
 		},
 	}),
 	endpoints: builder => ({
-		login: builder.mutation<UserResponse, LoginRequest>({
+		login: builder.mutation<LoginResponse, LoginRequest>({
 			query: credentials => ({
 				url: "login",
 				method: "POST",
