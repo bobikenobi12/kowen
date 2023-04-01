@@ -60,7 +60,20 @@ export const api = createApi({
 				method: "POST",
 			}),
 		}),
+		setProfilePicture: builder.mutation<void, FormData>({
+			// key: 'picture', value: File
+			query: formData => ({
+				url: "setProfilePic",
+				method: "POST",
+				body: formData,
+			}),
+		}),
 	}),
 });
 
-export const { useLoginMutation, useRegisterMutation, useLogoutMutation } = api;
+export const {
+	useLoginMutation,
+	useRegisterMutation,
+	useLogoutMutation,
+	useSetProfilePictureMutation,
+} = api;
