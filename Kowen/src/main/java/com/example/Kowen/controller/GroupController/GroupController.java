@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -60,6 +61,22 @@ public class GroupController {
 
         }
 
+    }
+
+    @GetMapping("/showGroups")
+    public List<UserGroup> showGroup(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        User user =  userRepository.findByEmail(principal.getUsername()).get(0);
+
+        List<UserGroup> groups = new ArrayList<>();
+        for (UserGroup group : user.getGroups()){
+            groups.add(group);
+        }
+        for (UserGroup group : user.getUserGroups()){
+            groups.add(group);
+        }
+        return groups;
     }
 
     @PostMapping("/addGroupPictire")

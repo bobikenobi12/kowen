@@ -6,4 +6,6 @@ import org.springframework.stereotype.Service;
 @Service
 public interface DocumentService {
     Document save(Document document);
+
+    Document changeName(Long groupId, String name) throws Exception;
 }
