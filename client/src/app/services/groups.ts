@@ -1,4 +1,3 @@
-import { Id } from "@reduxjs/toolkit/dist/tsHelpers";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { RootState } from "../store";
 import { type User } from "./auth";
