@@ -20,7 +20,7 @@ export interface saveNewDocumentVersion {
 	documentId: number;
 }
 
-export const documentsApi = createApi({
+export const api = createApi({
 	reducerPath: "documentsApi",
 	baseQuery: fetchBaseQuery({
 		baseUrl: "http://localhost:8080/document/",
@@ -69,4 +69,4 @@ export const {
 	useSaveDocumentMutation,
 	useDownloadDocumentMutation,
 	useSaveNewDocumentVersionMutation,
-} = documentsApi;
+} = api;

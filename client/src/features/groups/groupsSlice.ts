@@ -13,11 +13,7 @@ const slice = createSlice({
 	initialState: {
 		groups: [],
 	} as GroupsState,
-	reducers: {
-		// getGroupsStart: (state) => {
-		//     state.loading = true;
-		// }
-	},
+	reducers: {},
 	extraReducers: builder => {
 		builder.addMatcher(
 			api.endpoints.createGroup.matchFulfilled,
@@ -36,3 +32,5 @@ const slice = createSlice({
 });
 
 export default slice.reducer;
+
+export const selectGroups = (state: RootState) => state.groups.groups;

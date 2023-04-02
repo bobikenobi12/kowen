@@ -3,9 +3,15 @@ import { RootState } from "../store";
 
 export interface saveFolderToGroup {
 	groupId: number;
-	name: FormData;
+	name: string;
 }
-export const foldersApi = createApi({
+
+export interface Folder {
+	id: number;
+	name: string;
+}
+
+export const api = createApi({
 	reducerPath: "foldersApi",
 	baseQuery: fetchBaseQuery({
 		baseUrl: "http://localhost:8080/folder/",
@@ -18,22 +24,21 @@ export const foldersApi = createApi({
 		},
 	}),
 	endpoints: builder => ({
-		saveFolderToGroup: builder.mutation<void, saveFolderToGroup>({
+		saveFolderToGroup: builder.mutation<Folder, saveFolderToGroup>({
 			query: ({ groupId, name }) => ({
 				url: `saveTo/group/${groupId}`,
 				method: "POST",
 				params: { name },
 			}),
 		}),
-		getFoldersInGroup: builder.query<void, number>({
+		getFoldersInGroup: builder.query<Folder[], number>({
 			query: groupId => ({
 				url: "getFoldersInGroup",
-				method: "GET",
+				method: "POST",
 				params: { groupId },
 			}),
 		}),
 	}),
 });
 
-export const { useSaveFolderToGroupMutation, useGetFoldersInGroupQuery } =
-	foldersApi;
+export const { useSaveFolderToGroupMutation, useGetFoldersInGroupQuery } = api;

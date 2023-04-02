@@ -1,52 +1,95 @@
+// drawer of group icons
+// each group icon is a button that opens the group's page
+
 import {
 	Box,
-	Button,
 	Center,
-	Flex,
-	Heading,
-	HStack,
-	Link,
-	Menu,
-	MenuButton,
-	MenuItem,
-	MenuList,
-	Spacer,
-	Stack,
+	VStack,
 	Text,
+	Avatar,
+	Button,
 	useColorModeValue,
-	useDisclosure,
 	useToast,
+	IconButton,
+	useColorMode,
 } from "@chakra-ui/react";
 
 import { useShowGroupsQuery } from "../../app/services/groups";
-import groupsSlice from "./groupsSlice";
+import { ArrowRightIcon } from "@chakra-ui/icons";
+
+import { useAppDispatch } from "../../hooks/store";
+
+import { Link } from "react-router-dom";
+
+import Navbar from "../../components/Navigation/Navbar";
 
 export default function Groups() {
+	const toast = useToast();
 	const { data } = useShowGroupsQuery();
+	const dispatch = useAppDispatch();
 
 	return (
-		<Box>
-			<Flex
-				bg={useColorModeValue("white", "gray.800")}
-				color={useColorModeValue("gray.600", "white")}
-				minH={"500px"}
-				py={{ base: 2 }}
-				px={{ base: 4 }}
-				borderBottom={1}
-				borderStyle={"solid"}
-				borderColor={useColorModeValue("gray.200", "gray.900")}
-				align={"center"}
-				gap={10}>
-				{data?.map((group, idx) => (
-					<Stack key={idx} spacing={0} align={"center"}>
-						<Text>{group.id}</Text>
-						<Text fontWeight={600}>{group.name}</Text>
-						<Text color={"gray.500"}>{group.description}</Text>
-						<Text color={"gray.500"}>{group.groupPicture}</Text>
-						<Text color={"gray.500"}>{group.waitingUsersId}</Text>
-					</Stack>
-				))}
-			</Flex>
-		</Box>
+		<>
+			<Navbar />
+			<Box
+				mx="auto"
+				maxW={{ base: "xl", md: "4xl" }}
+				py="12"
+				px={{ base: "4", md: "6" }}>
+				<VStack>
+					{data?.map(group => (
+						<Center
+							key={group.id}
+							bg={useColorModeValue("white", "gray.800")}
+							rounded="lg"
+							shadow="base"
+							overflow="hidden"
+							w="full"
+							h="full"
+							p="6"
+							_hover={{
+								bg: useColorModeValue("gray.100", "gray.700"),
+							}}
+							transition="all 0.2s"
+							cursor="pointer"
+							as={Link}
+							to={`/groups/${group.id}`}
+							onClick={() =>
+								dispatch({
+									type: "router/setRoute",
+									payload: {
+										route: `/groups/${group.id}`,
+										path: "/groups/:groupId",
+										params: { groupId: group.id },
+									},
+								})
+							}>
+							<Avatar size="xl" name={group.name} />
+							<Box ml="4" textAlign="left">
+								<Text fontWeight="bold" fontSize="lg">
+									{group.name}
+								</Text>
+								<Text
+									fontSize="sm"
+									color={useColorModeValue(
+										"gray.600",
+										"gray.400"
+									)}>
+									{group.description}
+								</Text>
+							</Box>
+							<IconButton
+								aria-label="View Group"
+								icon={<ArrowRightIcon />}
+								variant="ghost"
+								colorScheme="blue"
+								size="sm"
+								ml="auto"
+							/>
+						</Center>
+					))}
+				</VStack>
+			</Box>
+		</>
 	);
 }

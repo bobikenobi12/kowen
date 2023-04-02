@@ -13,8 +13,13 @@ import Register from "./features/auth/Register";
 import NotFound from "./components/common/NotFound";
 
 import Groups from "./features/groups/Groups";
+import Group from "./features/groups/Group";
+
+import { useAppDispatch } from "./hooks/store";
 
 function App() {
+	const dispatch = useAppDispatch();
+
 	return (
 		<Box>
 			<Routes>
@@ -26,6 +31,8 @@ function App() {
 				<Route path="/" element={<PrivateOutlet />}>
 					<Route path="home" element={<Navbar />} />
 					<Route path="groups" element={<Groups />} />
+					{/* when a group is clicked we want to dispatch the route to the store */}
+					<Route path="groups/:groupId" element={<Group />} />
 				</Route>
 				<Route path="*" element={<NotFound />} />
 			</Routes>

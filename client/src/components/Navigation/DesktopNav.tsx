@@ -10,8 +10,6 @@ import {
 import { NAV_ITEMS } from "./Navbar";
 import DesktopSubNav from "./DesktopSubNav";
 
-import { usePrefetch, useShowGroupsQuery } from "../../app/services/groups";
-
 export default function DesktopNav() {
 	const linkColor = useColorModeValue("gray.600", "gray.200");
 	const linkHoverColor = useColorModeValue("gray.800", "white");
@@ -32,13 +30,7 @@ export default function DesktopNav() {
 								_hover={{
 									textDecoration: "none",
 									color: linkHoverColor,
-								}}
-								// onMouseEnter={() => {
-								// 	if (navItem.label === "My Groups") {
-								// 		usePrefetch("showGroups");
-								// 	}
-								// }}
-							>
+								}}>
 								{navItem.label}
 							</Link>
 						</PopoverTrigger>
