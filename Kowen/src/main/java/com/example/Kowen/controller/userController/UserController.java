@@ -180,4 +180,43 @@ public class UserController {
         }
         else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid password!");
     }
+
+    @PostMapping("/changeFirstName")
+    public User changeFirstName(@RequestBody UserDto dto){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        User user =  userRepository.findByEmail(principal.getUsername()).get(0);
+
+        if (passwordEncoder.matches(dto.getPassword(), user.getPassword())){
+            user.setFirstName(dto.getFirstName());
+            return userRepository.save(user);
+        }
+        else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid password!");
+    }
+
+    @PostMapping("/changeLastName")
+    public User changeLastName(@RequestBody UserDto dto){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        User user =  userRepository.findByEmail(principal.getUsername()).get(0);
+
+        if (passwordEncoder.matches(dto.getPassword(), user.getPassword())){
+            user.setLastName(dto.getLastName());
+            return userRepository.save(user);
+        }
+        else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid password!");
+    }
+
+    @PostMapping("/changeEmail")
+    public User changeEmail(@RequestBody UserDto dto){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        User user =  userRepository.findByEmail(principal.getUsername()).get(0);
+
+        if (passwordEncoder.matches(dto.getPassword(), user.getPassword())){
+            user.setEmail(dto.getEmail());
+            return userRepository.save(user);
+        }
+        else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid password!");
+    }
 }
