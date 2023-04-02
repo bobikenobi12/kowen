@@ -241,27 +241,6 @@ public class DocumentController {
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no such document!");
     }
 
-//    @PostMapping("/changeName/{groupId}/{documentId}")
-//    public Document changeName(@PathVariable Long groupId, @PathVariable Long documentId, @RequestParam String name) throws Exception {
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        UserDetails principal = (UserDetails) authentication.getPrincipal();
-//        User user =  userRepository.findByEmail(principal.getUsername()).get(0);
-//
-//        UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
-//
-//        Document document = documentRepo.findById(documentId).orElseThrow(Exception::new);
-//        for (Folder folder : group.getFolders()){
-//            if (folder.getDocuments().contains(document)){
-//                for (RoleInGroup roleInGroup : group.getRoleInGroup()){
-//                    if(roleInGroup.getUserId().contains(user.getId()) || group.getCreator() == user){
-//                        document.setName(name);
-//                        return documentRepo.save(document);
-//                    }
-//                }
-//                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You don't have permissions!");
-//            }
-//        }
-//        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no such document!");
-//    }
+
 
 }

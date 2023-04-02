@@ -22,4 +22,7 @@ public interface GroupService {
     List<User> getUsersInGroup(Long groupId) throws Exception;
 
     List<Document> getDocumentsInGroup(Long groupId, Long folderId) throws Exception;
+
+    UserGroup changeName(Long groupId, String name) throws Exception;
+    UserGroup changeDescr(Long groupId, String descr) throws Exception;
 }
