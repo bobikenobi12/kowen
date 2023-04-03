@@ -36,10 +36,10 @@ export default function GroupModal() {
 	return (
 		<>
 			<IconButton
-				h={{ base: "40px", md: "50px", lg: "60px" }}
 				size={{ base: "md", md: "lg", lg: "xl" }}
+				w={"full"}
+				p={6}
 				fontSize={"lg"}
-				// make button a circle
 				borderRadius={"full"}
 				variant={"ghost"}
 				aria-label={"Create Group"}

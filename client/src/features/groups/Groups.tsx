@@ -25,11 +25,7 @@ export default function Groups() {
 	const dispatch = useAppDispatch();
 
 	return (
-		<VStack
-			overflowY="scroll"
-			w="full"
-			h="full"
-			bg={useColorModeValue("gray.50", "inherit")}>
+		<VStack w="full" h="full" bg={useColorModeValue("gray.50", "inherit")}>
 			{data?.map(group => (
 				<>
 					<Text>{group.groupPicture}</Text>
@@ -40,13 +36,11 @@ export default function Groups() {
 						hasArrow
 						aria-label="A tooltip">
 						<Avatar
-							size={{ base: "md", md: "lg", lg: "xl" }}
+							size={{ base: "md", md: "lg" }}
 							name={group.name}
 							cursor="pointer"
-							// make avatar transition pop out
 							_hover={{
 								transform: "scale(1.1)",
-								// make them from rounded to less rounded
 								borderRadius: "30%",
 							}}
 						/>

@@ -1,12 +1,16 @@
 import {
-	Box,
-	Center,
+	Flex,
 	VStack,
 	Text,
-	useColorModeValue,
 	Avatar,
 	IconButton,
-	Button,
+	Menu,
+	MenuButton,
+	MenuList,
+	MenuItem,
+	useColorModeValue,
+	useToast,
+	HStack,
 } from "@chakra-ui/react";
 
 import * as React from "react";
@@ -16,66 +20,84 @@ import {
 	useSaveFolderToGroupMutation,
 } from "../../app/services/folders";
 
-import { useTypedSelector } from "../../hooks/store";
+import { useAppDispatch, useTypedSelector } from "../../hooks/store";
 
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
+import { SettingsIcon, ArrowDownIcon } from "@chakra-ui/icons";
 
 export default function Group() {
-	const { groupId } = useParams();
-
 	const navigate = useNavigate();
+	const dispatch = useAppDispatch();
 
-	const { data: folders } = useGetFoldersInGroupQuery(
-		parseInt(groupId as string)
-	);
+	const { data: folders } = useGetFoldersInGroupQuery(4);
 
 	// save folder to group
 	const [saveFolderToGroup] = useSaveFolderToGroupMutation();
 
 	return (
-		<Box
-			mx="auto"
-			maxW={{ base: "xl", md: "4xl" }}
-			py="12"
-			px={{ base: "4", md: "6" }}>
-			<VStack>
-				{folders?.map(folder => (
-					<Center
-						key={folder.id}
-						bg={useColorModeValue("white", "gray.800")}
-						rounded="lg"
-						shadow="base"
-						overflow="hidden"
-						w="full"
-						h="full"
-						p="6"
-						_hover={{
-							bg: useColorModeValue("gray.100", "gray.700"),
-						}}
-						transition="all 0.2s"
-						cursor="pointer"
-						onClick={() => {
-							navigate(`/groups/${groupId}/folders/${folder.id}`);
-						}}>
-						<Avatar size="xl" name={folder.name} />
-						<Box ml="4" textAlign="left">
-							<Text fontWeight="bold" fontSize="lg">
-								{folder.name}
-							</Text>
-						</Box>
-					</Center>
-				))}
-			</VStack>
-			<Button
-				onClick={async () => {
-					await saveFolderToGroup({
-						groupId: parseInt(groupId as string),
-						name: "Anton Stakov",
-					});
-					navigate(0);
-				}}>
-				Add Folder
-			</Button>
-		</Box>
+		// consists of 3 panes top mid and bottom
+		// top pane: group name and arrow down icon that opens a dropdown menu with group settings and leave group
+		// mid pane: list of folders
+		// bottom pane: profile picture, username, first and last name, settings icon
+		<Flex
+			direction="column"
+			w="full"
+			h="full"
+			bg={useColorModeValue("gray.200", "gray.600")}>
+			<Flex
+				direction="row"
+				w="full"
+				alignSelf={"flex-start"}
+				bg={useColorModeValue("gray.200", "gray.600")}>
+				<Text>Group Name</Text>
+				<Menu>
+					<MenuButton
+						as={IconButton}
+						aria-label="Group Options"
+						icon={<ArrowDownIcon />}
+						variant="outline"
+					/>
+					<MenuList>
+						<MenuItem>Group Settings</MenuItem>
+						<MenuItem>Leave Group</MenuItem>
+					</MenuList>
+				</Menu>
+			</Flex>
+			<Flex
+				direction="row"
+				w="full"
+				bg={useColorModeValue("gray.100", "gray.700")}>
+				<VStack
+					direction="column"
+					w="full"
+					h="full"
+					bg={useColorModeValue("gray.100", "gray.700")}>
+					{folders?.map(folder => (
+						<Text>{folder.name}</Text>
+					))}
+				</VStack>
+			</Flex>
+			<Flex
+				direction="row"
+				w="full"
+				alignSelf={"flex-end"}
+				bg={useColorModeValue("gray.200", "gray.600")}>
+				<Avatar />
+				<VStack>
+					<Text>Username</Text>
+					<HStack>
+						<Text>First Name</Text>
+						<Text>Last Name</Text>
+					</HStack>
+				</VStack>
+				<IconButton
+					aria-label="User Options"
+					icon={<SettingsIcon />}
+					variant="outline"
+					alignSelf={"flex-end"}
+				/>
+			</Flex>
+		</Flex>
 	);
 }

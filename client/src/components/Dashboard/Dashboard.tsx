@@ -34,33 +34,35 @@ export default function Dashboard() {
 
 	return (
 		<Flex
-			direction="column"
+			direction="row"
 			w="full"
 			h="100vh"
-			bg={useColorModeValue("gray.50", "inherit")}>
-			<Navbar />
+			bg={useColorModeValue("gray.50", "inherit")}
+			wrap="wrap">
 			<Flex
-				direction="row"
-				w="full"
+				direction="column"
+				w="fit-content"
 				h="full"
-				bg={useColorModeValue("gray.50", "inherit")}
+				bg={useColorModeValue("gray.200", "gray.900")}
+				wrap="wrap"
+				overflowY="scroll"
+				overflowX="hidden"
+				position={"fixed"}
+				left={0}
+				top={0}
+				bottom={0}
+				zIndex={10}
+				shadow="md"
+				p={3}>
+				<Groups />
+			</Flex>
+			<Flex
+				direction="column"
+				w="30%"
+				h="full"
+				bg={useColorModeValue("gray.100", "gray.800")}
 				wrap="wrap">
-				<Flex
-					direction="column"
-					w="15%"
-					h="full"
-					bg={useColorModeValue("gray.200", "gray.900")}
-					wrap="wrap">
-					<Groups />
-				</Flex>
-				<Flex
-					direction="column"
-					w="15%"
-					h="full"
-					bg={useColorModeValue("gray.100", "gray.800")}
-					wrap="wrap">
-					<Group />
-				</Flex>
+				<Group />
 			</Flex>
 		</Flex>
 	);
