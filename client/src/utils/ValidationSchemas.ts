@@ -54,3 +54,18 @@ export const LoginSchema = Yup.object().shape({
 		)
 		.required("Password is required"),
 });
+
+export const CreateGroupSchema = Yup.object().shape({
+	name: Yup.string()
+		.min(3, "Group name must be at least 3 character long")
+		.max(15, "Group name must be at most 15 characters long")
+		.matches(
+			/^[a-zA-Z0-9]+$/,
+			"Group name must only contain alphanumeric characters"
+		)
+		.required("Group name is required"),
+	description: Yup.string()
+		.min(15, "Group description must be at least 15 character long")
+		.max(50, "Group description must be at most 50 characters long")
+		.required("Group description is required"),
+});

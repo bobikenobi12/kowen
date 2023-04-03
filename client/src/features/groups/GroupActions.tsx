@@ -6,6 +6,7 @@ import {
 	FormControl,
 	FormLabel,
 	Input,
+	FormErrorMessage,
 	Modal,
 	ModalBody,
 	ModalCloseButton,
@@ -20,13 +21,17 @@ import {
 import { useCreateGroupMutation } from "../../app/services/groups";
 import { Form, Formik, FormikProps } from "formik";
 import { CreateGroupRequest } from "../../app/services/groups";
-
+import { useNavigate } from "react-router-dom";
 // import { useCreateGroupMutation } from "../../app/services/groups";
 import { AddIcon } from "@chakra-ui/icons";
+
+import { CreateGroupSchema } from "../../utils/ValidationSchemas";
 
 export default function GroupModal() {
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const [createGroup] = useCreateGroupMutation();
+	const toast = useToast();
+	const navigate = useNavigate();
 
 	return (
 		<>
@@ -54,17 +59,38 @@ export default function GroupModal() {
 					<ModalBody>
 						<Formik
 							initialValues={{ name: "", description: "" }}
+							validationSchema={CreateGroupSchema}
 							onSubmit={async (values, { setErrors }) => {
 								try {
 									await createGroup(values).unwrap();
 									onClose();
+									navigate(0);
+									toast({
+										title: "Group created.",
+										description:
+											"We've created your group for you.",
+										status: "success",
+										duration: 9000,
+										isClosable: true,
+									});
 								} catch (err) {
-									console.log(err);
+									toast({
+										title: "An error occurred.",
+										description:
+											"Sorry, we've encountered an error. Please try again later.",
+										status: "error",
+										duration: 9000,
+										isClosable: true,
+									});
 								}
 							}}>
 							{(props: FormikProps<CreateGroupRequest>) => (
 								<Form>
-									<FormControl>
+									<FormControl
+										isInvalid={
+											props.touched.name &&
+											Boolean(props.errors.name)
+										}>
 										<FormLabel htmlFor="name">
 											Name
 										</FormLabel>
@@ -75,8 +101,15 @@ export default function GroupModal() {
 											onBlur={props.handleBlur}
 											value={props.values.name}
 										/>
+										<FormErrorMessage>
+											{props.errors.name}
+										</FormErrorMessage>
 									</FormControl>
-									<FormControl>
+									<FormControl
+										isInvalid={
+											props.touched.description &&
+											Boolean(props.errors.description)
+										}>
 										<FormLabel htmlFor="description">
 											Description
 										</FormLabel>
@@ -87,8 +120,12 @@ export default function GroupModal() {
 											onBlur={props.handleBlur}
 											value={props.values.description}
 										/>
+										<FormErrorMessage>
+											{props.errors.description}
+										</FormErrorMessage>
 									</FormControl>
 									<Button
+										isDisabled={!props.isValid}
 										loadingText="Submitting"
 										colorScheme="twitter"
 										variant="outline"
