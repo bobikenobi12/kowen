@@ -15,6 +15,8 @@ import NotFound from "./components/common/NotFound";
 import Groups from "./features/groups/Groups";
 import Group from "./features/groups/Group";
 
+import Dashboard from "./components/Dashboard/Dashboard";
+
 import { useAppDispatch } from "./hooks/store";
 
 function App() {
@@ -33,6 +35,7 @@ function App() {
 					<Route path="groups" element={<Groups />} />
 					{/* when a group is clicked we want to dispatch the route to the store */}
 					<Route path="groups/:groupId" element={<Group />} />
+					<Route path="dashboard" element={<Dashboard />} />
 				</Route>
 				<Route path="*" element={<NotFound />} />
 			</Routes>

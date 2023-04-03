@@ -42,13 +42,16 @@ export interface Documents {
 	};
 }
 
+// groupPicture is a byte[] in the java backend.
+// Represented as an
+
 export interface Group {
 	id: number;
 	name: string;
 	description: string;
 	users: User[];
 	waitingUsersId: number[];
-	groupPicture: string;
+	groupPicture: any;
 	roleInGroup: {
 		id: number;
 		userId: number[];
@@ -57,6 +60,11 @@ export interface Group {
 			name: string;
 		};
 	};
+}
+
+export interface setGroupPictureRequest {
+	groupId: number;
+	picture: any;
 }
 
 export const api = createApi({
@@ -85,12 +93,11 @@ export const api = createApi({
 				method: "GET",
 			}),
 		}),
-		setProfilePicture: builder.mutation<void, FormData>({
-			// groupId
-			query: formData => ({
-				url: "addGroupPictire",
+		setGroupPicture: builder.mutation<void, setGroupPictureRequest>({
+			query: ({ groupId, picture }) => ({
+				url: "setGroupPicture",
 				method: "POST",
-				body: formData,
+				params: { groupId, picture },
 			}),
 		}),
 		saveGroupRole: builder.mutation<void, SaveGroupRoleRequest>({
@@ -166,7 +173,7 @@ export const api = createApi({
 export const {
 	useCreateGroupMutation,
 	useShowGroupsQuery,
-	useSetProfilePictureMutation,
+	useSetGroupPictureMutation,
 	useSaveGroupRoleMutation,
 	useSetGroupRoleToUserMutation,
 	useAddUserToGroupMutation,
