@@ -12,11 +12,12 @@ import {
 } from "@chakra-ui/react";
 
 import { useShowGroupsQuery } from "../../app/services/groups";
-import { ArrowRightIcon } from "@chakra-ui/icons";
+import GroupModal from "./GroupActions";
 
 import { useAppDispatch } from "../../hooks/store";
 
 import { Link } from "react-router-dom";
+import { AddIcon } from "@chakra-ui/icons";
 
 export default function Groups() {
 	const toast = useToast();
@@ -42,10 +43,17 @@ export default function Groups() {
 							size={{ base: "md", md: "lg", lg: "xl" }}
 							name={group.name}
 							cursor="pointer"
+							// make avatar transition pop out
+							_hover={{
+								transform: "scale(1.1)",
+								// make them from rounded to less rounded
+								borderRadius: "30%",
+							}}
 						/>
 					</Tooltip>
 				</>
 			))}
+			<GroupModal />
 		</VStack>
 	);
 }

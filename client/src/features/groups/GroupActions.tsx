@@ -6,18 +6,16 @@ import {
 	FormControl,
 	FormLabel,
 	Input,
-	InputGroup,
-	InputRightElement,
 	Modal,
 	ModalBody,
 	ModalCloseButton,
 	ModalContent,
-	ModalFooter,
 	ModalHeader,
 	ModalOverlay,
 	useDisclosure,
-	useToast,
 	IconButton,
+	useColorModeValue,
+	useToast,
 } from "@chakra-ui/react";
 import { useCreateGroupMutation } from "../../app/services/groups";
 import { Form, Formik, FormikProps } from "formik";
@@ -33,11 +31,18 @@ export default function GroupModal() {
 	return (
 		<>
 			<IconButton
-				size={"md"}
+				h={{ base: "40px", md: "50px", lg: "60px" }}
+				size={{ base: "md", md: "lg", lg: "xl" }}
 				fontSize={"lg"}
+				// make button a circle
+				borderRadius={"full"}
 				variant={"ghost"}
-				color={"current"}
 				aria-label={"Create Group"}
+				bg={useColorModeValue("gray.200", "gray.500")}
+				_hover={{
+					bg: "green.500",
+					borderRadius: "30%",
+				}}
 				icon={<AddIcon />}
 				onClick={onOpen}
 			/>

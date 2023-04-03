@@ -15,6 +15,7 @@ import { useAppDispatch, useTypedSelector } from "../../hooks/store";
 import Navbar from "../Navigation/Navbar";
 
 import Groups from "../../features/groups/Groups";
+import Group from "../../features/groups/Group";
 
 export default function Dashboard() {
 	const dispatch = useAppDispatch();
@@ -35,7 +36,7 @@ export default function Dashboard() {
 		<Flex
 			direction="column"
 			w="full"
-			h="full"
+			h="100vh"
 			bg={useColorModeValue("gray.50", "inherit")}>
 			<Navbar />
 			<Flex
@@ -48,9 +49,17 @@ export default function Dashboard() {
 					direction="column"
 					w="15%"
 					h="full"
-					bg={useColorModeValue("gray.50", "inherit")}
+					bg={useColorModeValue("gray.200", "gray.900")}
 					wrap="wrap">
 					<Groups />
+				</Flex>
+				<Flex
+					direction="column"
+					w="15%"
+					h="full"
+					bg={useColorModeValue("gray.100", "gray.800")}
+					wrap="wrap">
+					<Group />
 				</Flex>
 			</Flex>
 		</Flex>
