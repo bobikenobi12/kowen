@@ -4,11 +4,15 @@ import { RootState } from "../../app/store";
 import { type Folder } from "../../app/services/folders";
 
 export interface FolderState {
-	folders: Folder[];
+	folders: {
+		folders: Folder[];
+	};
 }
 
 const initialState: FolderState = {
-	folders: [],
+	folders: {
+		folders: [],
+	},
 };
 
 export const folderSlice = createSlice({
@@ -19,18 +23,20 @@ export const folderSlice = createSlice({
 		builder.addMatcher(
 			api.endpoints.getFoldersInGroup.matchFulfilled,
 			(state, action) => {
-				state.folders = action.payload;
+				state.folders.folders = action.payload as Folder[];
 			}
 		);
 		builder.addMatcher(
 			api.endpoints.saveFolderToGroup.matchFulfilled,
 			(state, action) => {
-				state.folders.push(action.payload);
+				state.folders.folders.push(action.payload as Folder);
 			}
 		);
 	},
 });
 
 export const selectFolders = (state: RootState) => state.folders.folders;
+export const selectFolderById = (state: RootState, folderId: number) =>
+	state.folders.folders.folders.find(folder => folder.id === folderId);
 
 export default folderSlice.reducer;

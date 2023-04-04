@@ -38,7 +38,21 @@ export const api = createApi({
 				params: { groupId },
 			}),
 		}),
+		changeFolderName: builder.mutation<
+			Folder,
+			{ groupId: number; folderId: number; name: string }
+		>({
+			query: ({ groupId, folderId, name }) => ({
+				url: `changeName/${groupId}/${folderId}`,
+				method: "POST",
+				params: { name },
+			}),
+		}),
 	}),
 });
 
-export const { useSaveFolderToGroupMutation, useGetFoldersInGroupQuery } = api;
+export const {
+	useSaveFolderToGroupMutation,
+	useGetFoldersInGroupQuery,
+	useChangeFolderNameMutation,
+} = api;

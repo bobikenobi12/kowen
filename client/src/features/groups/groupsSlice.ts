@@ -8,15 +8,22 @@ export interface GroupsState {
 	groups: Group[];
 	currentGroup: Group | null;
 }
+
+const initialState: GroupsState = {
+	groups: [],
+	currentGroup: JSON.parse(localStorage.getItem("currentGroup") || "null"),
+};
+
 const slice = createSlice({
 	name: "groups",
-	initialState: {
-		groups: [],
-		currentGroup: null,
-	} as GroupsState,
+	initialState,
 	reducers: {
 		setCurrentGroup(state, action: PayloadAction<Group>) {
 			state.currentGroup = action.payload;
+			localStorage.setItem(
+				"currentGroup",
+				JSON.stringify(action.payload)
+			);
 		},
 	},
 	extraReducers: builder => {

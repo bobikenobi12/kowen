@@ -69,3 +69,7 @@ export const CreateGroupSchema = Yup.object().shape({
 		.max(50, "Group description must be at most 50 characters long")
 		.required("Group description is required"),
 });
+
+export const EditFolderSchema = Yup.object().shape({
+	name: Yup.string().required("Folder name is required"),
+});

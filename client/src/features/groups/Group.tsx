@@ -35,6 +35,8 @@ import {
 	EditIcon,
 } from "@chakra-ui/icons";
 
+import EditFolder from "../folders/EditFolder";
+
 export default function Group() {
 	const group = useTypedSelector(selectCurrentGroup);
 	const { data: folders } = useGetFoldersInGroupQuery(group!.id);
@@ -122,14 +124,9 @@ export default function Group() {
 
 								<Text>{folder.name}</Text>
 								<HStack>
-									<Icon
-										as={EditIcon}
-										cursor="pointer"
-										_hover={{
-											transform: "scale(1.1)",
-											borderRadius: "30%",
-										}}
-										color="orange.500"
+									<EditFolder
+										groupId={group!.id}
+										folderId={folder.id}
 									/>
 									<Icon
 										as={DeleteIcon}
