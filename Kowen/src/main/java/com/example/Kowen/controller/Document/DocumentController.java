@@ -1,4 +1,4 @@
-package com.example.Kowen.controller;
+package com.example.Kowen.controller.Document;
 
 import com.example.Kowen.entity.*;
 import com.example.Kowen.enums.PermissionsEnum;
