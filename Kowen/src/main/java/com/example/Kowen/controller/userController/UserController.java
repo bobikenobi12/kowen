@@ -52,17 +52,14 @@ public class UserController {
     @Autowired
     private BlackListService blackListService;
 
-
-
-
     BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public UserController() {
     }
 
     @PostMapping("/register")
-    public User register(@RequestBody User user){
-        if(roleRepository.findByName("USER").isEmpty()){
+    public User register(@RequestBody User user) {
+        if (roleRepository.findByName("USER").isEmpty()) {
             Role role = new Role();
             List<PermissionsEnum> permissionsEnums = new ArrayList<>();
             permissionsEnums.add(PermissionsEnum.can_add);
@@ -71,20 +68,23 @@ public class UserController {
             roleRepository.save(role);
         }
 
-        //Validators
-        if (!user.getEmail().contains("@") || !user.getEmail().contains(".") || user.getEmail().indexOf(0) == '@' || user.getEmail().length() < 7)
+        // Validators
+        if (!user.getEmail().contains("@") || !user.getEmail().contains(".") || user.getEmail().indexOf(0) == '@'
+                || user.getEmail().length() < 7)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email address is not valid!");
         if (user.getPassword().length() < 6 || user.getPassword().length() > 16)
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password must contain characters between 6 and 16!");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Password must contain characters between 6 and 16!");
         if (user.getFirstName().length() < 3 || user.getFirstName().length() > 16)
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "First name must contain characters between 3 and 16!");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "First name must contain characters between 3 and 16!");
         if (user.getLastName().length() < 3 || user.getLastName().length() > 16)
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Last name must contain characters between 3 and 16!");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Last name must contain characters between 3 and 16!");
         if (user.getUsername().length() < 3 || user.getUsername().length() > 16)
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username must contain characters between 3 and 16!");
-        //end of validators
-
-
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Username must contain characters between 3 and 16!");
+        // end of validators
 
         List<Role> roles = new ArrayList<>();
         roles.add(roleRepository.findByName("USER").get(0));
@@ -98,17 +98,17 @@ public class UserController {
     public User setProfilePic(@RequestParam MultipartFile picture) throws IOException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails principal = (UserDetails) authentication.getPrincipal();
-        User user =  userRepository.findByEmail(principal.getUsername()).get(0);
+        User user = userRepository.findByEmail(principal.getUsername()).get(0);
 
         user.setProfilePicture(picture.getBytes());
         return userRepository.save(user);
     }
 
     @GetMapping("/downloadProfilePic")
-    public ResponseEntity<ByteArrayResource> downloadProfilePic(){
+    public ResponseEntity<ByteArrayResource> downloadProfilePic() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails principal = (UserDetails) authentication.getPrincipal();
-        User user =  userRepository.findByEmail(principal.getUsername()).get(0);
+        User user = userRepository.findByEmail(principal.getUsername()).get(0);
 
         byte[] fileBytes = user.getProfilePicture();
         ByteArrayResource resource = new ByteArrayResource(fileBytes);
@@ -125,20 +125,20 @@ public class UserController {
                 .body(resource);
     }
 
-
-
     @PostMapping("/login")
-    public AuthResponse login(@RequestBody AuthRequest authRequest){
+    public AuthResponse login(@RequestBody AuthRequest authRequest) {
         if (userRepository.findByEmail(authRequest.getEmail()).isEmpty() ||
                 !passwordEncoder.matches(authRequest.getPassword(), userRepository
                         .findByEmail(authRequest.getEmail())
                         .get(0)
                         .getPassword()))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid email or password!");
-        else if (!authRequest.getEmail().contains("@") || !authRequest.getEmail().contains(".") || authRequest.getEmail().indexOf(0) == '@' || authRequest.getEmail().length() < 7)
+        else if (!authRequest.getEmail().contains("@") || !authRequest.getEmail().contains(".")
+                || authRequest.getEmail().indexOf(0) == '@' || authRequest.getEmail().length() < 7)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email address is not valid!");
         else if (authRequest.getPassword().length() < 6 || authRequest.getPassword().length() > 16)
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password must contain characters between 6 and 16!");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Password must contain characters between 6 and 16!");
         else {
             User user = userRepository.findByEmail(authRequest.getEmail()).get(0);
             String token = jwtTokenService.generateToken(user.getEmail());
@@ -149,7 +149,6 @@ public class UserController {
         }
     }
 
-
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpServletRequest request) {
         String authToken = jwtTokenUtil.getTokenFromRequest(request);
@@ -158,65 +157,64 @@ public class UserController {
     }
 
     @GetMapping("/getMe")
-    public User showMyData(){
+    public User showMyData() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails principal = (UserDetails) authentication.getPrincipal();
-        User user =  userRepository.findByEmail(principal.getUsername()).get(0);
+        User user = userRepository.findByEmail(principal.getUsername()).get(0);
         return user;
     }
 
-
-    //=================================Changes===================================
+    // =================================Changes===================================
 
     @PostMapping("/changeUsername")
-    public User changeUsername(@RequestBody UserDto dto){
+    public User changeUsername(@RequestBody UserDto dto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails principal = (UserDetails) authentication.getPrincipal();
-        User user =  userRepository.findByEmail(principal.getUsername()).get(0);
+        User user = userRepository.findByEmail(principal.getUsername()).get(0);
 
-        if (passwordEncoder.matches(dto.getPassword(), user.getPassword())){
+        if (passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
             user.setUsername(dto.getUsername());
             return userRepository.save(user);
-        }
-        else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid password!");
+        } else
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid password!");
     }
 
     @PostMapping("/changeFirstName")
-    public User changeFirstName(@RequestBody UserDto dto){
+    public User changeFirstName(@RequestBody UserDto dto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails principal = (UserDetails) authentication.getPrincipal();
-        User user =  userRepository.findByEmail(principal.getUsername()).get(0);
+        User user = userRepository.findByEmail(principal.getUsername()).get(0);
 
-        if (passwordEncoder.matches(dto.getPassword(), user.getPassword())){
+        if (passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
             user.setFirstName(dto.getFirstName());
             return userRepository.save(user);
-        }
-        else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid password!");
+        } else
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid password!");
     }
 
     @PostMapping("/changeLastName")
-    public User changeLastName(@RequestBody UserDto dto){
+    public User changeLastName(@RequestBody UserDto dto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails principal = (UserDetails) authentication.getPrincipal();
-        User user =  userRepository.findByEmail(principal.getUsername()).get(0);
+        User user = userRepository.findByEmail(principal.getUsername()).get(0);
 
-        if (passwordEncoder.matches(dto.getPassword(), user.getPassword())){
+        if (passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
             user.setLastName(dto.getLastName());
             return userRepository.save(user);
-        }
-        else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid password!");
+        } else
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid password!");
     }
 
     @PostMapping("/changeEmail")
-    public User changeEmail(@RequestBody UserDto dto){
+    public User changeEmail(@RequestBody UserDto dto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails principal = (UserDetails) authentication.getPrincipal();
-        User user =  userRepository.findByEmail(principal.getUsername()).get(0);
+        User user = userRepository.findByEmail(principal.getUsername()).get(0);
 
-        if (passwordEncoder.matches(dto.getPassword(), user.getPassword())){
+        if (passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
             user.setEmail(dto.getEmail());
             return userRepository.save(user);
-        }
-        else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid password!");
+        } else
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid password!");
     }
 }

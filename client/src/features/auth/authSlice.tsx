@@ -53,6 +53,41 @@ const slice = createSlice({
 				localStorage.removeItem("user");
 			}
 		);
+		builder.addMatcher(
+			api.endpoints.setProfilePicture.matchFulfilled,
+			(state, { payload }) => {
+				state.user = payload;
+				localStorage.setItem("user", JSON.stringify(payload));
+			}
+		);
+		builder.addMatcher(
+			api.endpoints.changeEmail.matchFulfilled,
+			(state, { payload }) => {
+				state.user = payload;
+				localStorage.setItem("user", JSON.stringify(payload));
+			}
+		);
+		builder.addMatcher(
+			api.endpoints.changeFirstName.matchFulfilled,
+			(state, { payload }) => {
+				state.user = payload;
+				localStorage.setItem("user", JSON.stringify(payload));
+			}
+		);
+		builder.addMatcher(
+			api.endpoints.changeLastName.matchFulfilled,
+			(state, { payload }) => {
+				state.user = payload;
+				localStorage.setItem("user", JSON.stringify(payload));
+			}
+		);
+		builder.addMatcher(
+			api.endpoints.changeUsername.matchFulfilled,
+			(state, { payload }) => {
+				state.user = payload;
+				localStorage.setItem("user", JSON.stringify(payload));
+			}
+		);
 	},
 });
 
