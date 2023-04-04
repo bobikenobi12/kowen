@@ -13,6 +13,7 @@ import {
 	HStack,
 	CloseButton,
 	Icon,
+	Tooltip,
 } from "@chakra-ui/react";
 
 import * as React from "react";
@@ -25,6 +26,7 @@ import {
 import { useTypedSelector, useAppDispatch } from "../../hooks/store";
 import { selectCurrentGroup } from "./groupsSlice";
 import { selectFolders } from "../folders/folderSlice";
+import { selectCurrentUser } from "../auth/authSlice";
 import { type Folder } from "../../app/services/folders";
 
 import {
@@ -36,12 +38,14 @@ import {
 } from "@chakra-ui/icons";
 
 import EditFolder from "../folders/EditFolder";
+import ThemeToggle from "../../components/common/ThemeToggle";
 
 export default function Group() {
 	const group = useTypedSelector(selectCurrentGroup);
+	const user = useTypedSelector(selectCurrentUser);
+
 	const { data: folders } = useGetFoldersInGroupQuery(group!.id);
 
-	console.log("folders", folders);
 	return (
 		// consists of 3 panes top mid and bottom
 		// top pane: group name and arrow down icon that opens a dropdown menu with group settings and leave group
@@ -148,21 +152,43 @@ export default function Group() {
 			<Flex
 				direction="row"
 				w="full"
+				alignSelf={"flex-end"}
+				alignItems={"center"}
+				p={2}
 				bg={useColorModeValue("gray.200", "gray.600")}>
-				<Avatar />
-				<VStack>
-					<Text>Username</Text>
-					<HStack>
-						<Text>First Name</Text>
-						<Text>Last Name</Text>
+				<Avatar
+					name={user!.username}
+					src={user!.profilePicture || ""}
+				/>
+				<VStack
+					alignItems={"flex-start"}
+					justifyContent={"center"}
+					px={2}>
+					<Text
+						fontWeight={"bold"}
+						fontSize={"lg"}
+						color={useColorModeValue("gray.800", "white")}>
+						{user?.username}
+					</Text>
+					<HStack alignItems={"flex-start"} justifyContent={"center"}>
+						<Text>{user?.firstName}</Text>
+						<Text>{user?.lastName}</Text>
 					</HStack>
 				</VStack>
-				<IconButton
-					aria-label="User Options"
-					icon={<SettingsIcon />}
-					variant="outline"
-					alignSelf={"flex-end"}
-				/>
+				<HStack spacing={2} ml="auto">
+					<ThemeToggle />
+
+					<Tooltip
+						label="User Settings"
+						aria-label="User Settings"
+						hasArrow>
+						<IconButton
+							aria-label="User Settings"
+							icon={<SettingsIcon fontSize={"lg"} />}
+							variant="ghost"
+						/>
+					</Tooltip>
+				</HStack>
 			</Flex>
 		</Flex>
 	);

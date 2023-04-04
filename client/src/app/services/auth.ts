@@ -64,12 +64,63 @@ export const api = createApi({
 				method: "POST",
 			}),
 		}),
-		setProfilePicture: builder.mutation<void, FormData>({
-			// key: 'picture', value: File
+		setProfilePicture: builder.mutation<User, File>({
 			query: formData => ({
 				url: "setProfilePic",
 				method: "POST",
 				body: formData,
+			}),
+		}),
+		downloadProfilePicture: builder.query<File, void>({
+			query: () => ({
+				url: "getProfilePic",
+				method: "GET",
+			}),
+		}),
+		changeUsername: builder.mutation<
+			User,
+			{ username: string; password: string }
+		>({
+			query: ({ username, password }) => ({
+				url: "changeUsername",
+				method: "POST",
+				body: { username, password },
+			}),
+		}),
+		changeFirstName: builder.mutation<
+			User,
+			{ firstName: string; password: string }
+		>({
+			query: ({ firstName, password }) => ({
+				url: "changeFirstName",
+				method: "POST",
+				body: { firstName, password },
+			}),
+		}),
+		changeLastName: builder.mutation<
+			User,
+			{ lastName: string; password: string }
+		>({
+			query: ({ lastName, password }) => ({
+				url: "changeLastName",
+				method: "POST",
+				body: { lastName, password },
+			}),
+		}),
+		changeEmail: builder.mutation<
+			User,
+			{ email: string; password: string }
+		>({
+			query: ({ email, password }) => ({
+				url: "changeEmail",
+				method: "POST",
+				body: { email, password },
+			}),
+		}),
+		getUser: builder.query<User, void>({
+			query: () => ({
+				url: "getMe",
+				method: "GET",
 			}),
 		}),
 	}),
@@ -80,4 +131,10 @@ export const {
 	useRegisterMutation,
 	useLogoutMutation,
 	useSetProfilePictureMutation,
+	useDownloadProfilePictureQuery,
+	useChangeUsernameMutation,
+	useChangeFirstNameMutation,
+	useChangeLastNameMutation,
+	useChangeEmailMutation,
+	useGetUserQuery,
 } = api;
