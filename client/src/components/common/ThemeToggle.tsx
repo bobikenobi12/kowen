@@ -1,4 +1,9 @@
-import { useColorMode, IconButton, useColorModeValue } from "@chakra-ui/react";
+import {
+	useColorMode,
+	IconButton,
+	useColorModeValue,
+	Tooltip,
+} from "@chakra-ui/react";
 import { SunIcon, MoonIcon } from "@chakra-ui/icons";
 
 export default function ThemeToggle() {
@@ -7,17 +12,19 @@ export default function ThemeToggle() {
 	const SwitchIcon = useColorModeValue(MoonIcon, SunIcon);
 
 	return (
-		<IconButton
-			size="md"
-			fontSize="lg"
+		<Tooltip
+			label={`Switch to ${text} mode`}
 			aria-label={`Switch to ${text} mode`}
-			variant="ghost"
-			marginLeft="2"
-			onClick={toggleColorMode}
-			icon={<SwitchIcon />}
-			// position="absolute"
-			// top="5"
-			// right="5"
-		/>
+			hasArrow>
+			<IconButton
+				size="md"
+				fontSize="lg"
+				aria-label={`Switch to ${text} mode`}
+				variant="ghost"
+				marginLeft="2"
+				onClick={toggleColorMode}
+				icon={<SwitchIcon />}
+			/>
+		</Tooltip>
 	);
 }
