@@ -1,18 +1,22 @@
 package com.example.Kowen.controller;
 
 
+import com.example.Kowen.entity.User;
+import com.example.Kowen.jwt.JwtTokenService;
 import lombok.Getter;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin
 @RestController
 @RequestMapping("/test")
 public class TestController {
+
+    @Autowired
+    private JwtTokenService jwtTokenService;
+
     @GetMapping("/test")
-    public String hello(){
-        return "Hello!";
+    public Boolean hello(@RequestBody User user, String userToken){
+        return jwtTokenService.isTokenExpired(userToken);
     }
 }

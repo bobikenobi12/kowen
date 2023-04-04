@@ -26,6 +26,10 @@ public class UserDto {
 
     private String username;
 
+    private String confirmPassword;
+
+    private String newPassword;
+
 
     private String email;
 

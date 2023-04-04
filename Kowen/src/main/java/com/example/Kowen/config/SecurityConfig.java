@@ -5,6 +5,7 @@ import org.apache.catalina.filters.CorsFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -29,6 +30,7 @@ public class SecurityConfig {
          http.cors();
         http.authorizeRequests()
                 .requestMatchers("/user/**", "/roles/**", "/test/test", "/group/**", "/document/**", "/folder/**").authenticated()
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .anyRequest().permitAll();
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
@@ -36,7 +38,7 @@ public class SecurityConfig {
 
     @Bean
     WebSecurityCustomizer webSecurityCustomizer() {
-        return web -> web.ignoring().requestMatchers("/roles/**", "/user/register", "/user/login");
+        return web -> web.ignoring().requestMatchers("/roles/**", "/user/register", "/user/login", "/user/refresh", "/test/test");
     }
 
 

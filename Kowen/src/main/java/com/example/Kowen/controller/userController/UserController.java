@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @CrossOrigin
 @RestController
@@ -113,7 +114,7 @@ public class UserController {
         byte[] fileBytes = user.getProfilePicture();
         ByteArrayResource resource = new ByteArrayResource(fileBytes);
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentType(MediaType.IMAGE_PNG);
         headers.setContentLength(fileBytes.length);
 
         headers.setContentDispositionFormData("attachment", user.getFirstName());
@@ -154,6 +155,20 @@ public class UserController {
         String authToken = jwtTokenUtil.getTokenFromRequest(request);
         blackListService.addTokenToBlacklist(authToken);
         return ResponseEntity.ok("Logout successful.");
+    }
+
+    @PostMapping("/refresh")
+    public AuthResponse refreshToken(@RequestBody UserDto user){
+        User user1 = userRepository.findByEmail(user.getEmail()).get(0);
+        System.out.println(user.getToken());
+        if (jwtTokenService.isTokenExpired(user.getToken())){
+            String refreshToken = jwtTokenService.generateToken(user.getEmail());
+
+            return new AuthResponse("token", refreshToken, user1);
+        }
+        else{
+            return new AuthResponse("Already logged in", user.getToken(), user1);
+        }
     }
 
     @GetMapping("/getMe")
@@ -216,5 +231,18 @@ public class UserController {
             return userRepository.save(user);
         } else
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid password!");
+    }
+
+    @PostMapping("/changePassword")
+    public User changePassword(@RequestBody UserDto dto){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        User user =  userRepository.findByEmail(principal.getUsername()).get(0);
+
+        if (passwordEncoder.matches(dto.getPassword(), user.getPassword()) && Objects.equals(dto.getPassword(), dto.getConfirmPassword())){
+            user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
+            return userRepository.save(user);
+        }
+        else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid password!");
     }
 }
