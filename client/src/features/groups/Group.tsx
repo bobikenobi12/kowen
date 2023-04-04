@@ -11,6 +11,8 @@ import {
 	useColorModeValue,
 	useToast,
 	HStack,
+	CloseButton,
+	Icon,
 } from "@chakra-ui/react";
 
 import * as React from "react";
@@ -20,21 +22,24 @@ import {
 	useSaveFolderToGroupMutation,
 } from "../../app/services/folders";
 
-import { useAppDispatch, useTypedSelector } from "../../hooks/store";
+import { useTypedSelector, useAppDispatch } from "../../hooks/store";
+import { selectCurrentGroup } from "./groupsSlice";
+import { selectFolders } from "../folders/folderSlice";
+import { type Folder } from "../../app/services/folders";
 
-import { useNavigate } from "react-router-dom";
-
-import { SettingsIcon, ArrowDownIcon } from "@chakra-ui/icons";
+import {
+	SettingsIcon,
+	ChevronDownIcon,
+	InfoOutlineIcon,
+	DeleteIcon,
+	EditIcon,
+} from "@chakra-ui/icons";
 
 export default function Group() {
-	const navigate = useNavigate();
-	const dispatch = useAppDispatch();
+	const group = useTypedSelector(selectCurrentGroup);
+	const { data: folders } = useGetFoldersInGroupQuery(group!.id);
 
-	const { data: folders } = useGetFoldersInGroupQuery(4);
-
-	// save folder to group
-	const [saveFolderToGroup] = useSaveFolderToGroupMutation();
-
+	console.log("folders", folders);
 	return (
 		// consists of 3 panes top mid and bottom
 		// top pane: group name and arrow down icon that opens a dropdown menu with group settings and leave group
@@ -44,44 +49,108 @@ export default function Group() {
 			direction="column"
 			w="full"
 			h="full"
-			bg={useColorModeValue("gray.200", "gray.600")}>
+			bg={useColorModeValue("gray.50", "inherit")}>
 			<Flex
 				direction="row"
 				w="full"
 				alignSelf={"flex-start"}
-				bg={useColorModeValue("gray.200", "gray.600")}>
-				<Text>Group Name</Text>
-				<Menu>
-					<MenuButton
-						as={IconButton}
-						aria-label="Group Options"
-						icon={<ArrowDownIcon />}
-						variant="outline"
-					/>
-					<MenuList>
-						<MenuItem>Group Settings</MenuItem>
-						<MenuItem>Leave Group</MenuItem>
-					</MenuList>
+				justifyContent={"space-between"}
+				alignItems={"center"}
+				bg={useColorModeValue("gray.200", "gray.600")}
+				shadow="md">
+				<Menu isLazy>
+					{({ isOpen }) => (
+						<>
+							<MenuButton
+								w="full"
+								p={3}
+								transition={"all .3s ease"}
+								rightIcon={
+									isOpen ? (
+										<CloseButton />
+									) : (
+										<IconButton
+											aria-label="Group Options"
+											icon={<ChevronDownIcon />}
+											variant="ghost"
+											size={"sm"}
+										/>
+									)
+								}
+								textAlign="left"
+								border={0}
+								isActive={isOpen}
+								as={IconButton}
+								aria-label="Group Options">
+								Testing
+							</MenuButton>
+							<MenuList>
+								<MenuItem>Group Settings</MenuItem>
+								<MenuItem>Leave Group</MenuItem>
+							</MenuList>
+						</>
+					)}
 				</Menu>
 			</Flex>
-			<Flex
-				direction="row"
+			<VStack
 				w="full"
+				py={4}
+				h="full"
+				gap={2}
 				bg={useColorModeValue("gray.100", "gray.700")}>
-				<VStack
-					direction="column"
-					w="full"
-					h="full"
-					bg={useColorModeValue("gray.100", "gray.700")}>
-					{folders?.map(folder => (
-						<Text>{folder.name}</Text>
-					))}
-				</VStack>
-			</Flex>
+				{folders ? (
+					folders.map((folder: Folder) => {
+						return (
+							<Flex
+								key={folder.id}
+								direction="row"
+								alignItems={"center"}
+								justifyContent={"space-between"}
+								w="full"
+								h={12}
+								p={4}
+								bg={useColorModeValue("gray.100", "gray.700")}>
+								<Icon
+									as={InfoOutlineIcon}
+									cursor="pointer"
+									_hover={{
+										transform: "scale(1.1)",
+										borderRadius: "30%",
+									}}
+									color="twitter.500"
+								/>
+
+								<Text>{folder.name}</Text>
+								<HStack>
+									<Icon
+										as={EditIcon}
+										cursor="pointer"
+										_hover={{
+											transform: "scale(1.1)",
+											borderRadius: "30%",
+										}}
+										color="orange.500"
+									/>
+									<Icon
+										as={DeleteIcon}
+										cursor="pointer"
+										_hover={{
+											transform: "scale(1.1)",
+											borderRadius: "30%",
+										}}
+										color="red.500"
+									/>
+								</HStack>
+							</Flex>
+						);
+					})
+				) : (
+					<Text>Click the + button to create a folder</Text>
+				)}
+			</VStack>
 			<Flex
 				direction="row"
 				w="full"
-				alignSelf={"flex-end"}
 				bg={useColorModeValue("gray.200", "gray.600")}>
 				<Avatar />
 				<VStack>

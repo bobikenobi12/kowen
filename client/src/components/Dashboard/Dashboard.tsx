@@ -11,6 +11,7 @@ import {
 } from "@chakra-ui/react";
 
 import { useAppDispatch, useTypedSelector } from "../../hooks/store";
+import { selectCurrentGroup } from "../../features/groups/groupsSlice";
 
 import Navbar from "../Navigation/Navbar";
 
@@ -19,6 +20,7 @@ import Group from "../../features/groups/Group";
 
 export default function Dashboard() {
 	const dispatch = useAppDispatch();
+	const currentGroup = useTypedSelector(selectCurrentGroup);
 
 	// Navbar shows and below it is a page consistion of 3 panes:
 	// left pane: list of groups (with avatars)
@@ -47,23 +49,29 @@ export default function Dashboard() {
 				wrap="wrap"
 				overflowY="scroll"
 				overflowX="hidden"
-				position={"fixed"}
-				left={0}
-				top={0}
-				bottom={0}
-				zIndex={10}
 				shadow="md"
 				p={3}>
 				<Groups />
 			</Flex>
-			<Flex
-				direction="column"
-				w="30%"
-				h="full"
-				bg={useColorModeValue("gray.100", "gray.800")}
-				wrap="wrap">
-				<Group />
-			</Flex>
+			{currentGroup && (
+				<Flex
+					direction="column"
+					w="fit-content"
+					h="full"
+					bg={useColorModeValue("gray.100", "gray.700")}
+					wrap="wrap"
+					overflowY="scroll"
+					overflowX="hidden"
+					// position={"fixed"}
+					// left={{ base: "md", md: "lg" }}
+					// top={0}
+					// bottom={0}
+					// zIndex={10}
+					// shadow="md"
+				>
+					<Group />
+				</Flex>
+			)}
 		</Flex>
 	);
 }

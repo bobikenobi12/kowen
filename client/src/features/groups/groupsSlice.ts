@@ -6,14 +6,19 @@ import { type Group } from "../../app/services/groups";
 
 export interface GroupsState {
 	groups: Group[];
+	currentGroup: Group | null;
 }
-
 const slice = createSlice({
 	name: "groups",
 	initialState: {
 		groups: [],
+		currentGroup: null,
 	} as GroupsState,
-	reducers: {},
+	reducers: {
+		setCurrentGroup(state, action: PayloadAction<Group>) {
+			state.currentGroup = action.payload;
+		},
+	},
 	extraReducers: builder => {
 		builder.addMatcher(
 			api.endpoints.createGroup.matchFulfilled,
@@ -34,3 +39,5 @@ const slice = createSlice({
 export default slice.reducer;
 
 export const selectGroups = (state: RootState) => state.groups.groups;
+export const selectCurrentGroup = (state: RootState) =>
+	state.groups.currentGroup;

@@ -30,3 +30,7 @@ export const folderSlice = createSlice({
 		);
 	},
 });
+
+export const selectFolders = (state: RootState) => state.folders.folders;
+
+export default folderSlice.reducer;
