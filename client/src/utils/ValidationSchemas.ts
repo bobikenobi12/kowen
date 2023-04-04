@@ -73,3 +73,7 @@ export const CreateGroupSchema = Yup.object().shape({
 export const EditFolderSchema = Yup.object().shape({
 	name: Yup.string().required("Folder name is required"),
 });
+
+export const UploadFileSchema = Yup.object().shape({
+	file: Yup.mixed().required("A file is required"),
+});

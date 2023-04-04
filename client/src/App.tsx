@@ -17,6 +17,8 @@ import Group from "./features/groups/Group";
 
 import Dashboard from "./components/Dashboard/Dashboard";
 
+import UserSettings from "./features/auth/UserSettings";
+
 import { useAppDispatch } from "./hooks/store";
 
 function App() {
@@ -36,6 +38,7 @@ function App() {
 					{/* when a group is clicked we want to dispatch the route to the store */}
 					<Route path="groups/:groupId" element={<Group />} />
 					<Route path="dashboard" element={<Dashboard />} />
+					<Route path="user-settings" element={<UserSettings />} />
 				</Route>
 				<Route path="*" element={<NotFound />} />
 			</Routes>

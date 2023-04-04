@@ -9,8 +9,8 @@ export interface User {
 	firstName: string;
 	lastName: string;
 	lastLogin: string;
-	profilePicture: string | null;
-	createdAt: string;
+	profilePicture: string;
+	dateJoined: Date;
 }
 
 export interface LoginResponse {
@@ -31,6 +31,8 @@ export interface RegisterRequest {
 	password: string;
 }
 
+const boundary = `----${new Date().getTime()}`;
+
 export const api = createApi({
 	reducerPath: "authApi",
 	baseQuery: fetchBaseQuery({
@@ -39,6 +41,10 @@ export const api = createApi({
 			const token = (getState() as RootState).auth.token;
 			if (token) {
 				headers.set("authorization", `Bearer ${token}`);
+				headers.set(
+					"Content-Type",
+					`multipart/form-data; boundary=${boundary}`
+				);
 			}
 			return headers;
 		},
@@ -64,11 +70,13 @@ export const api = createApi({
 				method: "POST",
 			}),
 		}),
-		setProfilePicture: builder.mutation<User, File>({
-			query: formData => ({
+		setProfilePicture: builder.mutation<User, FormData>({
+			query: FormData => ({
 				url: "setProfilePic",
 				method: "POST",
-				body: formData,
+				params: {
+					picture: FormData,
+				},
 			}),
 		}),
 		downloadProfilePicture: builder.query<File, void>({
