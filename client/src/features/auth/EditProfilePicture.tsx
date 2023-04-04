@@ -82,11 +82,7 @@ export default function EditProfilePicture() {
 								const formData = new FormData();
 								formData.append("picture", values.file);
 								try {
-									await setProfilePicture({
-										picture: formData.get(
-											"picture"
-										) as FormDataEntryValue,
-									});
+									await setProfilePicture(formData).unwrap();
 									toast({
 										title: "Profile Picture Updated",
 										status: "success",
