@@ -110,7 +110,7 @@ export const api = createApi({
 			}),
 		}),
 		changeEmail: builder.mutation<
-			User,
+			LoginResponse,
 			{ email: string; password: string }
 		>({
 			query: ({ email, password }) => ({

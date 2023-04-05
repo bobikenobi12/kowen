@@ -22,9 +22,12 @@ import {
 	useChangeEmailMutation,
 	useChangeFirstNameMutation,
 	useChangeLastNameMutation,
+	useLoginMutation,
 } from "../../app/services/auth";
 
 import { useNavigate } from "react-router-dom";
+
+import { useAppDispatch } from "../../hooks/store";
 
 import { ValidateConfirmPasswordSchema } from "../../utils/ValidationSchemas";
 
@@ -44,10 +47,12 @@ export default function EditProfile({
 	const [changeEmail] = useChangeEmailMutation();
 	const [changeFirstName] = useChangeFirstNameMutation();
 	const [changeLastName] = useChangeLastNameMutation();
+	const [login] = useLoginMutation();
 
 	const toast = useToast();
 
 	const navigate = useNavigate();
+	const dispatch = useAppDispatch();
 
 	return (
 		<Modal isOpen={isOpen} onClose={onClose} isCentered>
@@ -65,22 +70,24 @@ export default function EditProfile({
 							try {
 								await changeUsername({
 									username: props.username,
-									password: values.password,
+									password: values.password as string,
+								});
+
+								await changeFirstName({
+									firstName: props.firstName,
+									password: values.password as string,
+								});
+
+								await changeLastName({
+									lastName: props.lastName,
+									password: values.password as string,
 								});
 								await changeEmail({
 									email: props.email,
-									password: values.password,
-								});
-								await changeFirstName({
-									firstName: props.firstName,
-									password: values.password,
-								});
-								await changeLastName({
-									lastName: props.lastName,
-									password: values.password,
+									password: values.password as string,
 								});
 								toast({
-									title: "Profile updated.",
+									title: "Profile changes confirmed",
 									status: "success",
 									duration: 3000,
 									isClosable: true,

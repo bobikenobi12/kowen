@@ -50,6 +50,13 @@ const slice = createSlice({
 			}
 		);
 		builder.addMatcher(
+			api.endpoints.login.matchRejected,
+			(state, { payload }) => {
+				console.log("login rejected");
+				console.log(payload);
+			}
+		);
+		builder.addMatcher(
 			api.endpoints.logout.matchFulfilled,
 			(state, { payload }) => {
 				state.token = null;
@@ -68,8 +75,10 @@ const slice = createSlice({
 		builder.addMatcher(
 			api.endpoints.changeEmail.matchFulfilled,
 			(state, { payload }) => {
-				state.user = payload;
-				localStorage.setItem("user", JSON.stringify(payload));
+				state.user = payload.user;
+				state.token = payload.token;
+				localStorage.setItem("user", JSON.stringify(payload.user));
+				localStorage.setItem("token", JSON.stringify(payload.token));
 			}
 		);
 		builder.addMatcher(
