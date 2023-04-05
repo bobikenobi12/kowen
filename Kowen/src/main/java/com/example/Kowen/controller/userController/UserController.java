@@ -14,10 +14,7 @@ import com.example.Kowen.service.user.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -221,14 +218,19 @@ public class UserController {
     }
 
     @PostMapping("/changeEmail")
-    public User changeEmail(@RequestBody UserDto dto) {
+    public AuthResponse changeEmail(@RequestBody UserDto dto, HttpServletRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails principal = (UserDetails) authentication.getPrincipal();
         User user = userRepository.findByEmail(principal.getUsername()).get(0);
 
         if (passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
             user.setEmail(dto.getEmail());
-            return userRepository.save(user);
+            userRepository.save(user);
+            String newToken = jwtTokenService.generateToken(user.getEmail());
+            String oldToken = jwtTokenService.getTokenFromRequest(request);
+            blackListService.addTokenToBlacklist(oldToken);
+            return new AuthResponse("token", newToken, user);
+
         } else
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid password!");
     }
