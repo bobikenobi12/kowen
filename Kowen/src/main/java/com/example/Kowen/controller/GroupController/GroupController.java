@@ -101,7 +101,7 @@ public class GroupController {
         byte[] fileBytes = group.getGroupPicture();
         ByteArrayResource resource = new ByteArrayResource(fileBytes);
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentType(MediaType.IMAGE_PNG);
         headers.setContentLength(fileBytes.length);
 
         headers.setContentDispositionFormData("attachment", group.getName());

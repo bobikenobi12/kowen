@@ -160,7 +160,7 @@ public class UserController {
     @PostMapping("/refresh")
     public AuthResponse refreshToken(@RequestBody UserDto user){
         User user1 = userRepository.findByEmail(user.getEmail()).get(0);
-        System.out.println(user.getToken());
+//        System.out.println(user.getToken());
         if (jwtTokenService.isTokenExpired(user.getToken())){
             String refreshToken = jwtTokenService.generateToken(user.getEmail());
 
