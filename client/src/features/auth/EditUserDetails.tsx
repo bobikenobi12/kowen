@@ -1,8 +1,4 @@
-// like view mode, but with edditable fields
-// on submit, ask user for password
-// if password is correct, update user details
-
-// if password is incorrect, show error message
+import * as React from "react";
 
 import {
 	Box,
@@ -49,6 +45,8 @@ import {
 	useChangeFirstNameMutation,
 	useChangeLastNameMutation,
 } from "../../app/services/auth";
+
+import { FormatDate } from "../../utils/FormatDate";
 
 export default function EditUserDetails() {
 	const dispatch = useAppDispatch();
@@ -97,23 +95,16 @@ export default function EditUserDetails() {
 				firstName: user?.firstName,
 				lastName: user?.lastName,
 			}}
-			onSubmit={async (values, { setErrors }) => {
-				// try {
-				//     const { data } = await changeUsername({
-				//         username: values.username,
-				//     });
-			}}>
+			onSubmit={async (values, { setErrors }) => {}}>
 			{(props: FormikProps<any>) => (
 				<Tbody>
 					<Tr>
 						<Th>Full Name</Th>
 						<Td>
 							<Editable
-								defaultValue={
-									user?.firstName + " " + user?.lastName
-								}>
+								defaultValue={`${user?.firstName} ${user?.lastName}`}>
 								<EditablePreview />
-								<EditableInput />
+								<Input as={EditableInput} />
 							</Editable>
 						</Td>
 					</Tr>
@@ -122,7 +113,7 @@ export default function EditUserDetails() {
 						<Td>
 							<Editable defaultValue={user?.email}>
 								<EditablePreview />
-								<EditableInput />
+								<Input as={EditableInput} />
 							</Editable>
 						</Td>
 					</Tr>
@@ -131,9 +122,13 @@ export default function EditUserDetails() {
 						<Td>
 							<Editable defaultValue={user?.username}>
 								<EditablePreview />
-								<EditableInput />
+								<Input as={EditableInput} focus="true" />
 							</Editable>
 						</Td>
+					</Tr>
+					<Tr>
+						<Th>Date Joined</Th>
+						<Td>{FormatDate(user?.dateJoined as Date)}</Td>
 					</Tr>
 				</Tbody>
 			)}

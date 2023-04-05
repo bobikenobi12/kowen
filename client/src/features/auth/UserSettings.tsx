@@ -55,7 +55,7 @@ import {
 	useChangeLastNameMutation,
 	useChangeEmailMutation,
 } from "../../app/services/auth";
-import { useTypedSelector, useAppDispatch } from "../../hooks/store";
+import { useTypedSelector } from "../../hooks/store";
 import { selectCurrentUser } from "../auth/authSlice";
 
 import {
@@ -68,15 +68,13 @@ import {
 	CheckIcon,
 } from "@chakra-ui/icons";
 
-import { FormatDate } from "../../utils/FormatDate";
-
 import * as React from "react";
 
 import UploadProfilePicture from "./UploadProfilePicture";
 import ViewOnlyUserDetails from "./ViewOnlyUserDetails";
+import EditUserDetails from "./EditUserDetails";
 
 export default function UserSettings() {
-	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
 	const toast = useToast();
 	const user = useTypedSelector(selectCurrentUser);
@@ -185,7 +183,11 @@ export default function UserSettings() {
 							)}
 						</Flex>
 					</TableCaption>
-					<ViewOnlyUserDetails />
+					{mode === "view" ? (
+						<ViewOnlyUserDetails />
+					) : (
+						<EditUserDetails />
+					)}
 				</Table>
 			</TableContainer>
 		</Flex>

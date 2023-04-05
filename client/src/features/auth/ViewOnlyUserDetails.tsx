@@ -19,6 +19,10 @@ export default function ViewOnlyUserDetails() {
 				<Td>{user?.email}</Td>
 			</Tr>
 			<Tr>
+				<Th>Username</Th>
+				<Td>{user?.username}</Td>
+			</Tr>
+			<Tr>
 				<Th>Date Joined</Th>
 				<Td>{FormatDate(user?.dateJoined as Date)}</Td>
 			</Tr>
