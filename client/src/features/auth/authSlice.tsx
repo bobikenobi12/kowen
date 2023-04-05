@@ -6,6 +6,7 @@ import { type User } from "../../app/services/auth";
 interface AuthState {
 	user: User | null;
 	token: string | null;
+	userProfileMode: "view" | "edit";
 }
 
 const initialState: AuthState = {
@@ -15,6 +16,7 @@ const initialState: AuthState = {
 	token: localStorage.getItem("token")
 		? JSON.parse(localStorage.getItem("token")!)
 		: null,
+	userProfileMode: "view",
 };
 
 const slice = createSlice({
@@ -32,6 +34,9 @@ const slice = createSlice({
 			state.token = null;
 			localStorage.removeItem("user");
 			localStorage.removeItem("token");
+		},
+		setUserProfileMode: (state, { payload }) => {
+			state.userProfileMode = payload;
 		},
 	},
 	extraReducers: builder => {
@@ -96,3 +101,5 @@ export default slice.reducer;
 // export const selectCurrentUser = (state: RootState) => state.auth.user;
 export const selectToken = (state: RootState) => state.auth.token;
 export const selectCurrentUser = (state: RootState) => state.auth.user;
+export const selectUserProfileMode = (state: RootState) =>
+	state.auth.userProfileMode;

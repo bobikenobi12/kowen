@@ -41,10 +41,6 @@ export const api = createApi({
 			const token = (getState() as RootState).auth.token;
 			if (token) {
 				headers.set("authorization", `Bearer ${token}`);
-				headers.set(
-					"Content-Type",
-					`multipart/form-data; boundary=<calculated when request is sent>`
-				);
 			}
 			return headers;
 		},
@@ -74,9 +70,7 @@ export const api = createApi({
 			query: FormData => ({
 				url: "setProfilePic",
 				method: "POST",
-				params: {
-					picture: FormData,
-				},
+				body: FormData,
 			}),
 		}),
 		downloadProfilePicture: builder.query<File, void>({

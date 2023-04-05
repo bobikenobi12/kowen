@@ -25,12 +25,10 @@ export default function UploadProfilePicture() {
 	const [setProfilePicture] = useSetProfilePictureMutation();
 
 	const onDrop = async (acceptedFiles: File[]) => {
-		const file = acceptedFiles[0];
+		const picture = acceptedFiles[0];
 
-		// i need to send the file in a form data object
-		// its going to be set as a request param with key picture value file
 		const formData = new FormData();
-		formData.append("picture", file);
+		formData.append("picture", picture);
 
 		try {
 			await setProfilePicture(formData).unwrap();
