@@ -43,6 +43,7 @@ import {
 	BreadcrumbLink,
 	BreadcrumbSeparator,
 	Flex,
+	ButtonGroup,
 } from "@chakra-ui/react";
 import { Formik, Form, Field, FieldProps, FormikProps } from "formik";
 import { useNavigate, Link } from "react-router-dom";
@@ -54,7 +55,7 @@ import {
 	useChangeLastNameMutation,
 	useChangeEmailMutation,
 } from "../../app/services/auth";
-import { useTypedSelector, useAppDispatch } from "../../hooks/store";
+import { useTypedSelector } from "../../hooks/store";
 import { selectCurrentUser } from "../auth/authSlice";
 
 import {
@@ -63,24 +64,21 @@ import {
 	EditIcon,
 	DeleteIcon,
 	AddIcon,
+	CloseIcon,
+	CheckIcon,
 } from "@chakra-ui/icons";
-
-import { FormatDate } from "../../utils/FormatDate";
 
 import * as React from "react";
 
-import EditProfilePicture from "./EditProfilePicture";
+import UploadProfilePicture from "./UploadProfilePicture";
+import ViewOnlyUserDetails from "./ViewOnlyUserDetails";
+import EditUserDetails from "./EditUserDetails";
 
 export default function UserSettings() {
-	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
 	const toast = useToast();
 	const user = useTypedSelector(selectCurrentUser);
-	// const [setProfilePicture] = useSetProfilePictureMutation();
-	// const [changeUsername] = useChangeUsernameMutation();
-	// const [changeFirstName] = useChangeFirstNameMutation();
-	// const [changeLastName] = useChangeLastNameMutation();
-	// const [changeEmail] = useChangeEmailMutation();
+	const [mode, SetMode] = React.useState("view");
 
 	return (
 		<Flex
@@ -102,7 +100,14 @@ export default function UserSettings() {
 				rounded={"lg"}
 				p={12}
 				textAlign={"center"}>
-				<EditProfilePicture />
+				<Avatar
+					size="2xl"
+					name={user?.username}
+					position={"relative"}
+					// src={user?.profilePicture}
+				>
+					<UploadProfilePicture />
+				</Avatar>
 				<Heading>{user?.username}</Heading>
 			</Box>
 			<TableContainer
@@ -113,23 +118,76 @@ export default function UserSettings() {
 				p={8}
 				textAlign={"center"}>
 				<Table variant="simple">
-					<TableCaption placement="top">User Settings</TableCaption>
-					<Tbody>
-						<Tr>
-							<Th>Full Name</Th>
-							<Td>
-								{user?.firstName} {user?.lastName}
-							</Td>
-						</Tr>
-						<Tr>
-							<Th>Email</Th>
-							<Td>{user?.email}</Td>
-						</Tr>
-						<Tr>
-							<Th>Date Joined</Th>
-							<Td>{FormatDate(user?.dateJoined as Date)}</Td>
-						</Tr>
-					</Tbody>
+					<TableCaption placement="top" px={2}>
+						<Flex
+							direction="row"
+							w="full"
+							justifyContent={"space-between"}
+							alignItems={"center"}
+							mx="auto">
+							<Heading size="md">User Settings</Heading>
+							{mode === "view" ? (
+								<IconButton
+									aria-label="Edit User Settings"
+									icon={<EditIcon />}
+									variant="unstyled"
+									rounded={"full"}
+									color={"gray.800"}
+									bg={"white"}
+									_hover={{
+										bg: "gray.100",
+										transform: "scale(1.1)",
+										borderRadius: "30%",
+									}}
+									onClick={() => {
+										SetMode("edit");
+									}}
+								/>
+							) : (
+								<ButtonGroup
+									justifyContent={"center"}
+									size="sm">
+									<IconButton
+										aria-label="Save Changes"
+										icon={<CheckIcon />}
+										variant="unstyled"
+										rounded={"full"}
+										color={"gray.800"}
+										bg={"white"}
+										_hover={{
+											bg: "gray.100",
+											transform: "scale(1.1)",
+											borderRadius: "30%",
+										}}
+										onClick={() => {
+											SetMode("view");
+										}}
+									/>
+									<IconButton
+										aria-label="Cancel Changes"
+										icon={<CloseIcon />}
+										variant="unstyled"
+										rounded={"full"}
+										color={"gray.800"}
+										bg={"white"}
+										_hover={{
+											bg: "gray.100",
+											transform: "scale(1.1)",
+											borderRadius: "30%",
+										}}
+										onClick={() => {
+											SetMode("view");
+										}}
+									/>
+								</ButtonGroup>
+							)}
+						</Flex>
+					</TableCaption>
+					{mode === "view" ? (
+						<ViewOnlyUserDetails />
+					) : (
+						<EditUserDetails />
+					)}
 				</Table>
 			</TableContainer>
 		</Flex>

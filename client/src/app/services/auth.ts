@@ -43,7 +43,7 @@ export const api = createApi({
 				headers.set("authorization", `Bearer ${token}`);
 				headers.set(
 					"Content-Type",
-					`multipart/form-data; boundary=${boundary}`
+					`multipart/form-data; boundary=<calculated when request is sent>`
 				);
 			}
 			return headers;
