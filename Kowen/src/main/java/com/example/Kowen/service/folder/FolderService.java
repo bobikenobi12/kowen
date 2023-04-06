@@ -7,5 +7,5 @@ import org.springframework.stereotype.Service;
 public interface FolderService {
     Folder changeName(Long folderId, String name) throws Exception;
 
-    Boolean deleteFolder(Long groupId, Long folderId) throws Exception;
+    Folder deleteFolder(Long groupId, Long folderId) throws Exception;
 }

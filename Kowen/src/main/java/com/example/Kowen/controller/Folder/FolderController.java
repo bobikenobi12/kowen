@@ -66,7 +66,7 @@ public class FolderController {
     }
 
     @PostMapping("/delete")
-    public Boolean deleteFolder(@RequestParam Long groupId, @RequestParam Long folderId) throws Exception {
+    public Folder deleteFolder(@RequestParam Long groupId, @RequestParam Long folderId) throws Exception {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails principal = (UserDetails) authentication.getPrincipal();
         User user =  userRepository.findByEmail(principal.getUsername()).get(0);

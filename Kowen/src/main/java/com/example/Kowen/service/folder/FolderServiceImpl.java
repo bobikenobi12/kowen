@@ -32,7 +32,7 @@ public class FolderServiceImpl implements FolderService{
     }
 
     @Override
-    public Boolean deleteFolder(Long groupId, Long folderId) throws Exception {
+    public Folder deleteFolder(Long groupId, Long folderId) throws Exception {
         UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
         Folder folder = folderRepo.findById(folderId).orElseThrow(Exception::new);
 
@@ -45,7 +45,7 @@ public class FolderServiceImpl implements FolderService{
             }
             folderRepo.delete(folder);
             groupRepo.save(group);
-            return Boolean.TRUE;
+            return folder;
         }
         else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no such folder in this group!");
     }
