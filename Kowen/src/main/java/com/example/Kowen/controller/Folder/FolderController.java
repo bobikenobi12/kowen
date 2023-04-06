@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.management.BadAttributeValueExpException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,6 +63,20 @@ public class FolderController {
         if (!group.getUsers().contains(user) && group.getCreator() != user) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not in this group!");
 
         return group.getFolders();
+    }
+
+    @PostMapping("/delete")
+    public Boolean deleteFolder(@RequestParam Long groupId, @RequestParam Long folderId) throws Exception {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        User user =  userRepository.findByEmail(principal.getUsername()).get(0);
+
+        UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
+
+        if (group.getCreator() == user){
+            return folderService.deleteFolder(groupId, folderId);
+        }
+        else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not creator of this group!");
     }
 
     //================================Changes===================================
