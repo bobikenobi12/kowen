@@ -83,7 +83,7 @@ export default function EditFolder({
 										isClosable: true,
 									});
 									onClose();
-									navigate(0);
+									// navigate(0);
 								} catch (err: any) {
 									toast({
 										title: "An error occurred.",
@@ -125,8 +125,8 @@ export default function EditFolder({
 										colorScheme="twitter"
 										variant="outline"
 										type="submit"
-										size="lg"
-										width="full">
+										mt={4}
+										size="lg">
 										Edit Folder
 									</Button>
 								</Form>

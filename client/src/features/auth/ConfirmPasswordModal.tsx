@@ -93,7 +93,10 @@ export default function EditProfile({
 									isClosable: true,
 								});
 								onClose();
-								navigate(0);
+								dispatch({
+									type: "auth/setUserProfileMode",
+									payload: "view",
+								});
 							} catch (err: any) {
 								toast({
 									title: "An error occurred.",
