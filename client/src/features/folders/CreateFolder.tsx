@@ -25,7 +25,7 @@ import { useTypedSelector } from "../../hooks/store";
 
 import { SaveFolderToGroupSchema } from "../../utils/ValidationSchemas";
 
-import { AddIcon } from "@chakra-ui/icons";
+import { FaFolderPlus } from "react-icons/fa";
 
 export default function SaveFolderToGroup({ groupId }: { groupId: number }) {
 	const { isOpen, onOpen, onClose } = useDisclosure();
@@ -39,15 +39,14 @@ export default function SaveFolderToGroup({ groupId }: { groupId: number }) {
 		<>
 			<IconButton
 				aria-label={"Save Folder To Group"}
-				rounded="full"
 				_hover={{
 					transform: "scale(1.1)",
-					borderRadius: "30%",
 				}}
 				bg={"none"}
 				mr={4}
-				icon={<Icon as={AddIcon} fontSize={"xl"} />}
+				icon={<Icon as={FaFolderPlus} fontSize={"xl"} />}
 				color={useColorModeValue("gray.500", "gray.400")}
+				variant="unstyled"
 				onClick={onOpen}
 			/>
 			<Modal isOpen={isOpen} onClose={onClose}>

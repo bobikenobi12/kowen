@@ -1,3 +1,5 @@
+import * as React from "react";
+
 import {
 	Flex,
 	VStack,
@@ -19,12 +21,9 @@ import {
 
 import { useNavigate } from "react-router-dom";
 
-import {
-	useGetFoldersInGroupQuery,
-	useSaveFolderToGroupMutation,
-} from "../../app/services/folders";
+import { useGetFoldersInGroupQuery } from "../../app/services/folders";
 
-import { useTypedSelector, useAppDispatch } from "../../hooks/store";
+import { useTypedSelector } from "../../hooks/store";
 import { selectCurrentGroup } from "./groupsSlice";
 import { selectFolders } from "../folders/folderSlice";
 import { selectCurrentUser } from "../auth/authSlice";
@@ -34,8 +33,10 @@ import {
 	SettingsIcon,
 	ChevronDownIcon,
 	InfoOutlineIcon,
-	DeleteIcon,
 } from "@chakra-ui/icons";
+import { FaFolder } from "react-icons/fa";
+
+import { FormatFolderName } from "../../utils/FormatFolderName";
 
 import EditFolder from "../folders/EditFolder";
 import CreateFolder from "../folders/CreateFolder";
@@ -49,8 +50,12 @@ export default function Group() {
 
 	useGetFoldersInGroupQuery(group!.id);
 	const { folders } = useTypedSelector(selectFolders);
-	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
+
+	const [hoveredFolder, setHoveredFolder] = React.useState<Folder | null>(
+		null
+	);
+
 	return (
 		// consists of 3 panes top mid and bottom
 		// top pane: group name and arrow down icon that opens a dropdown menu with group settings and leave group
@@ -132,28 +137,35 @@ export default function Group() {
 								w="full"
 								h={12}
 								p={4}
-								bg={useColorModeValue("gray.100", "gray.700")}>
-								<Icon
-									as={InfoOutlineIcon}
-									cursor="pointer"
-									_hover={{
-										transform: "scale(1.1)",
-										borderRadius: "30%",
-									}}
-									color="twitter.500"
-								/>
+								cursor={"pointer"}
+								bg={useColorModeValue("gray.100", "gray.700")}
+								onMouseEnter={() => {
+									setHoveredFolder(folder);
+								}}
+								onMouseLeave={() => {
+									setHoveredFolder(null);
+								}}>
+								<HStack alignItems={"center"}>
+									<Icon
+										as={FaFolder}
+										cursor="pointer"
+										color="twitter.500"
+									/>
 
-								<Text>{folder.name}</Text>
-								<HStack>
-									<EditFolder
-										groupId={group!.id}
-										folderId={folder.id}
-									/>
-									<DeleteFolder
-										folderId={folder.id}
-										groupId={group!.id}
-									/>
+									<Text>{FormatFolderName(folder.name)}</Text>
 								</HStack>
+								{hoveredFolder?.id === folder.id && (
+									<HStack>
+										<EditFolder
+											groupId={group!.id}
+											folderId={folder.id}
+										/>
+										<DeleteFolder
+											folderId={folder.id}
+											groupId={group!.id}
+										/>
+									</HStack>
+								)}
 							</Flex>
 						);
 					})
