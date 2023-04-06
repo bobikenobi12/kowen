@@ -48,6 +48,16 @@ export const api = createApi({
 				params: { name },
 			}),
 		}),
+		deleteFolderFromGroup: builder.mutation<
+			Folder,
+			{ groupId: number; folderId: number }
+		>({
+			query: ({ groupId, folderId }) => ({
+				url: `delete`,
+				method: "POST",
+				params: { groupId, folderId },
+			}),
+		}),
 	}),
 });
 
@@ -55,4 +65,5 @@ export const {
 	useSaveFolderToGroupMutation,
 	useGetFoldersInGroupQuery,
 	useChangeFolderNameMutation,
+	useDeleteFolderFromGroupMutation,
 } = api;

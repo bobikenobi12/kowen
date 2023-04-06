@@ -39,8 +39,7 @@ import {
 
 import EditFolder from "../folders/EditFolder";
 import CreateFolder from "../folders/CreateFolder";
-
-import CreateGroup from "./CreateGroup";
+import DeleteFolder from "../folders/DeleteFolder";
 
 import ThemeToggle from "../../components/common/ThemeToggle";
 
@@ -150,14 +149,9 @@ export default function Group() {
 										groupId={group!.id}
 										folderId={folder.id}
 									/>
-									<Icon
-										as={DeleteIcon}
-										cursor="pointer"
-										_hover={{
-											transform: "scale(1.1)",
-											borderRadius: "30%",
-										}}
-										color="red.500"
+									<DeleteFolder
+										folderId={folder.id}
+										groupId={group!.id}
 									/>
 								</HStack>
 							</Flex>

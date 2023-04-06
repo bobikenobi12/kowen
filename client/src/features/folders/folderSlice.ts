@@ -42,6 +42,16 @@ export const folderSlice = createSlice({
 				state.folders.folders[index] = folder;
 			}
 		);
+		builder.addMatcher(
+			api.endpoints.deleteFolderFromGroup.matchFulfilled,
+			(state, action) => {
+				const folder = action.payload as Folder;
+				const index = state.folders.folders.findIndex(
+					f => f.id === folder.id
+				);
+				state.folders.folders.splice(index, 1);
+			}
+		);
 	},
 });
 

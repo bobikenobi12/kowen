@@ -1,7 +1,5 @@
 import {
 	IconButton,
-	useColorModeValue,
-	AlertDialog,
 	Modal,
 	ModalOverlay,
 	ModalContent,
@@ -12,21 +10,20 @@ import {
 	FormLabel,
 	Input,
 	FormErrorMessage,
-	FormHelperText,
-	Text,
 	useToast,
 	useDisclosure,
 	Button,
+	FormHelperText,
 } from "@chakra-ui/react";
 
 import { EditIcon } from "@chakra-ui/icons";
 import { useChangeFolderNameMutation } from "../../app/services/folders";
-import { useTypedSelector, useAppDispatch } from "../../hooks/store";
+import { useTypedSelector } from "../../hooks/store";
 import { selectFolderById } from "./folderSlice";
 import { Formik, FormikProps, Form, Field } from "formik";
 import { EditFolderSchema } from "../../utils/ValidationSchemas";
 import { useNavigate } from "react-router-dom";
-import { selectCurrentGroup } from "../groups/groupsSlice";
+
 export default function EditFolder({
 	groupId,
 	folderId,
@@ -115,6 +112,11 @@ export default function EditFolder({
 												<FormErrorMessage>
 													{form.errors.name}
 												</FormErrorMessage>
+												<FormHelperText
+													textAlign="left"
+													fontSize="sm">
+													Old name: {folder?.name}
+												</FormHelperText>
 											</FormControl>
 										)}
 									</Field>
