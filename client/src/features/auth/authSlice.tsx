@@ -23,18 +23,18 @@ const slice = createSlice({
 	name: "auth",
 	initialState,
 	reducers: {
-		login: (state, { payload }) => {
-			state.user = payload.user;
-			localStorage.setItem("user", JSON.stringify(payload.user));
-			state.token = payload.token;
-			localStorage.setItem("token", JSON.stringify(payload.token));
-		},
-		logout: state => {
-			state.user = null;
-			state.token = null;
-			localStorage.removeItem("user");
-			localStorage.removeItem("token");
-		},
+		// login: (state, { payload }) => {
+		// 	state.user = payload.user;
+		// 	localStorage.setItem("user", JSON.stringify(payload.user));
+		// 	state.token = payload.token;
+		// 	localStorage.setItem("token", JSON.stringify(payload.token));
+		// },
+		// logout: state => {
+		// 	state.user = null;
+		// 	state.token = null;
+		// 	localStorage.removeItem("user");
+		// 	localStorage.removeItem("token");
+		// },
 		setUserProfileMode: (state, { payload }) => {
 			state.userProfileMode = payload;
 		},
