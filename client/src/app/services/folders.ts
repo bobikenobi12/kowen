@@ -23,6 +23,7 @@ export const api = createApi({
 			return headers;
 		},
 	}),
+	tagTypes: ["Folder"],
 	endpoints: builder => ({
 		saveFolderToGroup: builder.mutation<Folder, saveFolderToGroupRequest>({
 			query: ({ groupId, name }) => ({
@@ -30,6 +31,7 @@ export const api = createApi({
 				method: "POST",
 				params: { name },
 			}),
+			invalidatesTags: ["Folder"],
 		}),
 		getFoldersInGroup: builder.query<Folder[], number>({
 			query: groupId => ({
@@ -37,6 +39,16 @@ export const api = createApi({
 				method: "POST",
 				params: { groupId },
 			}),
+			providesTags: (result, error, arg) =>
+				result
+					? [
+							...result.map(({ id }) => ({
+								type: "Folder" as const,
+								id,
+							})),
+							"Folder",
+					  ]
+					: ["Folder"],
 		}),
 		changeFolderName: builder.mutation<
 			Folder,
@@ -47,6 +59,7 @@ export const api = createApi({
 				method: "POST",
 				params: { name },
 			}),
+			invalidatesTags: ["Folder"],
 		}),
 		deleteFolderFromGroup: builder.mutation<
 			Folder,
@@ -57,6 +70,7 @@ export const api = createApi({
 				method: "POST",
 				params: { groupId, folderId },
 			}),
+			invalidatesTags: ["Folder"],
 		}),
 	}),
 });

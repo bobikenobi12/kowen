@@ -19,40 +19,42 @@ export const folderSlice = createSlice({
 	name: "folders",
 	initialState,
 	reducers: {},
-	extraReducers: builder => {
-		builder.addMatcher(
-			api.endpoints.getFoldersInGroup.matchFulfilled,
-			(state, action) => {
-				state.folders.folders = action.payload as Folder[];
-			}
-		);
-		builder.addMatcher(
-			api.endpoints.saveFolderToGroup.matchFulfilled,
-			(state, action) => {
-				state.folders.folders.push(action.payload as Folder);
-			}
-		);
-		builder.addMatcher(
-			api.endpoints.changeFolderName.matchFulfilled,
-			(state, action) => {
-				const folder = action.payload as Folder;
-				const index = state.folders.folders.findIndex(
-					f => f.id === folder.id
-				);
-				state.folders.folders[index] = folder;
-			}
-		);
-		builder.addMatcher(
-			api.endpoints.deleteFolderFromGroup.matchFulfilled,
-			(state, action) => {
-				const folder = action.payload as Folder;
-				const index = state.folders.folders.findIndex(
-					f => f.id === folder.id
-				);
-				state.folders.folders.splice(index, 1);
-			}
-		);
-	},
+	// extraReducers: builder => {
+	// builder.addMatcher(
+	// 	api.endpoints.getFoldersInGroup.matchFulfilled,
+	// 	(state, action) => {
+	// 		state.folders.folders = action.payload as Folder[];
+	// 	}
+	// );
+	// builder.addMatcher(
+	// 	api.endpoints.saveFolderToGroup.matchFulfilled,
+	// 	(state, action) => {
+	// 		state.folders.folders.push(action.payload as Folder);
+	// 	}
+	// );
+	// builder.addMatcher(
+	// 	api.endpoints.changeFolderName.matchFulfilled,
+	// 	(state, action) => {
+	// 		const folder = action.payload as Folder;
+	// 		const index = state.folders.folders.findIndex(
+	// 			f => f.id === folder.id
+	// 		);
+	// 		state.folders.folders[index] = folder;
+	// 	}
+	// );
+	// builder.addMatcher(
+	// 	api.endpoints.deleteFolderFromGroup.matchFulfilled,
+	// 	(state, action) => {
+	// 		console.log("before delete", state.folders.folders);
+	// 		const folder = action.payload as Folder;
+	// 		const index = state.folders.folders.findIndex(
+	// 			f => f.id === folder.id
+	// 		);
+	// 		state.folders.folders.splice(index, 1);
+	// 		console.log("fater delete", state.folders.folders);
+	// 	}
+	// );
+	// },
 });
 
 export const selectFolders = (state: RootState) => state.folders.folders;

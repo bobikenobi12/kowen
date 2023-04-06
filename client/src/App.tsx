@@ -18,6 +18,7 @@ import Group from "./features/groups/Group";
 import Dashboard from "./components/Dashboard/Dashboard";
 
 import UserSettings from "./features/auth/UserSettings";
+import GroupSettings from "./features/groups/GroupSettings";
 
 import { useAppDispatch } from "./hooks/store";
 
@@ -36,6 +37,10 @@ function App() {
 					<Route path="home" element={<Navbar />} />
 					<Route path="dashboard" element={<Dashboard />} />
 					<Route path="user-settings" element={<UserSettings />} />
+					<Route
+						path="group-settings/:groupId"
+						element={<GroupSettings />}
+					/>
 				</Route>
 				<Route path="*" element={<NotFound />} />
 			</Routes>

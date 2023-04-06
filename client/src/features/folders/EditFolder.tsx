@@ -80,7 +80,6 @@ export default function EditFolder({
 										isClosable: true,
 									});
 									onClose();
-									// navigate(0);
 								} catch (err: any) {
 									toast({
 										title: "An error occurred.",

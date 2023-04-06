@@ -46,10 +46,15 @@ import ThemeToggle from "../../components/common/ThemeToggle";
 
 export default function Group() {
 	const group = useTypedSelector(selectCurrentGroup);
+	const [id, setId] = React.useState<number>(group?.id as number);
 	const user = useTypedSelector(selectCurrentUser);
+	const { data: folders } = useGetFoldersInGroupQuery(id);
 
-	useGetFoldersInGroupQuery(group!.id);
-	const { folders } = useTypedSelector(selectFolders);
+	React.useEffect(() => {
+		if (group) {
+			setId(group.id);
+		}
+	}, [group]);
 	const navigate = useNavigate();
 
 	const [hoveredFolder, setHoveredFolder] = React.useState<Folder | null>(
@@ -114,15 +119,18 @@ export default function Group() {
 				alignItems={"center"}
 				justifyContent={"space-between"}
 				bg={useColorModeValue("gray.100", "gray.700")}>
-				<Heading size="md" p={4}>
+				<Text
+					ml={4}
+					fontSize="sm"
+					as={"b"}
+					color={useColorModeValue("gray.500", "gray.400")}>
 					Folders
-				</Heading>
+				</Text>
 				<CreateFolder groupId={group!.id} />
 			</Flex>
 
 			<VStack
 				w="full"
-				py={4}
 				h="full"
 				gap={2}
 				bg={useColorModeValue("gray.100", "gray.700")}>

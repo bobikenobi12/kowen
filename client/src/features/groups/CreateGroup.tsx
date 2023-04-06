@@ -66,8 +66,6 @@ export default function CreateGroup() {
 							onSubmit={async (values, { setErrors }) => {
 								try {
 									await createGroup(values).unwrap();
-									onClose();
-									navigate(0);
 									toast({
 										title: "Group created.",
 										description:
@@ -76,6 +74,7 @@ export default function CreateGroup() {
 										duration: 9000,
 										isClosable: true,
 									});
+									onClose();
 								} catch (err) {
 									toast({
 										title: "An error occurred.",

@@ -79,6 +79,7 @@ export const api = createApi({
 			return headers;
 		},
 	}),
+	tagTypes: ["Group"],
 	endpoints: builder => ({
 		createGroup: builder.mutation<void, CreateGroupRequest>({
 			query: group => ({
@@ -86,12 +87,14 @@ export const api = createApi({
 				method: "POST",
 				body: group,
 			}),
+			invalidatesTags: ["Group"],
 		}),
 		showGroups: builder.query<Group[], void>({
 			query: () => ({
 				url: "showGroups",
 				method: "GET",
 			}),
+			providesTags: ["Group"],
 		}),
 		setGroupPicture: builder.mutation<void, setGroupPictureRequest>({
 			query: ({ groupId, picture }) => ({
@@ -99,6 +102,7 @@ export const api = createApi({
 				method: "POST",
 				params: { groupId, picture },
 			}),
+			invalidatesTags: ["Group"],
 		}),
 		saveGroupRole: builder.mutation<void, SaveGroupRoleRequest>({
 			query: role => ({

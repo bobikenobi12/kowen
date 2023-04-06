@@ -37,7 +37,6 @@ const slice = createSlice({
 			api.endpoints.showGroups.matchFulfilled,
 			(state, action) => {
 				state.groups = action.payload;
-				console.log(action.payload);
 			}
 		);
 	},
@@ -48,3 +47,5 @@ export default slice.reducer;
 export const selectGroups = (state: RootState) => state.groups.groups;
 export const selectCurrentGroup = (state: RootState) =>
 	state.groups.currentGroup;
+export const selectGroupById = (state: RootState, groupId: number) =>
+	state.groups.groups.find(group => group.id === groupId);

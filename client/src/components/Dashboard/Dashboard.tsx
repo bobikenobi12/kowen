@@ -1,19 +1,9 @@
 import * as React from "react";
 import { Routes, Route } from "react-router-dom";
-import {
-	Flex,
-	Avatar,
-	List,
-	ListItem,
-	Text,
-	Box,
-	useColorModeValue,
-} from "@chakra-ui/react";
+import { Flex, useColorModeValue } from "@chakra-ui/react";
 
 import { useAppDispatch, useTypedSelector } from "../../hooks/store";
 import { selectCurrentGroup } from "../../features/groups/groupsSlice";
-
-import Navbar from "../Navigation/Navbar";
 
 import Groups from "../../features/groups/Groups";
 import Group from "../../features/groups/Group";
@@ -21,18 +11,6 @@ import Group from "../../features/groups/Group";
 export default function Dashboard() {
 	const dispatch = useAppDispatch();
 	const currentGroup = useTypedSelector(selectCurrentGroup);
-
-	// Navbar shows and below it is a page consistion of 3 panes:
-	// left pane: list of groups (with avatars)
-	// middle pane: list of folders (with avatars)
-	// right pane: list of files (with avatars)
-	// make page not scrollable
-	// make left pane scrollable
-	// make middle pane scrollable
-	// make right pane scrollable
-	// make left pane fixed width
-	// make middle pane fixed width
-	// make right pane fixed width
 
 	return (
 		<Flex

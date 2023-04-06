@@ -20,7 +20,10 @@ import { Formik, Form, Field, FormikProps } from "formik";
 import { useNavigate } from "react-router-dom";
 import { useTypedSelector } from "../../hooks/store";
 import { selectFolderById } from "./folderSlice";
-import { useDeleteFolderFromGroupMutation } from "../../app/services/folders";
+import {
+	useDeleteFolderFromGroupMutation,
+	useGetFoldersInGroupQuery,
+} from "../../app/services/folders";
 
 import { DeleteIcon } from "@chakra-ui/icons";
 
