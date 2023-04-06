@@ -16,7 +16,7 @@ import {
 	Tooltip,
 } from "@chakra-ui/react";
 
-import * as React from "react";
+import { useNavigate } from "react-router-dom";
 
 import {
 	useGetFoldersInGroupQuery,
@@ -34,7 +34,6 @@ import {
 	ChevronDownIcon,
 	InfoOutlineIcon,
 	DeleteIcon,
-	EditIcon,
 } from "@chakra-ui/icons";
 
 import EditFolder from "../folders/EditFolder";
@@ -44,8 +43,10 @@ export default function Group() {
 	const group = useTypedSelector(selectCurrentGroup);
 	const user = useTypedSelector(selectCurrentUser);
 
-	const { data: folders } = useGetFoldersInGroupQuery(group!.id);
-
+	useGetFoldersInGroupQuery(group!.id);
+	const { folders } = useTypedSelector(selectFolders);
+	const dispatch = useAppDispatch();
+	const navigate = useNavigate();
 	return (
 		// consists of 3 panes top mid and bottom
 		// top pane: group name and arrow down icon that opens a dropdown menu with group settings and leave group
@@ -186,6 +187,9 @@ export default function Group() {
 							aria-label="User Settings"
 							icon={<SettingsIcon fontSize={"lg"} />}
 							variant="ghost"
+							onClick={() => {
+								navigate("/user-settings	");
+							}}
 						/>
 					</Tooltip>
 				</HStack>
