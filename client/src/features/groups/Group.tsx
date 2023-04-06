@@ -14,6 +14,7 @@ import {
 	CloseButton,
 	Icon,
 	Tooltip,
+	Heading,
 } from "@chakra-ui/react";
 
 import { useNavigate } from "react-router-dom";
@@ -37,6 +38,10 @@ import {
 } from "@chakra-ui/icons";
 
 import EditFolder from "../folders/EditFolder";
+import CreateFolder from "../folders/CreateFolder";
+
+import CreateGroup from "./CreateGroup";
+
 import ThemeToggle from "../../components/common/ThemeToggle";
 
 export default function Group() {
@@ -89,7 +94,7 @@ export default function Group() {
 								isActive={isOpen}
 								as={IconButton}
 								aria-label="Group Options">
-								Testing
+								<Text>{group?.name}</Text>
 							</MenuButton>
 							<MenuList>
 								<MenuItem>Group Settings</MenuItem>
@@ -99,6 +104,18 @@ export default function Group() {
 					)}
 				</Menu>
 			</Flex>
+			<Flex
+				direction="row"
+				w="full"
+				alignItems={"center"}
+				justifyContent={"space-between"}
+				bg={useColorModeValue("gray.100", "gray.700")}>
+				<Heading size="md" p={4}>
+					Folders
+				</Heading>
+				<CreateFolder groupId={group!.id} />
+			</Flex>
+
 			<VStack
 				w="full"
 				py={4}

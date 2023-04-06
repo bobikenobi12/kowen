@@ -23,7 +23,7 @@ import { HamburgerIcon, CloseIcon, BellIcon } from "@chakra-ui/icons";
 import DesktopNav from "./DesktopNav";
 import MobileNav from "./MobileNav";
 import ThemeToggle from "../common/ThemeToggle";
-import GroupModal from "../../features/groups/GroupActions";
+import GroupModal from "../../features/groups/CreateGroup";
 import Logout from "../../features/auth/Logout";
 
 export default function Navbar() {

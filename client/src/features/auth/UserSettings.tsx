@@ -27,8 +27,6 @@ import ViewOnlyUserDetails from "./ViewOnlyUserDetails";
 import EditUserDetails from "./EditUserDetails";
 
 export default function UserSettings() {
-	const navigate = useNavigate();
-	const toast = useToast();
 	const user = useTypedSelector(selectCurrentUser);
 	const userProfileMode = useTypedSelector(selectUserProfileMode);
 

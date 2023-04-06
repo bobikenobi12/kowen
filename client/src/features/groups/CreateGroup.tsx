@@ -1,7 +1,5 @@
-// a popup similar to the discord join/create server popup
-// this is the popup that appears when you click the "join/create" button
-
 import {
+	Tooltip,
 	Button,
 	FormControl,
 	FormLabel,
@@ -18,6 +16,7 @@ import {
 	useColorModeValue,
 	useToast,
 } from "@chakra-ui/react";
+
 import { useCreateGroupMutation } from "../../app/services/groups";
 import { Form, Formik, FormikProps } from "formik";
 import { CreateGroupRequest } from "../../app/services/groups";
@@ -27,7 +26,7 @@ import { AddIcon } from "@chakra-ui/icons";
 
 import { CreateGroupSchema } from "../../utils/ValidationSchemas";
 
-export default function GroupModal() {
+export default function CreateGroup() {
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const [createGroup] = useCreateGroupMutation();
 	const toast = useToast();
@@ -35,22 +34,26 @@ export default function GroupModal() {
 
 	return (
 		<>
-			<IconButton
-				size={{ base: "md", md: "lg", lg: "xl" }}
-				w={"full"}
-				p={6}
-				fontSize={"lg"}
-				borderRadius={"full"}
-				variant={"ghost"}
-				aria-label={"Create Group"}
-				bg={useColorModeValue("gray.200", "gray.500")}
-				_hover={{
-					bg: "green.500",
-					borderRadius: "30%",
-				}}
-				icon={<AddIcon />}
-				onClick={onOpen}
-			/>
+			<Tooltip
+				label="Create Group"
+				fontSize="md"
+				hasArrow
+				placement={"right"}>
+				<IconButton
+					size={{ base: "md", md: "lg" }}
+					aria-label={"Create Group"}
+					bg={useColorModeValue("gray.200", "gray.500")}
+					rounded="full"
+					_hover={{
+						bg: "green.500",
+						transform: "scale(1.1)",
+						borderRadius: "30%",
+					}}
+					py={{ base: 6, md: 8 }}
+					icon={<AddIcon fontSize={"xl"} />}
+					onClick={onOpen}
+				/>
+			</Tooltip>
 			<Modal isOpen={isOpen} onClose={onClose}>
 				<ModalOverlay />
 				<ModalContent>
@@ -130,8 +133,7 @@ export default function GroupModal() {
 										colorScheme="twitter"
 										variant="outline"
 										type="submit"
-										size="lg"
-										width="full">
+										size="lg">
 										Create Group
 									</Button>
 								</Form>
