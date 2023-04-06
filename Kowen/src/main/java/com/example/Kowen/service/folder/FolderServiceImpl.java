@@ -1,7 +1,9 @@
 package com.example.Kowen.service.folder;
 
+import com.example.Kowen.entity.Document;
 import com.example.Kowen.entity.Folder;
 import com.example.Kowen.entity.UserGroup;
+import com.example.Kowen.service.document.DocumentRepo;
 import com.example.Kowen.service.group.GroupRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,6 +21,9 @@ public class FolderServiceImpl implements FolderService{
     @Autowired
     private GroupRepo groupRepo;
 
+    @Autowired
+    private DocumentRepo documentRepo;
+
     @Override
     public Folder changeName(Long folderId, String name) throws Exception {
         Folder folder = folderRepo.findById(folderId).orElseThrow(Exception::new);
@@ -35,6 +40,9 @@ public class FolderServiceImpl implements FolderService{
             List<Folder> folders = group.getFolders();
             folders.remove(folder);
             group.setFolders(folders);
+            for(Document document : folder.getDocuments()){
+                documentRepo.delete(document);
+            }
             folderRepo.delete(folder);
             groupRepo.save(group);
             return Boolean.TRUE;
