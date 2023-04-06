@@ -2,6 +2,7 @@ package com.example.Kowen.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,6 +18,7 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "kowen")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class UserGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

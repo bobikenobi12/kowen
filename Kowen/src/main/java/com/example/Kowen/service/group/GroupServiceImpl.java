@@ -140,4 +140,26 @@ public class GroupServiceImpl implements GroupService {
         group.setDescription(descr);
         return groupRepo.save(group);
     }
+
+    @Override
+    public List<RoleWithUsers> getRolesWithUsers(Long groupId) throws Exception {
+        UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
+        List<RoleWithUsers> roleWithUsersList = new ArrayList<>();
+
+        for (User user : group.getUsers()){
+            RoleWithUsers roleWithUsers = new RoleWithUsers(user, null);
+            roleWithUsersList.add(roleWithUsers);
+        }
+
+        for (RoleWithUsers roleWithUsers : roleWithUsersList){
+            List<RoleInGroup> roles = new ArrayList<>();
+            for (RoleInGroup role : group.getRoleInGroup()){
+                if (role.getUserId().contains(roleWithUsers.getUser().getId())){
+                    roles.add(role);
+                    roleWithUsers.setRoles(roles);
+                }
+            }
+        }
+        return roleWithUsersList;
+    }
 }

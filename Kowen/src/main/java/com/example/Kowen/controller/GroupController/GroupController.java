@@ -12,6 +12,7 @@ import com.example.Kowen.entity.UserGroup;
 import com.example.Kowen.service.folder.FolderRepo;
 import com.example.Kowen.service.group.GroupRepo;
 import com.example.Kowen.service.group.GroupService;
+import com.example.Kowen.service.group.RoleWithUsers;
 import com.example.Kowen.service.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,6 +62,38 @@ public class GroupController {
             return groupService.create(groupRequest.getName(), groupRequest.getDescription(), creator);
 
         }
+
+    }
+
+    @PostMapping("/leaveGroup/{groupId}")
+    public Boolean leaveGroup(@PathVariable Long groupId) throws Exception {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        User user =  userRepository.findByEmail(principal.getUsername()).get(0);
+
+        UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
+
+        if (user.getUserGroups().contains(group) || user.getGroups().contains(group)){
+            if (group.getCreator() == user){
+                List<UserGroup> groups = user.getGroups();
+                groups.remove(group);
+                user.setGroups(groups);
+                userRepository.save(user);
+                groupRepo.deleteById(group.getId());
+                return true;
+            }
+            else {
+                List<UserGroup> groups = user.getUserGroups();
+                groups.remove(group);
+                user.setUserGroups(groups);
+                userRepository.save(user);
+                List<User> users = group.getUsers();
+                users.remove(user);
+                groupRepo.save(group);
+                return true;
+            }
+        }
+        else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no such group!");
 
     }
 
@@ -145,7 +179,8 @@ public class GroupController {
         UserDetails principal = (UserDetails) authentication.getPrincipal();
         User user =  userRepository.findByEmail(principal.getUsername()).get(0);
 
-        User userToAdd = userRepository.findById(groupId.getUserId()).orElseThrow(Exception::new);
+        if (userRepository.findByUsername(groupId.getUsername()).isEmpty()) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no user with username: " + groupId.getUsername());
+        User userToAdd = userRepository.findByUsername(groupId.getUsername()).get(0);
         UserGroup group = groupRepo.findById(groupId.getGroupId()).orElseThrow(Exception::new);
 
         if (user == group.getCreator()){
@@ -248,6 +283,11 @@ public class GroupController {
             return groupService.changeDescr(groupId, description);
         }
         else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not able to change group description!");
+    }
+
+    @GetMapping("/getRolesWithUsers/{groupId}")
+    public List<RoleWithUsers> getRolesWithUsers(@PathVariable Long groupId) throws Exception {
+        return groupService.getRolesWithUsers(groupId);
     }
 }
 
