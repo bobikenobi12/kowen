@@ -12,7 +12,7 @@ import {
 import { useShowGroupsQuery } from "../../app/services/groups";
 import { useGetFoldersInGroupQuery } from "../../app/services/folders";
 
-import GroupModal from "./GroupActions";
+import GroupModal from "./CreateGroup";
 
 import { useTypedSelector, useAppDispatch } from "../../hooks/store";
 import { selectGroups } from "./groupsSlice";

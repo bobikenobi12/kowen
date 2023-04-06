@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { RootState } from "../store";
 
-export interface saveFolderToGroup {
+export interface saveFolderToGroupRequest {
 	groupId: number;
 	name: string;
 }
@@ -24,7 +24,7 @@ export const api = createApi({
 		},
 	}),
 	endpoints: builder => ({
-		saveFolderToGroup: builder.mutation<Folder, saveFolderToGroup>({
+		saveFolderToGroup: builder.mutation<Folder, saveFolderToGroupRequest>({
 			query: ({ groupId, name }) => ({
 				url: `saveTo/group/${groupId}`,
 				method: "POST",

@@ -34,9 +34,6 @@ function App() {
 				</Route>
 				<Route path="/" element={<PrivateOutlet />}>
 					<Route path="home" element={<Navbar />} />
-					<Route path="groups" element={<Groups />} />
-					{/* when a group is clicked we want to dispatch the route to the store */}
-					<Route path="groups/:groupId" element={<Group />} />
 					<Route path="dashboard" element={<Dashboard />} />
 					<Route path="user-settings" element={<UserSettings />} />
 				</Route>

@@ -118,3 +118,7 @@ export const ValidateConfirmPasswordSchema = Yup.object().shape({
 		)
 		.required("Password is required"),
 });
+
+export const SaveFolderToGroupSchema = Yup.object().shape({
+	name: Yup.string().required("Folder name is required"),
+});
