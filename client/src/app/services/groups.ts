@@ -42,9 +42,6 @@ export interface Documents {
 	};
 }
 
-// groupPicture is a byte[] in the java backend.
-// Represented as an
-
 export interface Group {
 	id: number;
 	name: string;
@@ -67,6 +64,10 @@ export interface setGroupPictureRequest {
 	picture: any;
 }
 
+export interface RolesWithUsers {
+	role: Role;
+	users: User[];
+}
 export const api = createApi({
 	reducerPath: "groupsApi",
 	baseQuery: fetchBaseQuery({
@@ -96,6 +97,13 @@ export const api = createApi({
 			}),
 			providesTags: ["Group"],
 		}),
+		showGroup: builder.query<Group, number>({
+			query: groupId => ({
+				url: `showGroup/${groupId}`,
+				method: "GET",
+			}),
+			providesTags: ["Group"],
+		}),
 		setGroupPicture: builder.mutation<void, setGroupPictureRequest>({
 			query: ({ groupId, picture }) => ({
 				url: "setGroupPicture",
@@ -103,6 +111,12 @@ export const api = createApi({
 				params: { groupId, picture },
 			}),
 			invalidatesTags: ["Group"],
+		}),
+		getRolesWithUsers: builder.query<RolesWithUsers[], number>({
+			query: groupId => ({
+				url: `getRolesWithUsers/${groupId}`,
+				method: "GET",
+			}),
 		}),
 		saveGroupRole: builder.mutation<void, SaveGroupRoleRequest>({
 			query: role => ({
@@ -171,13 +185,22 @@ export const api = createApi({
 				method: "GET",
 			}),
 		}),
+		leaveGroup: builder.mutation<void, number>({
+			query: groupId => ({
+				url: `leaveGroup/${groupId}`,
+				method: "POST",
+			}),
+			invalidatesTags: ["Group"],
+		}),
 	}),
 });
 
 export const {
 	useCreateGroupMutation,
 	useShowGroupsQuery,
+	useShowGroupQuery,
 	useSetGroupPictureMutation,
+	useGetRolesWithUsersQuery,
 	useSaveGroupRoleMutation,
 	useSetGroupRoleToUserMutation,
 	useAddUserToGroupMutation,
@@ -188,5 +211,5 @@ export const {
 	useGetWaitingUsersQuery,
 	useGetGroupUsersQuery,
 	useGetDocumentsInGroupQuery,
-	usePrefetch,
+	useLeaveGroupMutation,
 } = api;
