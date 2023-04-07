@@ -16,12 +16,12 @@ import {
 	Icon,
 	Tooltip,
 	useToast,
+	Button,
 } from "@chakra-ui/react";
 
 import { useNavigate } from "react-router-dom";
 
 import { useGetFoldersInGroupQuery } from "../../app/services/folders";
-import { useLeaveGroupMutation } from "../../app/services/groups";
 
 import { useTypedSelector } from "../../hooks/store";
 import { selectCurrentGroup } from "./groupsSlice";
@@ -29,11 +29,7 @@ import { selectFolders } from "../folders/folderSlice";
 import { selectCurrentUser } from "../auth/authSlice";
 import { type Folder } from "../../app/services/folders";
 
-import {
-	SettingsIcon,
-	ChevronDownIcon,
-	InfoOutlineIcon,
-} from "@chakra-ui/icons";
+import { SettingsIcon, ChevronDownIcon } from "@chakra-ui/icons";
 import { FaFolder } from "react-icons/fa";
 
 import { FormatFolderName } from "../../utils/FormatFolderName";
@@ -41,6 +37,7 @@ import { FormatFolderName } from "../../utils/FormatFolderName";
 import EditFolder from "../folders/EditFolder";
 import CreateFolder from "../folders/CreateFolder";
 import DeleteFolder from "../folders/DeleteFolder";
+import GroupMenu from "./GroupMenu";
 
 import ThemeToggle from "../../components/common/ThemeToggle";
 
@@ -48,7 +45,6 @@ export default function Group() {
 	const group = useTypedSelector(selectCurrentGroup);
 	const user = useTypedSelector(selectCurrentUser);
 	const { data: folders } = useGetFoldersInGroupQuery(group!.id);
-	const [leaveGroup] = useLeaveGroupMutation();
 	const navigate = useNavigate();
 
 	const [hoveredFolder, setHoveredFolder] = React.useState<Folder | null>(
@@ -63,60 +59,7 @@ export default function Group() {
 			w="full"
 			h="full"
 			bg={useColorModeValue("gray.50", "inherit")}>
-			<Flex
-				direction="row"
-				w="full"
-				alignSelf={"flex-start"}
-				justifyContent={"space-between"}
-				alignItems={"center"}
-				bg={useColorModeValue("gray.200", "gray.600")}
-				shadow="md">
-				<Menu>
-					{({ isOpen }) => (
-						<>
-							<MenuButton
-								w="full"
-								p={3}
-								transition={"all .3s ease"}
-								rightIcon={
-									isOpen ? (
-										<CloseButton />
-									) : (
-										<IconButton
-											aria-label="Group Options"
-											icon={<ChevronDownIcon />}
-											variant="ghost"
-											size={"sm"}
-										/>
-									)
-								}
-								textAlign="left"
-								border={0}
-								isActive={isOpen}
-								as={IconButton}
-								aria-label="Group Options">
-								<Text>{group?.name}</Text>
-							</MenuButton>
-							<MenuList>
-								<MenuItem>Group Settings</MenuItem>
-								<MenuItem
-									onClick={async () => {
-										await leaveGroup(group!.id);
-										toast({
-											title: "Left Group",
-											description: `You have left the group ${group?.name}`,
-											status: "info",
-											duration: 5000,
-											isClosable: true,
-										});
-									}}>
-									Leave Group
-								</MenuItem>
-							</MenuList>
-						</>
-					)}
-				</Menu>
-			</Flex>
+			<GroupMenu />
 			<Flex
 				direction="row"
 				w="full"
