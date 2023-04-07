@@ -16,7 +16,9 @@ import { selectSelectedSection } from "../groupsSlice";
 import { type Group, useShowGroupQuery } from "../../../app/services/groups";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+
 import GroupOverview from "./Overview";
+import GroupRoles from "./Roles";
 
 export default function GroupSettings() {
 	const dispatch = useAppDispatch();
@@ -38,10 +40,30 @@ export default function GroupSettings() {
 				<Text fontSize="xl" fontWeight="bold" mb={4} textAlign="center">
 					{group?.name}
 				</Text>
-				<Button variant="ghost" colorScheme="blue" width="100%" mb={4}>
+				<Button
+					variant="ghost"
+					colorScheme="blue"
+					width="100%"
+					mb={4}
+					onClick={() => {
+						dispatch({
+							type: "groups/setSelectedSection",
+							payload: "overview",
+						});
+					}}>
 					Overview
 				</Button>
-				<Button variant="ghost" colorScheme="blue" width="100%" mb={4}>
+				<Button
+					variant="ghost"
+					colorScheme="blue"
+					width="100%"
+					mb={4}
+					onClick={() => {
+						dispatch({
+							type: "groups/setSelectedSection",
+							payload: "roles",
+						});
+					}}>
 					Roles
 				</Button>
 				<Divider />
@@ -63,6 +85,9 @@ export default function GroupSettings() {
 			<Flex direction="column" bg={bg} p={4} width="60%" height="100vh">
 				{group && selectedSection === "overview" && (
 					<GroupOverview group={group} />
+				)}
+				{group && selectedSection === "roles" && (
+					<GroupRoles group={group} />
 				)}
 			</Flex>
 			<Flex
@@ -86,6 +111,10 @@ export default function GroupSettings() {
 							dispatch({
 								type: "groups/setCurrentGroup",
 								payload: group as Group,
+							});
+							dispatch({
+								type: "groups/setSelectedSection",
+								payload: "overview",
 							});
 
 							navigate("/dashboard");

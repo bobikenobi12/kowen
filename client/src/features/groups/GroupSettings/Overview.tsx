@@ -4,18 +4,15 @@ import {
 	Text,
 	VStack,
 	Box,
-	Button,
 	useColorModeValue,
 	useToast,
 } from "@chakra-ui/react";
-import { useNavigate } from "react-router-dom";
-import { useTypedSelector, useAppDispatch } from "../../../hooks/store";
+import { useAppDispatch } from "../../../hooks/store";
 import { type Group } from "../../../app/services/groups";
 
 export default function GroupOverview({ group }: { group: Group }) {
 	const dispatch = useAppDispatch();
 
-	const navigate = useNavigate();
 	const toast = useToast();
 	const bg = useColorModeValue("white", "gray.800");
 

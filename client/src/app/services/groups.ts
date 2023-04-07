@@ -64,6 +64,10 @@ export interface setGroupPictureRequest {
 	picture: any;
 }
 
+export interface RolesWithUsers {
+	role: Role;
+	users: User[];
+}
 export const api = createApi({
 	reducerPath: "groupsApi",
 	baseQuery: fetchBaseQuery({
@@ -107,6 +111,12 @@ export const api = createApi({
 				params: { groupId, picture },
 			}),
 			invalidatesTags: ["Group"],
+		}),
+		getRolesWithUsers: builder.query<RolesWithUsers[], number>({
+			query: groupId => ({
+				url: `getRolesWithUsers/${groupId}`,
+				method: "GET",
+			}),
 		}),
 		saveGroupRole: builder.mutation<void, SaveGroupRoleRequest>({
 			query: role => ({
@@ -190,6 +200,7 @@ export const {
 	useShowGroupsQuery,
 	useShowGroupQuery,
 	useSetGroupPictureMutation,
+	useGetRolesWithUsersQuery,
 	useSaveGroupRoleMutation,
 	useSetGroupRoleToUserMutation,
 	useAddUserToGroupMutation,
