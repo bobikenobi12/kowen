@@ -289,5 +289,10 @@ public class GroupController {
     public List<RoleWithUsers> getRolesWithUsers(@PathVariable Long groupId) throws Exception {
         return groupService.getRolesWithUsers(groupId);
     }
+
+    @GetMapping("/getGroupById/{groupId}")
+    public UserGroup getGroupById(@PathVariable Long groupId) throws Exception {
+        return groupRepo.findById(groupId).orElseThrow(Exception::new);
+    }
 }
 
