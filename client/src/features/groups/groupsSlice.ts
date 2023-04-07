@@ -1,7 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { api } from "../../app/services/groups";
 import { RootState } from "../../app/store";
-import { type User } from "../../app/services/auth";
 import { type Group } from "../../app/services/groups";
 
 export interface GroupsState {
@@ -25,18 +24,23 @@ const slice = createSlice({
 				JSON.stringify(action.payload)
 			);
 		},
+		getFolderById(state, action: PayloadAction<number>) {
+			state.groups?.find(group => group.id === action.payload);
+		},
 	},
 	extraReducers: builder => {
-		builder.addMatcher(
-			api.endpoints.createGroup.matchFulfilled,
-			(state, action) => {
-				console.log(action);
-			}
-		);
 		builder.addMatcher(
 			api.endpoints.showGroups.matchFulfilled,
 			(state, action) => {
 				state.groups = action.payload;
+			}
+		);
+		builder.addMatcher(
+			api.endpoints.leaveGroup.matchFulfilled,
+			(state, action) => {
+				// set currentGroup to null if the user leaves the current group
+				state.currentGroup = null;
+				localStorage.removeItem("currentGroup");
 			}
 		);
 	},
@@ -48,4 +52,4 @@ export const selectGroups = (state: RootState) => state.groups.groups;
 export const selectCurrentGroup = (state: RootState) =>
 	state.groups.currentGroup;
 export const selectGroupById = (state: RootState, groupId: number) =>
-	state.groups.groups.find(group => group.id === groupId);
+	state.groups.groups?.find(group => group.id === groupId);

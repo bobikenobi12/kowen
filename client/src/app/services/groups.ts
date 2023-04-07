@@ -42,9 +42,6 @@ export interface Documents {
 	};
 }
 
-// groupPicture is a byte[] in the java backend.
-// Represented as an
-
 export interface Group {
 	id: number;
 	name: string;
@@ -171,6 +168,13 @@ export const api = createApi({
 				method: "GET",
 			}),
 		}),
+		leaveGroup: builder.mutation<void, number>({
+			query: groupId => ({
+				url: `leaveGroup/${groupId}`,
+				method: "POST",
+			}),
+			invalidatesTags: ["Group"],
+		}),
 	}),
 });
 
@@ -188,5 +192,5 @@ export const {
 	useGetWaitingUsersQuery,
 	useGetGroupUsersQuery,
 	useGetDocumentsInGroupQuery,
-	usePrefetch,
+	useLeaveGroupMutation,
 } = api;

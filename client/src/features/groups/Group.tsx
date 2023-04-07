@@ -11,17 +11,17 @@ import {
 	MenuList,
 	MenuItem,
 	useColorModeValue,
-	useToast,
 	HStack,
 	CloseButton,
 	Icon,
 	Tooltip,
-	Heading,
+	useToast,
 } from "@chakra-ui/react";
 
 import { useNavigate } from "react-router-dom";
 
 import { useGetFoldersInGroupQuery } from "../../app/services/folders";
+import { useLeaveGroupMutation } from "../../app/services/groups";
 
 import { useTypedSelector } from "../../hooks/store";
 import { selectCurrentGroup } from "./groupsSlice";
@@ -46,26 +46,18 @@ import ThemeToggle from "../../components/common/ThemeToggle";
 
 export default function Group() {
 	const group = useTypedSelector(selectCurrentGroup);
-	const [id, setId] = React.useState<number>(group?.id as number);
 	const user = useTypedSelector(selectCurrentUser);
-	const { data: folders } = useGetFoldersInGroupQuery(id);
-
-	React.useEffect(() => {
-		if (group) {
-			setId(group.id);
-		}
-	}, [group]);
+	const { data: folders } = useGetFoldersInGroupQuery(group!.id);
+	const [leaveGroup] = useLeaveGroupMutation();
 	const navigate = useNavigate();
 
 	const [hoveredFolder, setHoveredFolder] = React.useState<Folder | null>(
 		null
 	);
 
+	const toast = useToast();
+
 	return (
-		// consists of 3 panes top mid and bottom
-		// top pane: group name and arrow down icon that opens a dropdown menu with group settings and leave group
-		// mid pane: list of folders
-		// bottom pane: profile picture, username, first and last name, settings icon
 		<Flex
 			direction="column"
 			w="full"
@@ -79,7 +71,7 @@ export default function Group() {
 				alignItems={"center"}
 				bg={useColorModeValue("gray.200", "gray.600")}
 				shadow="md">
-				<Menu isLazy>
+				<Menu>
 					{({ isOpen }) => (
 						<>
 							<MenuButton
@@ -107,7 +99,19 @@ export default function Group() {
 							</MenuButton>
 							<MenuList>
 								<MenuItem>Group Settings</MenuItem>
-								<MenuItem>Leave Group</MenuItem>
+								<MenuItem
+									onClick={async () => {
+										await leaveGroup(group!.id);
+										toast({
+											title: "Left Group",
+											description: `You have left the group ${group?.name}`,
+											status: "info",
+											duration: 5000,
+											isClosable: true,
+										});
+									}}>
+									Leave Group
+								</MenuItem>
 							</MenuList>
 						</>
 					)}
