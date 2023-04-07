@@ -12,19 +12,12 @@ import Register from "./features/auth/Register";
 
 import NotFound from "./components/common/NotFound";
 
-import Groups from "./features/groups/Groups";
-import Group from "./features/groups/Group";
-
 import Dashboard from "./components/Dashboard/Dashboard";
 
 import UserSettings from "./features/auth/UserSettings";
-import GroupSettings from "./features/groups/GroupSettings";
-
-import { useAppDispatch } from "./hooks/store";
+import GroupSettings from "./features/groups/GroupSettings/GroupSettings";
 
 function App() {
-	const dispatch = useAppDispatch();
-
 	return (
 		<Box>
 			<Routes>
@@ -38,7 +31,7 @@ function App() {
 					<Route path="dashboard" element={<Dashboard />} />
 					<Route path="user-settings" element={<UserSettings />} />
 					<Route
-						path="group-settings/:groupId"
+						path="dashboard/group-settings/:groupId"
 						element={<GroupSettings />}
 					/>
 				</Route>

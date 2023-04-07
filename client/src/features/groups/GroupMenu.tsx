@@ -20,11 +20,14 @@ import { useLeaveGroupMutation } from "../../app/services/groups";
 import { useTypedSelector } from "../../hooks/store";
 import { selectCurrentGroup } from "./groupsSlice";
 
+import { useNavigate } from "react-router-dom";
+
 export default function GroupMenu() {
 	const [leaveGroup] = useLeaveGroupMutation();
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const group = useTypedSelector(selectCurrentGroup);
 	const toast = useToast();
+	const navigate = useNavigate();
 	return (
 		<Flex
 			direction="row"
@@ -61,7 +64,14 @@ export default function GroupMenu() {
 							<Text>{group?.name}</Text>
 						</MenuButton>
 						<MenuList>
-							<MenuItem>Group Settings</MenuItem>
+							<MenuItem
+								onClick={() => {
+									navigate(
+										`/dashboard/group-settings/${group?.id}`
+									);
+								}}>
+								Group Settings
+							</MenuItem>
 							<MenuItem
 								onClick={async () => {
 									await leaveGroup(group!.id);

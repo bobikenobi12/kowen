@@ -93,6 +93,13 @@ export const api = createApi({
 			}),
 			providesTags: ["Group"],
 		}),
+		showGroup: builder.query<Group, number>({
+			query: groupId => ({
+				url: `showGroup/${groupId}`,
+				method: "GET",
+			}),
+			providesTags: ["Group"],
+		}),
 		setGroupPicture: builder.mutation<void, setGroupPictureRequest>({
 			query: ({ groupId, picture }) => ({
 				url: "setGroupPicture",
@@ -181,6 +188,7 @@ export const api = createApi({
 export const {
 	useCreateGroupMutation,
 	useShowGroupsQuery,
+	useShowGroupQuery,
 	useSetGroupPictureMutation,
 	useSaveGroupRoleMutation,
 	useSetGroupRoleToUserMutation,

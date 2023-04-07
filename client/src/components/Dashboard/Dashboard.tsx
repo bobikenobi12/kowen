@@ -39,17 +39,19 @@ export default function Dashboard() {
 					bg={useColorModeValue("gray.100", "gray.700")}
 					wrap="wrap"
 					overflowY="scroll"
-					overflowX="hidden"
-					// position={"fixed"}
-					// left={{ base: "md", md: "lg" }}
-					// top={0}
-					// bottom={0}
-					// zIndex={10}
-					// shadow="md"
-				>
+					overflowX="hidden">
 					<Group />
 				</Flex>
 			)}
+			{/* <Flex
+				direction="column"
+				w="full"
+				h="full"
+				bg={useColorModeValue("gray.100", "gray.700")}
+				wrap="wrap"
+				overflowY="scroll"
+				overflowX="hidden"
+			> */}
 		</Flex>
 	);
 }
