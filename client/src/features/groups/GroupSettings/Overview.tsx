@@ -5,15 +5,10 @@ import {
 	VStack,
 	Box,
 	useColorModeValue,
-	useToast,
 } from "@chakra-ui/react";
-import { useAppDispatch } from "../../../hooks/store";
 import { type Group } from "../../../app/services/groups";
 
 export default function GroupOverview({ group }: { group: Group }) {
-	const dispatch = useAppDispatch();
-
-	const toast = useToast();
 	const bg = useColorModeValue("white", "gray.800");
 
 	return (

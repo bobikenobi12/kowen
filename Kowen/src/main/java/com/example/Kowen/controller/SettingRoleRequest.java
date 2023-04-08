@@ -6,5 +6,5 @@ import lombok.Getter;
 public class SettingRoleRequest {
     Long userId;
     Long groupId;
-    String roleName;
+    Long roleId;
 }

@@ -8,9 +8,11 @@ import java.util.List;
 @Service
 public interface GroupService {
     UserGroup create(String name, String description, User user);
+
     UserGroup saveGroupRole(Long groupId, RoleInGroupEntity role) throws Exception;
 
-    UserGroup setUserGroupRole(Long userId, Long groupId, String role) throws Exception;
+    UserGroup setUserGroupRole(Long userId, Long groupId, Long roleId) throws Exception;
+
     UserGroup addUserToGroup(User user, Long groupId) throws Exception;
 
     UserGroup requestGroup(User user, Long groupId) throws Exception;
@@ -24,6 +26,7 @@ public interface GroupService {
     List<Document> getDocumentsInGroup(Long groupId, Long folderId) throws Exception;
 
     UserGroup changeName(Long groupId, String name) throws Exception;
+
     UserGroup changeDescr(Long groupId, String descr) throws Exception;
 
     List<RoleWithUsers> getRolesWithUsers(Long groupId) throws Exception;

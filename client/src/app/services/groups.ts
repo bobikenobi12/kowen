@@ -8,19 +8,15 @@ export interface CreateGroupRequest {
 }
 
 export interface Role {
+	id: number;
 	name: string;
-	permissions: string[];
-}
-
-export interface SaveGroupRoleRequest {
-	groupId: number;
-	role: Role;
+	permissions: GroupRolePermissions[];
 }
 
 export interface SetGroupRoleToUserRequest {
 	groupId: number;
 	userId: number;
-	roleName: string;
+	roleId: number;
 }
 
 export interface Ids {
@@ -68,6 +64,26 @@ export interface RolesWithUsers {
 	role: Role;
 	users: User[];
 }
+
+export enum GroupRolePermissions {
+	can_view = "can_view",
+	can_edit = "can_edit",
+	can_delete = "can_delete",
+	can_add = "can_add",
+}
+
+export interface saveGroupRoleRequest {
+	groupId: number;
+	role: Partial<Role>;
+}
+
+export interface saveGroupRoleResponse {
+	id: number;
+	name: string;
+	permissions: GroupRolePermissions[];
+	users: User[] | [];
+}
+
 export const api = createApi({
 	reducerPath: "groupsApi",
 	baseQuery: fetchBaseQuery({
@@ -80,7 +96,7 @@ export const api = createApi({
 			return headers;
 		},
 	}),
-	tagTypes: ["Group"],
+	tagTypes: ["Group", "Roles"],
 	endpoints: builder => ({
 		createGroup: builder.mutation<void, CreateGroupRequest>({
 			query: group => ({
@@ -112,18 +128,23 @@ export const api = createApi({
 			}),
 			invalidatesTags: ["Group"],
 		}),
-		getRolesWithUsers: builder.query<RolesWithUsers[], number>({
+		getRolesWithUsers: builder.query<any, number>({
 			query: groupId => ({
 				url: `getRolesWithUsers/${groupId}`,
 				method: "GET",
 			}),
+			providesTags: ["Roles"],
 		}),
-		saveGroupRole: builder.mutation<void, SaveGroupRoleRequest>({
+		saveGroupRole: builder.mutation<
+			saveGroupRoleResponse,
+			saveGroupRoleRequest
+		>({
 			query: role => ({
 				url: "saveGroupRole",
 				method: "POST",
 				body: role,
 			}),
+			invalidatesTags: ["Roles"],
 		}),
 		setGroupRoleToUser: builder.mutation<void, SetGroupRoleToUserRequest>({
 			query: role => ({
@@ -132,11 +153,14 @@ export const api = createApi({
 				body: role,
 			}),
 		}),
-		addUserToGroup: builder.mutation<void, number>({
-			query: groupId => ({
+		addUserToGroup: builder.mutation<
+			void,
+			{ groupId: number; username: string }
+		>({
+			query: ({ groupId, username }) => ({
 				url: "addUserToGroup",
 				method: "POST",
-				body: groupId,
+				body: { groupId, username },
 			}),
 		}),
 		requestToJoinToGroup: builder.query<void, number>({
@@ -173,9 +197,9 @@ export const api = createApi({
 				method: "GET",
 			}),
 		}),
-		getGroupUsers: builder.query<User[], number>({
+		getUsersInGroup: builder.query<User[], number>({
 			query: groupId => ({
-				url: `getGroupUsers/${groupId}`,
+				url: `getUsersInGroup/${groupId}`,
 				method: "GET",
 			}),
 		}),
@@ -209,7 +233,7 @@ export const {
 	useDeclineUserToGroupMutation,
 	useRemoveUserFromGroupMutation,
 	useGetWaitingUsersQuery,
-	useGetGroupUsersQuery,
+	useGetUsersInGroupQuery,
 	useGetDocumentsInGroupQuery,
 	useLeaveGroupMutation,
 } = api;

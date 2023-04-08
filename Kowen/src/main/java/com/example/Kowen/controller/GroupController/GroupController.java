@@ -176,6 +176,22 @@ public class GroupController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not creator of this group!");
 
     }
+    // @GetMapping("/showGroupRoles/{groupId}")
+    // public List<Role> showGroupRoles(@PathVariable Long groupId) throws Exception
+    // {
+    // Authentication authentication =
+    // SecurityContextHolder.getContext().getAuthentication();
+    // UserDetails principal = (UserDetails) authentication.getPrincipal();
+    // User user = userRepository.findByEmail(principal.getUsername()).get(0);
+    // UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
+
+    // if (user.getUserGroups().contains(group) || user.getGroups().contains(group))
+    // {
+    // return group.getRoles();
+    // } else
+    // throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no such
+    // group!");
+    // }
 
     @PostMapping("/setGroupRoleToUser")
     public UserGroup setGroupRoleToUser(@RequestBody SettingRoleRequest settingRoleRequest) throws Exception {
@@ -185,14 +201,13 @@ public class GroupController {
         UserGroup group = groupRepo.findById(settingRoleRequest.getGroupId()).orElseThrow(Exception::new);
         if (user == group.getCreator()) {
             return groupService.setUserGroupRole(settingRoleRequest.getUserId(), settingRoleRequest.getGroupId(),
-                    settingRoleRequest.getRoleName());
+                    settingRoleRequest.getRoleId());
         } else
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not creator of this group!");
     }
 
     @PostMapping("/addUserToGroup")
-    public UserGroup addUserToGroup(@RequestBody Id groupId) throws Exception {// TODO: make quie for request joining
-                                                                               // group
+    public UserGroup addUserToGroup(@RequestBody Id groupId) throws Exception {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails principal = (UserDetails) authentication.getPrincipal();
         User user = userRepository.findByEmail(principal.getUsername()).get(0);

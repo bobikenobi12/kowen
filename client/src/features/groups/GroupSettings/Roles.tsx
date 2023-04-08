@@ -16,7 +16,6 @@ import {
 	Button,
 } from "@chakra-ui/react";
 
-import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useTypedSelector } from "../../../hooks/store";
 import {
 	type Group,
@@ -25,15 +24,9 @@ import {
 
 import { selectCurrentUser } from "../../auth/authSlice";
 
+import CreateGroupRole from "./CreateGroupRole";
+
 export default function GroupRoles({ group }: { group: Group }) {
-	const navigate = useNavigate();
-	const dispatch = useAppDispatch();
-	const { data: roles } = useGetRolesWithUsersQuery(group.id);
-	const user = useTypedSelector(selectCurrentUser);
-	console.log(roles);
-
-	const toast = useToast();
-
 	return (
 		<Box
 			w="full"
@@ -41,6 +34,7 @@ export default function GroupRoles({ group }: { group: Group }) {
 			bg={useColorModeValue("white", "gray.800")}
 			p={4}
 			rounded="md">
+			<CreateGroupRole group={group} />
 			<Table variant="simple">
 				<Thead>
 					<Tr>
@@ -50,16 +44,9 @@ export default function GroupRoles({ group }: { group: Group }) {
 					</Tr>
 				</Thead>
 				<Tbody>
-					{roles?.map(role => (
+					{group.roleInGroup.userId.map(role => (
 						<Tr>
-							<Td>{role.role.name}</Td>
-							<Td>{role.role.permissions}</Td>
-							<Td>
-								<HStack>
-									<Button>Edit</Button>
-									<Button>Delete</Button>
-								</HStack>
-							</Td>
+							<Td>{role}</Td>
 						</Tr>
 					))}
 				</Tbody>
