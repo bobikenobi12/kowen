@@ -326,11 +326,14 @@ public class GroupController {
 
     @GetMapping("/getRolesWithUsers/{groupId}")
     public List<RoleWithUsers> getRolesWithUsers(@PathVariable Long groupId) throws Exception {
-        return groupService.getRolesWithUsers(groupId);
-    }
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        User user = userRepository.findByEmail(principal.getUsername()).get(0);
+        UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
 
-    @GetMapping("/getGroupById/{groupId}")
-    public UserGroup getGroupById(@PathVariable Long groupId) throws Exception {
-        return groupRepo.findById(groupId).orElseThrow(Exception::new);
+        if (group.getCreator() == user){
+            return groupService.getRolesWithUsers(groupId);
+        }
+        else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not the creator of this group!");
     }
 }
