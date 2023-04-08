@@ -4,10 +4,7 @@ import com.example.Kowen.controller.GroupRequest;
 import com.example.Kowen.controller.Id;
 import com.example.Kowen.controller.RoleInGroupRequest;
 import com.example.Kowen.controller.SettingRoleRequest;
-import com.example.Kowen.entity.Document;
-import com.example.Kowen.entity.Folder;
-import com.example.Kowen.entity.User;
-import com.example.Kowen.entity.UserGroup;
+import com.example.Kowen.entity.*;
 import com.example.Kowen.service.folder.FolderRepo;
 import com.example.Kowen.service.group.GroupRepo;
 import com.example.Kowen.service.group.GroupService;
@@ -320,5 +317,18 @@ public class GroupController {
             return groupService.getRolesWithUsers(groupId);
         }
         else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not the creator of this group!");
+    }
+
+    @GetMapping("getRolers/{groupId}")
+    public List<RoleInGroup> getRolesInGroup(@PathVariable Long groupId) throws Exception {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        User user = userRepository.findByEmail(principal.getUsername()).get(0);
+        UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
+
+        if (user.getUserGroups().contains(group) || user.getGroups().contains(group)){
+            return groupService.getRolesInGroup(groupId);
+        }
+        else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not in this group!");
     }
 }

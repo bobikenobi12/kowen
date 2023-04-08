@@ -162,4 +162,10 @@ public class GroupServiceImpl implements GroupService {
         }
         return roleWithUsersList;
     }
+
+    @Override
+    public List<RoleInGroup> getRolesInGroup(Long groupId) throws Exception {
+        UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
+        return group.getRoleInGroup();
+    }
 }

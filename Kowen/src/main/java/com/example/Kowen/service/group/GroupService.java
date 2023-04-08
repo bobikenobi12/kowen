@@ -27,4 +27,6 @@ public interface GroupService {
     UserGroup changeDescr(Long groupId, String descr) throws Exception;
 
     List<RoleWithUsers> getRolesWithUsers(Long groupId) throws Exception;
+
+    List<RoleInGroup> getRolesInGroup(Long groupId) throws Exception;
 }
