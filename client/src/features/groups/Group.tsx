@@ -6,17 +6,11 @@ import {
 	Text,
 	Avatar,
 	IconButton,
-	Menu,
-	MenuButton,
-	MenuList,
-	MenuItem,
 	useColorModeValue,
 	HStack,
-	CloseButton,
 	Icon,
 	Tooltip,
 	useToast,
-	Button,
 } from "@chakra-ui/react";
 
 import { useNavigate } from "react-router-dom";
@@ -25,11 +19,10 @@ import { useGetFoldersInGroupQuery } from "../../app/services/folders";
 
 import { useTypedSelector } from "../../hooks/store";
 import { selectCurrentGroup } from "./groupsSlice";
-import { selectFolders } from "../folders/folderSlice";
 import { selectCurrentUser } from "../auth/authSlice";
 import { type Folder } from "../../app/services/folders";
 
-import { SettingsIcon, ChevronDownIcon } from "@chakra-ui/icons";
+import { SettingsIcon } from "@chakra-ui/icons";
 import { FaFolder } from "react-icons/fa";
 
 import { FormatFolderName } from "../../utils/FormatFolderName";
@@ -38,7 +31,6 @@ import EditFolder from "../folders/EditFolder";
 import CreateFolder from "../folders/CreateFolder";
 import DeleteFolder from "../folders/DeleteFolder";
 import GroupMenu from "./GroupMenu";
-
 import ThemeToggle from "../../components/common/ThemeToggle";
 
 export default function Group() {
@@ -50,8 +42,6 @@ export default function Group() {
 	const [hoveredFolder, setHoveredFolder] = React.useState<Folder | null>(
 		null
 	);
-
-	const toast = useToast();
 
 	return (
 		<Flex

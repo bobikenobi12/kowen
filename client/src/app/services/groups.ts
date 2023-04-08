@@ -182,6 +182,7 @@ export const api = createApi({
 				method: "POST",
 				body: { groupId, username },
 			}),
+			invalidatesTags: ["Group"],
 		}),
 		requestToJoinToGroup: builder.query<void, number>({
 			query: groupId => ({
