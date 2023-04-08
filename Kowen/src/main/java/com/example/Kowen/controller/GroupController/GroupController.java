@@ -8,6 +8,7 @@ import com.example.Kowen.entity.*;
 import com.example.Kowen.service.folder.FolderRepo;
 import com.example.Kowen.service.group.GroupRepo;
 import com.example.Kowen.service.group.GroupService;
+import com.example.Kowen.service.group.RoleInGroupRepo;
 import com.example.Kowen.service.group.RoleWithUsers;
 import com.example.Kowen.service.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,9 @@ public class GroupController {
 
     @Autowired
     private FolderRepo folderRepo;
+
+    @Autowired
+    private RoleInGroupRepo roleInGroupRepo;
 
     @PostMapping("/create")
     public UserGroup create(@RequestBody GroupRequest groupRequest) {
@@ -371,6 +375,27 @@ public class GroupController {
 
         if (group.getCreator() == user){
             return groupService.removeRoleFromGroup(groupId, roleId);
+        }
+        else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not the creator of this group!");
+    }
+
+    @PostMapping("/removeRoleFromUser")
+    public List<Long> removeRoleFromUser(@RequestParam Long groupId, @RequestParam Long roleId, @RequestParam Long userId) throws Exception {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        User user = userRepository.findByEmail(principal.getUsername()).get(0);
+        UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
+        User userInGroup = userRepository.findById(userId).orElseThrow(Exception::new);
+        RoleInGroup role = roleInGroupRepo.findById(roleId).orElseThrow(Exception::new);
+
+        if (group.getCreator() == user){
+            if (group.getUsers().contains(userInGroup)){
+                if (group.getRoleInGroup().contains(role)){
+                    return groupService.removeRoleFromUser(groupId, roleId, userId);
+                }
+                else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no such role in this group!");
+            }
+            else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no such user in this group!");
         }
         else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not the creator of this group!");
     }

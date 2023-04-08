@@ -208,4 +208,20 @@ public class GroupServiceImpl implements GroupService {
         }
         else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no such role in this group!");
     }
+
+    @Override
+    public List<Long> removeRoleFromUser(Long groupId, Long roleId, Long userId) throws Exception {
+        UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
+        User user = userRepository.findById(userId).orElseThrow(Exception::new);
+        RoleInGroup role = roleRepository.findById(roleId).orElseThrow(Exception::new);
+
+        if (role.getUserId().contains(userId)){
+            List<Long> ids = role.getUserId();
+            ids.remove(userId);
+            role.setUserId(ids);
+            roleRepository.save(role);
+            return ids;
+        }
+        else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This user hasn't this role!");
+    }
 }

@@ -37,4 +37,6 @@ public interface GroupService {
     List<User> removeUserFromGroup(Long groupId, Long userId) throws Exception;
 
     List<RoleInGroup> removeRoleFromGroup(Long groupId, Long roleId) throws Exception;
+
+    List<Long> removeRoleFromUser(Long groupId, Long roleId, Long userId) throws Exception;
 }
