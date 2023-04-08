@@ -177,6 +177,10 @@ public class GroupServiceImpl implements GroupService {
         if (group.getUsers().contains(user) && group.getCreator() != user){
             List<User> users = group.getUsers();
             users.remove(user);
+            List<UserGroup> groups = user.getUserGroups();
+            groups.remove(group);
+            user.setUserGroups(groups);
+            userRepository.save(user);
             group.setUsers(users);
             groupRepo.save(group);
             return users;

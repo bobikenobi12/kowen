@@ -1,6 +1,7 @@
 package com.example.Kowen.service.group;
 
 import com.example.Kowen.entity.*;
+import jdk.dynalink.linker.LinkerServices;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,4 +35,6 @@ public interface GroupService {
     List<RoleInGroup> getRolesInGroup(Long groupId) throws Exception;
 
     List<User> removeUserFromGroup(Long groupId, Long userId) throws Exception;
+
+//    List<RoleInGroup> removeRoleFromGroup
 }
