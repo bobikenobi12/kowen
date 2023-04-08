@@ -3,6 +3,7 @@ package com.example.Kowen.service.group;
 
 import com.example.Kowen.entity.*;
 import com.example.Kowen.service.folder.FolderRepo;
+import com.example.Kowen.service.role.RoleRepository;
 import com.example.Kowen.service.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,11 @@ public class GroupServiceImpl implements GroupService {
 
     @Autowired
     private FolderRepo folderRepo;
+
+
+    @Autowired
+    private RoleInGroupRepo roleRepository;
+
     @Override
     public UserGroup create(String name, String description, User user) {
         UserGroup userGroup = new UserGroup();
@@ -186,5 +192,20 @@ public class GroupServiceImpl implements GroupService {
             return users;
         }
         else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No group or user!");
+    }
+
+    @Override
+    public List<RoleInGroup> removeRoleFromGroup(Long groupId, Long roleId) throws Exception {
+        UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
+        RoleInGroup roleInGroup = roleRepository.findById(roleId).orElseThrow(Exception::new);
+
+        if (group.getRoleInGroup().contains(roleInGroup)){
+            List<RoleInGroup> rolesInGroup = group.getRoleInGroup();
+            rolesInGroup.remove(roleInGroup);
+            group.setRoleInGroup(rolesInGroup);
+            groupRepo.save(group);
+            return group.getRoleInGroup();
+        }
+        else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no such role in this group!");
     }
 }

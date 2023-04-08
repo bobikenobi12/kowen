@@ -22,6 +22,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.HandlerAdapter;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -356,6 +357,20 @@ public class GroupController {
 
         if (group.getCreator() == user){
             return groupService.removeUserFromGroup(groupId, userId);
+        }
+        else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not the creator of this group!");
+    }
+
+
+    @PostMapping("/removeRole")
+    public List<RoleInGroup> removeRoleFromGroup(@RequestParam Long groupId, Long roleId) throws Exception {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        User user = userRepository.findByEmail(principal.getUsername()).get(0);
+        UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
+
+        if (group.getCreator() == user){
+            return groupService.removeRoleFromGroup(groupId, roleId);
         }
         else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not the creator of this group!");
     }
