@@ -176,7 +176,7 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public List<User> removeUserFromGroup(Long groupId, Long userId) throws Exception{
+    public List<User> removeUserFromGroup(Long groupId, Long userId) throws Exception{//TODO: not changing roles
         UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
         User user = userRepository.findById(userId).orElseThrow(Exception::new);
 
@@ -188,6 +188,18 @@ public class GroupServiceImpl implements GroupService {
             user.setUserGroups(groups);
             userRepository.save(user);
             group.setUsers(users);
+
+            List<RoleInGroup> roles = group.getRoleInGroup();
+            List<RoleInGroup> newRoles = new ArrayList<>();
+            for (RoleInGroup role : roles){
+                List<Long> ids = role.getUserId();
+                if (role.getUserId().contains(userId)){
+                    ids.remove(userId);
+                }
+                role.setUserId(ids);
+                newRoles.add(role);
+            }
+            group.setRoleInGroup(newRoles);
             groupRepo.save(group);
             return users;
         }
