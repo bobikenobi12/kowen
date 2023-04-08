@@ -335,7 +335,7 @@ public class GroupController {
         else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not the creator of this group!");
     }
 
-    @GetMapping("getRolers/{groupId}")
+    @GetMapping("getRoles/{groupId}")
     public List<RoleInGroup> getRolesInGroup(@PathVariable Long groupId) throws Exception {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails principal = (UserDetails) authentication.getPrincipal();
