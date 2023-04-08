@@ -16,6 +16,7 @@ import {
 	Text,
 	useColorModeValue,
 	useToast,
+	Tooltip,
 } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
 
@@ -23,15 +24,16 @@ import { useTypedSelector } from "../../../hooks/store";
 
 import {
 	type Group,
-	useSetGroupRoleToUserMutation,
+	useGetRolesWithUsersQuery,
 } from "../../../app/services/groups";
 import { type User } from "../../../app/services/auth";
 import { selectCurrentUser } from "../../auth/authSlice";
 
+import RoleMenu from "./RoleMenu";
+
 export default function GroupMembers({ group }: { group: Group }) {
 	const user = useTypedSelector(selectCurrentUser) as User;
-	const [setGroupRoleToUser] = useSetGroupRoleToUserMutation();
-	const toast = useToast();
+	const { data: rolesWithUsers } = useGetRolesWithUsersQuery(group.id);
 
 	return (
 		<Box
@@ -70,59 +72,76 @@ export default function GroupMembers({ group }: { group: Group }) {
 						</Td>
 					</Tr>
 
-					{group.users.map(user => (
-						<Tr key={user.id}>
-							<Td>
-								<HStack spacing={4}>
-									<Avatar size="sm" name={user.username} />
-									<VStack align="start" spacing={1}>
-										<Text>
-											{user.firstName} {user.lastName}
-										</Text>
-										<Text fontSize="sm" color="gray.500">
-											{user.username}
-										</Text>
-									</VStack>
-								</HStack>
-							</Td>
-							<Td>
-								<Badge colorScheme="green">Member</Badge>
-								<IconButton
-									aria-label="Add Role To Member"
-									icon={<AddIcon />}
-									size="sm"
-									variant="ghost"
-									onClick={async () => {
-										try {
-											await setGroupRoleToUser({
-												groupId: group.id,
-												userId: parseInt(user.id),
-												roleId: 2,
-											});
-											toast({
-												title: "Role added to member",
-												description:
-													"The role was added to the member",
-												status: "success",
-												duration: 5000,
-												isClosable: true,
-											});
-										} catch (error) {
-											toast({
-												title: "Error adding role to member",
-
-												description:
-													"There was an error adding the role to the member",
-												status: "error",
-												duration: 5000,
-												isClosable: true,
-											});
-										}
-									}}
-								/>
-							</Td>
-						</Tr>
-					))}
+					{rolesWithUsers &&
+						rolesWithUsers.map(userWithRoles => (
+							<Tr key={userWithRoles.user.id}>
+								<Td>
+									<HStack spacing={4}>
+										<Avatar
+											size="sm"
+											name={userWithRoles.user.username}
+										/>
+										<VStack align="start" spacing={1}>
+											<Text>
+												{userWithRoles.user.firstName}{" "}
+												{userWithRoles.user.lastName}
+											</Text>
+											<Text
+												fontSize="sm"
+												color="gray.500">
+												{userWithRoles.user.username}
+											</Text>
+										</VStack>
+									</HStack>
+								</Td>
+								<Td>
+									<HStack spacing={4}>
+										<HStack spacing={2}>
+											{Array.from(
+												userWithRoles.roles.slice(0, 3)
+											).map(role => (
+												<Badge
+													colorScheme="green"
+													key={role.id}>
+													{role.roleUser.name}
+												</Badge>
+											))}
+											{userWithRoles.roles.length > 3 && (
+												<Tooltip
+													hasArrow
+													bg={useColorModeValue(
+														"white",
+														"gray.500"
+													)}
+													label={userWithRoles.roles
+														.slice(3)
+														.map(role => (
+															<Badge
+																colorScheme="green"
+																key={role.id}>
+																{
+																	role
+																		.roleUser
+																		.name
+																}
+															</Badge>
+														))}>
+													<Badge colorScheme="green">
+														{userWithRoles.roles
+															.length - 3}{" "}
+														more
+													</Badge>
+												</Tooltip>
+											)}
+										</HStack>
+										<RoleMenu
+											user={userWithRoles.user}
+											group={group}
+										/>
+									</HStack>
+								</Td>
+							</Tr>
+						))}
 				</Tbody>
 			</Table>
 		</Box>

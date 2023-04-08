@@ -84,6 +84,18 @@ export interface saveGroupRoleResponse {
 	users: User[] | [];
 }
 
+export interface getRolesInGroupResponse {
+	id: number;
+	name: string;
+	userId: number[];
+	roleUser: Role;
+}
+
+export interface getRolesWithUsers {
+	user: User;
+	roles: getRolesInGroupResponse[];
+}
+
 export const api = createApi({
 	reducerPath: "groupsApi",
 	baseQuery: fetchBaseQuery({
@@ -128,7 +140,7 @@ export const api = createApi({
 			}),
 			invalidatesTags: ["Group"],
 		}),
-		getRolesWithUsers: builder.query<any, number>({
+		getRolesWithUsers: builder.query<getRolesWithUsers[], number>({
 			query: groupId => ({
 				url: `getRolesWithUsers/${groupId}`,
 				method: "GET",
@@ -152,6 +164,14 @@ export const api = createApi({
 				method: "POST",
 				body: role,
 			}),
+			invalidatesTags: ["Roles"],
+		}),
+		getRolesInGroup: builder.query<getRolesInGroupResponse[], number>({
+			query: groupId => ({
+				url: `getRoles/${groupId}`,
+				method: "GET",
+			}),
+			providesTags: ["Roles"],
 		}),
 		addUserToGroup: builder.mutation<
 			void,
@@ -227,6 +247,7 @@ export const {
 	useGetRolesWithUsersQuery,
 	useSaveGroupRoleMutation,
 	useSetGroupRoleToUserMutation,
+	useGetRolesInGroupQuery,
 	useAddUserToGroupMutation,
 	useRequestToJoinToGroupQuery,
 	useAcceptUserToGroupMutation,
