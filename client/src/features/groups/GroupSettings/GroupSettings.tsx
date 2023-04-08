@@ -19,6 +19,7 @@ import { useNavigate } from "react-router-dom";
 
 import GroupOverview from "./Overview";
 import GroupRoles from "./Roles";
+import GroupMembers from "./Members";
 
 export default function GroupSettings() {
 	const dispatch = useAppDispatch();
@@ -75,7 +76,17 @@ export default function GroupSettings() {
 					textAlign="center">
 					User Management
 				</Text>
-				<Button variant="ghost" colorScheme="blue" width="100%" mb={4}>
+				<Button
+					variant="ghost"
+					colorScheme="blue"
+					width="100%"
+					mb={4}
+					onClick={() => {
+						dispatch({
+							type: "groups/setSelectedSection",
+							payload: "members",
+						});
+					}}>
 					Members
 				</Button>
 				<Button variant="ghost" colorScheme="blue" width="100%" mb={4}>
@@ -88,6 +99,9 @@ export default function GroupSettings() {
 				)}
 				{group && selectedSection === "roles" && (
 					<GroupRoles group={group} />
+				)}
+				{group && selectedSection === "members" && (
+					<GroupMembers group={group} />
 				)}
 			</Flex>
 			<Flex

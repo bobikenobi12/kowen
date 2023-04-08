@@ -16,7 +16,7 @@ export interface Role {
 export interface SetGroupRoleToUserRequest {
 	groupId: number;
 	userId: number;
-	roleName: string;
+	roleId: number;
 }
 
 export interface Ids {
@@ -128,7 +128,7 @@ export const api = createApi({
 			}),
 			invalidatesTags: ["Group"],
 		}),
-		getRolesWithUsers: builder.query<RolesWithUsers[], number>({
+		getRolesWithUsers: builder.query<any, number>({
 			query: groupId => ({
 				url: `getRolesWithUsers/${groupId}`,
 				method: "GET",
@@ -153,11 +153,14 @@ export const api = createApi({
 				body: role,
 			}),
 		}),
-		addUserToGroup: builder.mutation<void, number>({
-			query: groupId => ({
+		addUserToGroup: builder.mutation<
+			void,
+			{ groupId: number; username: string }
+		>({
+			query: ({ groupId, username }) => ({
 				url: "addUserToGroup",
 				method: "POST",
-				body: groupId,
+				body: { groupId, username },
 			}),
 		}),
 		requestToJoinToGroup: builder.query<void, number>({
@@ -194,9 +197,9 @@ export const api = createApi({
 				method: "GET",
 			}),
 		}),
-		getGroupUsers: builder.query<User[], number>({
+		getUsersInGroup: builder.query<User[], number>({
 			query: groupId => ({
-				url: `getGroupUsers/${groupId}`,
+				url: `getUsersInGroup/${groupId}`,
 				method: "GET",
 			}),
 		}),
@@ -230,7 +233,7 @@ export const {
 	useDeclineUserToGroupMutation,
 	useRemoveUserFromGroupMutation,
 	useGetWaitingUsersQuery,
-	useGetGroupUsersQuery,
+	useGetUsersInGroupQuery,
 	useGetDocumentsInGroupQuery,
 	useLeaveGroupMutation,
 } = api;
