@@ -46,14 +46,14 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public UserGroup setUserGroupRole(Long userId, Long groupId, String roleName) throws Exception {
+    public UserGroup setUserGroupRole(Long userId, Long groupId, Long roleId) throws Exception {
         UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
         User user = userRepository.findById(userId).orElseThrow(Exception::new);
 
         if (group.getUsers().contains(user)){
             List<RoleInGroup> roles = group.getRoleInGroup();
             for(RoleInGroup role : roles){
-                if(Objects.equals(role.getRoleUser().getName(), roleName)){
+                if(Objects.equals(role.getRoleUser().getId(), roleId)){
                     List<Long> ids = role.getUserId();
                     ids.add(userId);
                     role.setUserId(ids);
@@ -167,5 +167,20 @@ public class GroupServiceImpl implements GroupService {
     public List<RoleInGroup> getRolesInGroup(Long groupId) throws Exception {
         UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
         return group.getRoleInGroup();
+    }
+
+    @Override
+    public List<User> removeUserFromGroup(Long groupId, Long userId) throws Exception{
+        UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
+        User user = userRepository.findById(userId).orElseThrow(Exception::new);
+
+        if (group.getUsers().contains(user) && group.getCreator() != user){
+            List<User> users = group.getUsers();
+            users.remove(user);
+            group.setUsers(users);
+            groupRepo.save(group);
+            return users;
+        }
+        else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No group or user!");
     }
 }
