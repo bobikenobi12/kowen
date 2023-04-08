@@ -30,6 +30,7 @@ import { type User } from "../../../app/services/auth";
 import { selectCurrentUser } from "../../auth/authSlice";
 
 import RoleMenu from "./RoleMenu";
+import RemoveUserFromGroupModal from "./RemoveUserFromGroupModal";
 
 export default function GroupMembers({ group }: { group: Group }) {
 	const user = useTypedSelector(selectCurrentUser) as User;
@@ -135,6 +136,10 @@ export default function GroupMembers({ group }: { group: Group }) {
 											)}
 										</HStack>
 										<RoleMenu
+											user={userWithRoles.user}
+											group={group}
+										/>
+										<RemoveUserFromGroupModal
 											user={userWithRoles.user}
 											group={group}
 										/>

@@ -204,12 +204,16 @@ export const api = createApi({
 				body: ids,
 			}),
 		}),
-		removeUserFromGroup: builder.mutation<void, number[]>({
-			query: ids => ({
+		removeUserFromGroup: builder.mutation<
+			void,
+			{ groupId: number; userId: number }
+		>({
+			query: ({ groupId, userId }) => ({
 				url: "removeUser",
 				method: "POST",
-				body: ids,
+				params: { groupId, userId },
 			}),
+			invalidatesTags: ["Group", "Roles"],
 		}),
 		getWaitingUsers: builder.query<User[], number>({
 			query: groupId => ({
