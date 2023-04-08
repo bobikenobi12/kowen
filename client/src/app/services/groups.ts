@@ -8,13 +8,9 @@ export interface CreateGroupRequest {
 }
 
 export interface Role {
+	id: number;
 	name: string;
-	permissions: string[];
-}
-
-export interface SaveGroupRoleRequest {
-	groupId: number;
-	role: Role;
+	permissions: GroupRolePermissions[];
 }
 
 export interface SetGroupRoleToUserRequest {
@@ -68,6 +64,26 @@ export interface RolesWithUsers {
 	role: Role;
 	users: User[];
 }
+
+export enum GroupRolePermissions {
+	can_view = "can_view",
+	can_edit = "can_edit",
+	can_delete = "can_delete",
+	can_add = "can_add",
+}
+
+export interface saveGroupRoleRequest {
+	groupId: number;
+	role: Partial<Role>;
+}
+
+export interface saveGroupRoleResponse {
+	id: number;
+	name: string;
+	permissions: GroupRolePermissions[];
+	users: User[] | [];
+}
+
 export const api = createApi({
 	reducerPath: "groupsApi",
 	baseQuery: fetchBaseQuery({
@@ -80,7 +96,7 @@ export const api = createApi({
 			return headers;
 		},
 	}),
-	tagTypes: ["Group"],
+	tagTypes: ["Group", "Roles"],
 	endpoints: builder => ({
 		createGroup: builder.mutation<void, CreateGroupRequest>({
 			query: group => ({
@@ -117,13 +133,18 @@ export const api = createApi({
 				url: `getRolesWithUsers/${groupId}`,
 				method: "GET",
 			}),
+			providesTags: ["Roles"],
 		}),
-		saveGroupRole: builder.mutation<void, SaveGroupRoleRequest>({
+		saveGroupRole: builder.mutation<
+			saveGroupRoleResponse,
+			saveGroupRoleRequest
+		>({
 			query: role => ({
 				url: "saveGroupRole",
 				method: "POST",
 				body: role,
 			}),
+			invalidatesTags: ["Roles"],
 		}),
 		setGroupRoleToUser: builder.mutation<void, SetGroupRoleToUserRequest>({
 			query: role => ({

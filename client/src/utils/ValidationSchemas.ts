@@ -122,3 +122,17 @@ export const ValidateConfirmPasswordSchema = Yup.object().shape({
 export const SaveFolderToGroupSchema = Yup.object().shape({
 	name: Yup.string().required("Folder name is required"),
 });
+
+export const CreateGroupRoleSchema = Yup.object().shape({
+	name: Yup.string()
+		.min(3, "Role name must be at least 3 character long")
+		.max(30, "Role name must be at most 30 characters long")
+		.matches(
+			/^[a-zA-Z0-9 ]+$/,
+			"Role name must only contain alphanumeric characters and spaces"
+		)
+		.required("Role name is required"),
+	permissions: Yup.array()
+		.min(1, "At least one permission is required")
+		.required("Permissions are required"),
+});
