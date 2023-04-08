@@ -136,3 +136,14 @@ export const CreateGroupRoleSchema = Yup.object().shape({
 		.min(1, "At least one permission is required")
 		.required("Permissions are required"),
 });
+
+export const AddUserToGroup = Yup.object().shape({
+	username: Yup.string()
+		.min(1, "Username must be at least 1 character long")
+		.max(50, "Username must be at most 50 characters long")
+		.matches(
+			/^[a-zA-Z0-9]+$/,
+			"Username must only contain alphanumeric characters"
+		)
+		.required("Username is required"),
+});

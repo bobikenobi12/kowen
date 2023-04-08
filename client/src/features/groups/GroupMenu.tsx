@@ -22,6 +22,8 @@ import { selectCurrentGroup } from "./groupsSlice";
 
 import { useNavigate } from "react-router-dom";
 
+import AddUserToGroupModal from "./AddUserToGroupModal";
+
 export default function GroupMenu() {
 	const [leaveGroup] = useLeaveGroupMutation();
 	const { isOpen, onOpen, onClose } = useDisclosure();
@@ -71,6 +73,9 @@ export default function GroupMenu() {
 									);
 								}}>
 								Group Settings
+							</MenuItem>
+							<MenuItem>
+								<AddUserToGroupModal />
 							</MenuItem>
 							<MenuItem
 								onClick={async () => {
