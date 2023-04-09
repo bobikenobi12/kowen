@@ -16,7 +16,6 @@ import ThemeToggle from "./common/ThemeToggle";
 export default function CallToActionWithAnnotation() {
 	return (
 		<Container maxW={"3xl"}>
-			<ThemeToggle />
 			<Stack
 				as={Box}
 				textAlign={"center"}

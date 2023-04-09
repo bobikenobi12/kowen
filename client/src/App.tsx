@@ -26,10 +26,9 @@ function App() {
 					<Route path="/login" element={<Login />} />
 					<Route path="/register" element={<Register />} />
 				</Route>
-				<Route path="/" element={<PrivateOutlet />}>
-					<Route path="home" element={<Navbar />} />
-					<Route path="dashboard" element={<Dashboard />} />
-					<Route path="user-settings" element={<UserSettings />} />
+				<Route element={<PrivateOutlet />}>
+					<Route index path="/dashboard" element={<Dashboard />} />
+					<Route path="/user-settings" element={<UserSettings />} />
 					<Route
 						path="dashboard/group-settings/:groupId"
 						element={<GroupSettings />}

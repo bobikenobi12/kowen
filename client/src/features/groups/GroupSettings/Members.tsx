@@ -13,7 +13,6 @@ import {
 	Badge,
 	Text,
 	useColorModeValue,
-	Tooltip,
 	useToast,
 	Icon,
 } from "@chakra-ui/react";
@@ -99,74 +98,83 @@ export default function GroupMembers({ group }: { group: Group }) {
 								<Td>
 									<HStack spacing={4}>
 										<HStack spacing={2}>
-											{Array.from(
-												userWithRoles.roles.slice(0, 3)
-											).map(role => (
-												<Badge
-													colorScheme="green"
-													key={role.id}>
-													<HStack spacing={1}>
-														<Text>
-															{role.roleUser.name}
-														</Text>
-														<Icon
-															as={
-																IoMdRemoveCircleOutline
-															}
-															cursor="pointer"
-															size="sm"
-															_hover={{
-																transform:
-																	"scale(1.1)",
-																transition:
-																	"all 0.2s ease-in-out",
-																color: useColorModeValue(
-																	"red.500",
-																	"red.100"
-																),
-															}}
-															onClick={async () => {
-																try {
-																	await removeRoleFromUser(
-																		{
-																			groupId:
-																				group.id,
-																			roleId: role.id,
-																			userId: parseInt(
-																				userWithRoles
-																					.user
-																					.id
-																			),
+											{userWithRoles.roles &&
+												userWithRoles.roles.map(
+													role => (
+														<Badge
+															colorScheme="green"
+															key={role.id}>
+															<HStack spacing={1}>
+																<Text>
+																	{
+																		role
+																			.roleUser
+																			.name
+																	}
+																</Text>
+																<Icon
+																	as={
+																		IoMdRemoveCircleOutline
+																	}
+																	cursor="pointer"
+																	size="sm"
+																	_hover={{
+																		transform:
+																			"scale(1.1)",
+																		transition:
+																			"all 0.2s ease-in-out",
+																		color: useColorModeValue(
+																			"red.500",
+																			"red.100"
+																		),
+																	}}
+																	onClick={async () => {
+																		try {
+																			await removeRoleFromUser(
+																				{
+																					groupId:
+																						group.id,
+																					roleId: role.id,
+																					userId: parseInt(
+																						userWithRoles
+																							.user
+																							.id
+																					),
+																				}
+																			);
+																			toast(
+																				{
+																					title: "Role removed",
+																					description: `You have removed the role ${role.roleUser.name} from ${userWithRoles.user.username}`,
+																					status: "success",
+																					duration: 5000,
+																					isClosable:
+																						true,
+																				}
+																			);
+																		} catch (err) {
+																			console.log(
+																				err
+																			);
+																			toast(
+																				{
+																					title: "Error",
+																					description:
+																						"There was an error removing the role",
+																					status: "error",
+																					duration: 5000,
+																					isClosable:
+																						true,
+																				}
+																			);
 																		}
-																	);
-																	toast({
-																		title: "Role removed",
-																		description: `You have removed the role ${role.roleUser.name} from ${userWithRoles.user.username}`,
-																		status: "success",
-																		duration: 5000,
-																		isClosable:
-																			true,
-																	});
-																} catch (err) {
-																	console.log(
-																		err
-																	);
-																	toast({
-																		title: "Error",
-																		description:
-																			"There was an error removing the role",
-																		status: "error",
-																		duration: 5000,
-																		isClosable:
-																			true,
-																	});
-																}
-															}}
-														/>
-													</HStack>
-												</Badge>
-											))}
-											{userWithRoles.roles.length > 3 && (
+																	}}
+																/>
+															</HStack>
+														</Badge>
+													)
+												)}
+											{/* {userWithRoles.roles.length > 3 && (
 												<Tooltip
 													hasArrow
 													bg={useColorModeValue(
@@ -192,7 +200,7 @@ export default function GroupMembers({ group }: { group: Group }) {
 														more
 													</Badge>
 												</Tooltip>
-											)}
+											)} */}
 										</HStack>
 										<RoleMenu
 											user={userWithRoles.user}

@@ -27,7 +27,7 @@ export default function Groups() {
 	useShowGroupsQuery();
 
 	return (
-		<VStack w="full" h="full" bg={useColorModeValue("gray.50", "inherit")}>
+		<VStack w="full" h="full" bg={useColorModeValue("gray.100", "inherit")}>
 			{groups.map((group: Group) => (
 				<Tooltip
 					key={group.id}

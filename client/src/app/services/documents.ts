@@ -21,10 +21,17 @@ export interface saveNewDocumentVersion {
 	documentId: number;
 }
 
+export interface DocumentVersion {
+	id: number;
+	version: number;
+	documentContent: Blob;
+	document: Document;
+}
 export interface Document {
 	id: number;
 	name: string;
 	documentExtension: string;
+	versions: DocumentVersion[];
 	roles: getRolesInGroupResponse[];
 }
 

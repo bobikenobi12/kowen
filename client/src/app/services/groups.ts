@@ -131,7 +131,7 @@ export const api = createApi({
 				url: `getRolesWithUsers/${groupId}`,
 				method: "GET",
 			}),
-			providesTags: ["Roles"],
+			providesTags: ["Roles", "Group"],
 		}),
 		saveGroupRole: builder.mutation<
 			saveGroupRoleResponse,
