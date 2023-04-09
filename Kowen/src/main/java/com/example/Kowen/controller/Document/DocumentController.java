@@ -10,6 +10,7 @@ import com.example.Kowen.service.group.GroupService;
 import com.example.Kowen.service.group.RoleInGroupRepo;
 import com.example.Kowen.service.role.RoleRepository;
 import com.example.Kowen.service.user.UserRepository;
+import jakarta.xml.bind.DatatypeConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
@@ -24,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -241,6 +243,40 @@ public class DocumentController {
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no such document!");
     }
 
+    @GetMapping("getContent/{groupId}/{folderId}/{documentId}/{version}")
+    public String getContent(@PathVariable Long groupId, @PathVariable Long folderId, @PathVariable Long documentId, @PathVariable Long version) throws Exception {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        User user =  userRepository.findByEmail(principal.getUsername()).get(0);
+        UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
+        Folder folder = folderRepo.findById(folderId).orElseThrow(Exception::new);
+        Document document = documentRepo.findById(documentId).orElseThrow(Exception::new);
 
+        if (!group.getUsers().contains(user) && group.getCreator() != user) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not in this group!");
+        if (!group.getFolders().contains(folder)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no such folder!");
+        if (!folder.getDocuments().contains(document)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no folder in this group!");
+        Boolean errorFlag = Boolean.FALSE;
+        if (group.getCreator() != user){
+            for(RoleInGroup role : document.getRoles()){
+                if (role.getUserId().contains(user.getId())) {
+                    errorFlag = Boolean.FALSE;
+                    break;
+                }
+                errorFlag = Boolean.TRUE;
+            }
+        }
+
+
+
+        if (errorFlag) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You don't have permissions!");
+        for (DocumentVersion documentVersion : document.getVersions()){
+            if (documentVersion.getVersion().longValue() == version){
+                return new String(documentVersion.getDocumentContent(), StandardCharsets.UTF_8);
+            }
+        }
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no such version 2");
+
+
+    }
 
 }

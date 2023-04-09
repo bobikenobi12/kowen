@@ -399,4 +399,22 @@ public class GroupController {
         }
         else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not the creator of this group!");
     }
+
+    @GetMapping("/getUnassignedRoles/{groupId}/{userId}")
+    public List<RoleInGroup> getUnassignedRoles(@PathVariable Long groupId, @PathVariable Long userId) throws Exception {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        User user = userRepository.findByEmail(principal.getUsername()).get(0);
+        UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
+        User userInGroup = userRepository.findById(userId).orElseThrow(Exception::new);
+
+        if (group.getCreator() != user) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "you are not the creator of this group!");
+        if (!group.getUsers().contains(userInGroup)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no such user in this group@!");
+
+        List<RoleInGroup> roleInGroupList = new ArrayList<>();
+        for (RoleInGroup role : group.getRoleInGroup()){
+            if (!role.getUserId().contains(userId)) roleInGroupList.add(role);
+        }
+        return roleInGroupList;
+    }
 }

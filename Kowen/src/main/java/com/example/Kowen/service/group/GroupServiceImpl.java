@@ -176,7 +176,7 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public List<User> removeUserFromGroup(Long groupId, Long userId) throws Exception{//TODO: not changing roles
+    public List<User> removeUserFromGroup(Long groupId, Long userId) throws Exception{
         UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
         User user = userRepository.findById(userId).orElseThrow(Exception::new);
 
