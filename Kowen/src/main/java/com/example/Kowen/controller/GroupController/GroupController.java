@@ -5,6 +5,7 @@ import com.example.Kowen.controller.Id;
 import com.example.Kowen.controller.RoleInGroupRequest;
 import com.example.Kowen.controller.SettingRoleRequest;
 import com.example.Kowen.entity.*;
+import com.example.Kowen.enums.PermissionsEnum;
 import com.example.Kowen.service.folder.FolderRepo;
 import com.example.Kowen.service.group.GroupRepo;
 import com.example.Kowen.service.group.GroupService;
@@ -27,7 +28,9 @@ import org.springframework.web.servlet.HandlerAdapter;
 
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @CrossOrigin("http://localhost:5173/")
@@ -416,5 +419,43 @@ public class GroupController {
             if (!role.getUserId().contains(userId)) roleInGroupList.add(role);
         }
         return roleInGroupList;
+    }
+
+    @PostMapping("removePermissionFromRole/{groupId}/{roleId}")
+    public RoleInGroup removePermissionsFromRole(@PathVariable Long groupId, @PathVariable Long roleId, @RequestParam String permission) throws Exception {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        User user = userRepository.findByEmail(principal.getUsername()).get(0);
+        UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
+        RoleInGroup role = roleInGroupRepo.findById(roleId).orElseThrow(Exception::new);
+
+        if (group.getCreator() != user) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "you are not the creator of this group!");
+        if (!group.getRoleInGroup().contains(role)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no such role in this group!");
+        for(PermissionsEnum permissionEnum : role.getRoleUser().getPermissions()){
+            if (Objects.equals(permissionEnum.toString(), permission)){
+                Collection<PermissionsEnum> permissions = role.getRoleUser().getPermissions();
+                permissions.remove(permissionEnum);
+                role.getRoleUser().setPermissions(permissions);
+                roleInGroupRepo.save(role);
+                return role;
+            }
+        }
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no such permission in this role!");
+
+    }
+
+
+    @PostMapping("addPermissionToRole/{groupId}/{roleId}")
+    public RoleInGroup addPermissionsToRole(@PathVariable Long groupId, @PathVariable Long roleId, @RequestParam PermissionsEnum permission) throws Exception {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        User user = userRepository.findByEmail(principal.getUsername()).get(0);
+        UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
+        RoleInGroup role = roleInGroupRepo.findById(roleId).orElseThrow(Exception::new);
+
+        if (group.getCreator() != user) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "you are not the creator of this group!");
+        if (!group.getRoleInGroup().contains(role)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no such role in this group!");
+        role.getRoleUser().getPermissions().add(permission);
+        return roleInGroupRepo.save(role);
     }
 }
