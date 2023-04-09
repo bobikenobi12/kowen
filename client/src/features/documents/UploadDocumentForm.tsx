@@ -1,13 +1,12 @@
 import * as React from "react";
 import {
-	Box,
 	Button,
 	FormControl,
 	FormErrorMessage,
 	FormLabel,
-	Input,
-	Select,
 	Stack,
+	useToast,
+	Select,
 } from "@chakra-ui/react";
 import { Field, FieldProps, Form, Formik } from "formik";
 
@@ -26,16 +25,16 @@ import DocumentDropzone from "./DocumentDropzone";
 
 export default function UploadDocumentForm() {
 	const currentGroup = useTypedSelector(selectCurrentGroup) as Group;
-
 	const { data: roles } = useGetRolesInGroupQuery(currentGroup.id);
 	const currentFolder = useTypedSelector(selectCurrentFolder) as Folder;
 	const [saveDocument, { isLoading }] = useSaveDocumentMutation();
 
+	const toast = useToast();
 	return (
 		<Formik
 			initialValues={{
 				file: "",
-				roleIds: [],
+				roleIds: [] as number[],
 			}}
 			validationSchema={UploadDocumentSchema}
 			onSubmit={async (values, { setSubmitting, resetForm }) => {
@@ -44,13 +43,26 @@ export default function UploadDocumentForm() {
 				formData.append("file", values.file);
 				formData.append("folderId", currentFolder.id.toString());
 				formData.append("groupId", currentGroup.id.toString());
-				values.roleIds.forEach((roleId: string) => {
-					formData.append("roleIds", roleId);
+				values.roleIds.forEach((roleId: number) => {
+					formData.append("roleIds", roleId.toString());
 				});
 				try {
 					await saveDocument(formData).unwrap();
+					toast({
+						title: "Document uploaded.",
+						description: "Your document has been uploaded.",
+						status: "success",
+						duration: 9000,
+						isClosable: true,
+					});
 				} catch (err) {
-					console.log(err);
+					toast({
+						title: "An error occurred.",
+						description: "Unable to upload document.",
+						status: "error",
+						duration: 9000,
+						isClosable: true,
+					});
 				} finally {
 					setSubmitting(false);
 					resetForm();
@@ -74,11 +86,26 @@ export default function UploadDocumentForm() {
 									<FormLabel htmlFor={field.name}>
 										Roles
 									</FormLabel>
-									<Select
+									{/* <Select
 										{...field}
 										multiple
 										size="md"
-										placeholder="Select roles">
+										placeholder="Select roles"
+										value={values.roleIds}>
+										{roles &&
+											roles.map(role => (
+												<option
+													key={role.id}
+													value={role.roleUser.id}>
+													{role.roleUser.name}
+												</option>
+											))}
+									</Select> */}
+									<Select
+										multiple
+										{...field}
+										placeholder="Select roles"
+										value={values.roleIds.toString()}>
 										{roles &&
 											roles.map(role => (
 												<option

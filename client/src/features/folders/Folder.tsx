@@ -40,7 +40,7 @@ export default function Folder() {
 			direction="column"
 			w="full"
 			h="full"
-			bg={useColorModeValue("gray.50", "inherit")}>
+			bg={useColorModeValue("gray.100", "inherit")}>
 			<Flex
 				direction="row"
 				w="full"
@@ -48,7 +48,13 @@ export default function Folder() {
 				gap={10}
 				alignItems={"center"}
 				justifyContent={"space-between"}
-				bg={useColorModeValue("gray.100", "gray.700")}>
+				bg={useColorModeValue("gray.100", "gray.700")}
+				shadow="md"
+				style={{
+					position: "sticky",
+					top: 0,
+					zIndex: 1,
+				}}>
 				<Heading ml={4} size="md">
 					{folder.name}
 				</Heading>
@@ -60,7 +66,7 @@ export default function Folder() {
 				direction="column"
 				w="full"
 				h="full"
-				bg={useColorModeValue("gray.50", "inherit")}>
+				bg={useColorModeValue("gray.100", "inherit")}>
 				{documents &&
 					documents.map(document => {
 						return (
@@ -70,7 +76,15 @@ export default function Folder() {
 								p={2}
 								alignItems={"center"}
 								justifyContent={"space-between"}
-								bg={useColorModeValue("gray.100", "gray.700")}>
+								bg={useColorModeValue("gray.100", "gray.700")}
+								// make it pop
+								cursor="pointer"
+								_hover={{
+									bg: useColorModeValue(
+										"gray.200",
+										"gray.600"
+									),
+								}}>
 								<Text ml={4} size="md">
 									{document.name}
 								</Text>
