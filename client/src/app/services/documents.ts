@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { RootState } from "../store";
+import { type getRolesInGroupResponse, type Ids } from "./groups";
 
 export interface getDocuments {
 	file: File;
@@ -20,10 +21,17 @@ export interface saveNewDocumentVersion {
 	documentId: number;
 }
 
+export interface Document {
+	id: number;
+	name: string;
+	documentExtension: string;
+	roles: getRolesInGroupResponse[];
+}
+
 export const api = createApi({
 	reducerPath: "documentsApi",
 	baseQuery: fetchBaseQuery({
-		baseUrl: "http://localhost:8080/document/",
+		baseUrl: "http://localhost:8080/",
 		prepareHeaders: (headers, { getState }) => {
 			const token = (getState() as RootState).auth.token;
 			if (token) {
@@ -32,28 +40,33 @@ export const api = createApi({
 			return headers;
 		},
 	}),
+	tagTypes: ["Documents"],
 	endpoints: builder => ({
-		saveDocument: builder.mutation<void, getDocuments>({
-			query: ({ file, groupId, folderId, roleIds }) => ({
-				url: "save",
-				method: "POST",
-				params: {
-					file,
-					groupId,
-					folderId,
-					roleIds,
-				},
+		getDocumentsInGroup: builder.query<Document[], Ids>({
+			query: ({ groupId, folderId }) => ({
+				url: `group/getDocumentsInGroup/${groupId}/${folderId}`,
+				method: "GET",
 			}),
+			providesTags: ["Documents"],
 		}),
-		downloadDocument: builder.mutation<void, downloadDocument>({
+		saveDocument: builder.mutation<void, FormData>({
+			query: formData => ({
+				url: "document/save",
+				method: "POST",
+				body: formData,
+			}),
+			invalidatesTags: ["Documents"],
+		}),
+		// downLoad document response is supposed to be a ByteArrayResource
+		downloadDocument: builder.mutation<Blob, downloadDocument>({
 			query: ({ folderId, documentId, version }) => ({
-				url: `download/${folderId}/${documentId}/${version}`,
+				url: `document/download/${folderId}/${documentId}/${version}`,
 				method: "GET",
 			}),
 		}),
 		saveNewDocumentVersion: builder.mutation<void, saveNewDocumentVersion>({
 			query: ({ file, groupId, documentId }) => ({
-				url: "saveNewVersion",
+				url: "document/saveNewVersion",
 				method: "POST",
 				params: {
 					file,
@@ -61,11 +74,13 @@ export const api = createApi({
 					documentId,
 				},
 			}),
+			invalidatesTags: ["Documents"],
 		}),
 	}),
 });
 
 export const {
+	useGetDocumentsInGroupQuery,
 	useSaveDocumentMutation,
 	useDownloadDocumentMutation,
 	useSaveNewDocumentVersionMutation,

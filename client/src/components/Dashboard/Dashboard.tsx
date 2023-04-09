@@ -3,14 +3,18 @@ import { Routes, Route } from "react-router-dom";
 import { Flex, useColorModeValue } from "@chakra-ui/react";
 
 import { useAppDispatch, useTypedSelector } from "../../hooks/store";
-import { selectCurrentGroup } from "../../features/groups/groupsSlice";
+import {
+	selectCurrentGroup,
+	selectCurrentFolder,
+} from "../../features/groups/groupsSlice";
 
 import Groups from "../../features/groups/Groups";
 import Group from "../../features/groups/Group";
-
+import Folder from "../../features/folders/Folder";
 export default function Dashboard() {
 	const dispatch = useAppDispatch();
 	const currentGroup = useTypedSelector(selectCurrentGroup);
+	const currentFolder = useTypedSelector(selectCurrentFolder);
 
 	return (
 		<Flex
@@ -43,6 +47,19 @@ export default function Dashboard() {
 					<Group />
 				</Flex>
 			)}
+			{currentFolder && (
+				<Flex
+					direction="column"
+					w="fit-content"
+					h="full"
+					bg={useColorModeValue("gray.100", "gray.700")}
+					wrap="wrap"
+					overflowY="scroll"
+					overflowX="hidden">
+					<Folder />
+				</Flex>
+			)}
+
 			{/* <Flex
 				direction="column"
 				w="full"

@@ -23,20 +23,6 @@ export interface Ids {
 	groupId: number;
 	folderId: number;
 }
-export interface Documents {
-	id: number;
-	name: string;
-	documentExtension: string;
-	roles: {
-		id: number;
-		userId: number[];
-		roleUser: {
-			id: number;
-			name: string;
-			permissions: string[];
-		};
-	};
-}
 
 export interface Group {
 	id: number;
@@ -108,7 +94,7 @@ export const api = createApi({
 			return headers;
 		},
 	}),
-	tagTypes: ["Group", "Roles"],
+	tagTypes: ["Group", "Roles", "Folder", "Document"],
 	endpoints: builder => ({
 		createGroup: builder.mutation<void, CreateGroupRequest>({
 			query: group => ({
@@ -250,12 +236,6 @@ export const api = createApi({
 				method: "GET",
 			}),
 		}),
-		getDocumentsInGroup: builder.query<void, Ids>({
-			query: ({ groupId, folderId }) => ({
-				url: `getDocumentsInGroup/${groupId}/${folderId}`,
-				method: "GET",
-			}),
-		}),
 		leaveGroup: builder.mutation<void, number>({
 			query: groupId => ({
 				url: `leaveGroup/${groupId}`,
@@ -284,6 +264,5 @@ export const {
 	useRemoveUserFromGroupMutation,
 	useGetWaitingUsersQuery,
 	useGetUsersInGroupQuery,
-	useGetDocumentsInGroupQuery,
 	useLeaveGroupMutation,
 } = api;

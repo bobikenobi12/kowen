@@ -7,6 +7,7 @@ import authReducer from "../features/auth/authSlice";
 import groupsReducer from "../features/groups/groupsSlice";
 import routerReducer from "../features/router/routerSlice";
 import foldersReducer from "../features/folders/folderSlice";
+import documentReducer from "../features/documents/documentSlice";
 
 export const store = configureStore({
 	reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
 		groups: groupsReducer,
 		router: routerReducer,
 		folders: foldersReducer,
+		documents: documentReducer,
 		[authApi.reducerPath]: authApi.reducer,
 		[groupApi.reducerPath]: groupApi.reducer,
 		[folderApi.reducerPath]: folderApi.reducer,

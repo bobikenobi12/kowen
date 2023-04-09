@@ -17,7 +17,7 @@ import { useNavigate } from "react-router-dom";
 
 import { useGetFoldersInGroupQuery } from "../../app/services/folders";
 
-import { useTypedSelector } from "../../hooks/store";
+import { useTypedSelector, useAppDispatch } from "../../hooks/store";
 import { selectCurrentGroup } from "./groupsSlice";
 import { selectCurrentUser } from "../auth/authSlice";
 import { type Folder } from "../../app/services/folders";
@@ -38,6 +38,7 @@ export default function Group() {
 	const user = useTypedSelector(selectCurrentUser);
 	const { data: folders } = useGetFoldersInGroupQuery(group!.id);
 	const navigate = useNavigate();
+	const dispatch = useAppDispatch();
 
 	const [hoveredFolder, setHoveredFolder] = React.useState<Folder | null>(
 		null
@@ -89,6 +90,13 @@ export default function Group() {
 								}}
 								onMouseLeave={() => {
 									setHoveredFolder(null);
+								}}
+								onClick={() => {
+									// navigate(`/groups/${group!.id}/folders/${folder.id}`);
+									dispatch({
+										type: "groups/setCurrentFolder",
+										payload: folder,
+									});
 								}}>
 								<HStack alignItems={"center"}>
 									<Icon

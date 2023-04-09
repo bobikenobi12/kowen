@@ -147,3 +147,7 @@ export const AddUserToGroup = Yup.object().shape({
 		)
 		.required("Username is required"),
 });
+
+export const UploadDocumentSchema = Yup.object().shape({
+	file: Yup.mixed().required("A file is required"),
+});

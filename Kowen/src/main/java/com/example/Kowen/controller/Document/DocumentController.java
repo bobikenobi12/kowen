@@ -10,7 +10,6 @@ import com.example.Kowen.service.group.GroupService;
 import com.example.Kowen.service.group.RoleInGroupRepo;
 import com.example.Kowen.service.role.RoleRepository;
 import com.example.Kowen.service.user.UserRepository;
-import jakarta.xml.bind.DatatypeConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
@@ -25,7 +24,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -58,62 +56,62 @@ public class DocumentController {
     private FolderRepo folderRepo;
 
     @PostMapping("/save")
-    public Document save(@RequestParam(name = "file") MultipartFile file,@RequestParam Long groupId,@RequestParam Long folderId, @RequestParam List<Long> roleIds) throws Exception {
+    public Document save(@RequestParam(name = "file") MultipartFile file, @RequestParam Long groupId,
+            @RequestParam Long folderId, @RequestParam List<Long> roleIds) throws Exception {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails principal = (UserDetails) authentication.getPrincipal();
-        User user =  userRepository.findByEmail(principal.getUsername()).get(0);
+        User user = userRepository.findByEmail(principal.getUsername()).get(0);
         byte[] fileBytes = file.getBytes();
 
         Document document = new Document();
         document.setName(file.getOriginalFilename());
         document.setPublisher(user);
-//        document.setPublishingDate(new Date());
+        // document.setPublishingDate(new Date());
 
-
-//        document.setDocumentContent(fileBytes);
+        // document.setDocumentContent(fileBytes);
         DocumentVersion version = new DocumentVersion();
         version.setDocumentContent(fileBytes);
         version.setVersion(1L);
         version.setDocument(document);
 
-
         List<DocumentVersion> versions = new ArrayList<>();
         versions.add(version);
         document.setVersions(versions);
-
 
         document.setDocumentExtension(file.getContentType());
         List<RoleInGroup> roles = new ArrayList<>();
         UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
         Boolean continueFlag = Boolean.FALSE;
 
-        if(!group.getUsers().contains(user) && group.getCreator() != user) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tou are not in this group!");
-        if (group.getCreator() == user){
+        if (!group.getUsers().contains(user) && group.getCreator() != user)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tou are not in this group!");
+        if (group.getCreator() == user) {
             continueFlag = Boolean.TRUE;
-        }
-        else {
-            for (int i = 0; i < group.getRoleInGroup().size(); i++){
-                if (group.getRoleInGroup().get(i).getRoleUser().getPermissions().contains(PermissionsEnum.can_add) && group.getRoleInGroup().get(i).getUserId().contains(user.getId())){
+        } else {
+            for (int i = 0; i < group.getRoleInGroup().size(); i++) {
+                if (group.getRoleInGroup().get(i).getRoleUser().getPermissions().contains(PermissionsEnum.can_add)
+                        && group.getRoleInGroup().get(i).getUserId().contains(user.getId())) {
                     continueFlag = Boolean.TRUE;
                     break;
                 }
             }
-            if (continueFlag == Boolean.FALSE) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You don't have permissions to save add new document!");
+            if (continueFlag == Boolean.FALSE)
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "You don't have permissions to save add new document!");
         }
 
-
-        for(Long id : roleIds){
+        for (Long id : roleIds) {
             RoleInGroup role = roleInGroupRepo.findById(id).orElseThrow(Exception::new);
-            if (group.getRoleInGroup().contains(role)){
+            if (group.getRoleInGroup().contains(role)) {
                 roles.add(role);
-            }
-            else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no such role!");
+            } else
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no such role!");
 
         }
-
 
         Folder folder = folderRepo.findById(folderId).orElseThrow(Exception::new);
-        if (!group.getFolders().contains(folder)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "there is no such folder in this group");
+        if (!group.getFolders().contains(folder))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "there is no such folder in this group");
 
         document.setRoles(roles);
         documentRepo.save(document);
@@ -126,20 +124,23 @@ public class DocumentController {
     }
 
     @GetMapping("/download/{folderId}/{documentId}/{version}")
-    public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable("documentId") Long documentId, @PathVariable("version") Long version, @PathVariable("folderId") Long folderId) throws Exception {
+    public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable("documentId") Long documentId,
+            @PathVariable("version") Long version, @PathVariable("folderId") Long folderId) throws Exception {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails principal = (UserDetails) authentication.getPrincipal();
-        User user =  userRepository.findByEmail(principal.getUsername()).get(0);
+        User user = userRepository.findByEmail(principal.getUsername()).get(0);
         Document document = documentRepo.findById(documentId).orElseThrow(Exception::new);
         Folder folder = folderRepo.findById(folderId).orElseThrow(Exception::new);
 
-        for (int i = 0; i < user.getUserGroups().size(); i++){
-            if (!user.getUserGroups().get(i).getFolders().contains(folder) && i == user.getUserGroups().size() - 1) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no such folder");
+        for (int i = 0; i < user.getUserGroups().size(); i++) {
+            if (!user.getUserGroups().get(i).getFolders().contains(folder) && i == user.getUserGroups().size() - 1)
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no such folder");
 
-            if (user.getUserGroups().get(i).getFolders().get(user.getUserGroups().get(i).getFolders().indexOf(folder)).getDocuments().contains(document)){
-                for (int j = 0; j < document.getRoles().size(); j++){
-                    if (document.getRoles().get(j).getUserId().contains(user.getId())){
-                        byte[] fileBytes = document.getVersions().get((int)(version - 1)).getDocumentContent();
+            if (user.getUserGroups().get(i).getFolders().get(user.getUserGroups().get(i).getFolders().indexOf(folder))
+                    .getDocuments().contains(document)) {
+                for (int j = 0; j < document.getRoles().size(); j++) {
+                    if (document.getRoles().get(j).getUserId().contains(user.getId())) {
+                        byte[] fileBytes = document.getVersions().get((int) (version - 1)).getDocumentContent();
                         ByteArrayResource resource = new ByteArrayResource(fileBytes);
                         HttpHeaders headers = new HttpHeaders();
                         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
@@ -154,13 +155,15 @@ public class DocumentController {
                                 .body(resource);
                     }
                 }
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You don't have permissions to download this document!");
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "You don't have permissions to download this document!");
             }
 
         }
-        for (int i = 0; i < user.getGroups().size(); i++){
-            if (user.getGroups().get(i).getFolders().get(user.getGroups().get(i).getFolders().indexOf(folder)).getDocuments().contains(document)){
-                byte[] fileBytes = document.getVersions().get((int)(version - 1)).getDocumentContent();
+        for (int i = 0; i < user.getGroups().size(); i++) {
+            if (user.getGroups().get(i).getFolders().get(user.getGroups().get(i).getFolders().indexOf(folder))
+                    .getDocuments().contains(document)) {
+                byte[] fileBytes = document.getVersions().get((int) (version - 1)).getDocumentContent();
                 ByteArrayResource resource = new ByteArrayResource(fileBytes);
                 HttpHeaders headers = new HttpHeaders();
                 headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
@@ -179,33 +182,36 @@ public class DocumentController {
     }
 
     @PostMapping("/saveNewVersion")
-    public DocumentVersion saveNewVersion(@RequestParam(name = "file") MultipartFile file,@RequestParam Long groupId, @RequestParam Long documentId) throws Exception {
+    public DocumentVersion saveNewVersion(@RequestParam(name = "file") MultipartFile file, @RequestParam Long groupId,
+            @RequestParam Long documentId) throws Exception {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails principal = (UserDetails) authentication.getPrincipal();
-        User user =  userRepository.findByEmail(principal.getUsername()).get(0);
+        User user = userRepository.findByEmail(principal.getUsername()).get(0);
         byte[] fileBytes = file.getBytes();
         UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
         Document document = documentRepo.findById(documentId).orElseThrow(Exception::new);
         Boolean continueFlag = Boolean.FALSE;
 
-        if(!group.getUsers().contains(user) && group.getCreator() != user) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tou are not in this group!");
-        if (group.getCreator() == user){
+        if (!group.getUsers().contains(user) && group.getCreator() != user)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tou are not in this group!");
+        if (group.getCreator() == user) {
             continueFlag = Boolean.TRUE;
-        }
-        else {
-            for (int i = 0; i < group.getRoleInGroup().size(); i++){
-                if (group.getRoleInGroup().get(i).getRoleUser().getPermissions().contains(PermissionsEnum.can_add) && group.getRoleInGroup().get(i).getUserId().contains(user.getId())){
+        } else {
+            for (int i = 0; i < group.getRoleInGroup().size(); i++) {
+                if (group.getRoleInGroup().get(i).getRoleUser().getPermissions().contains(PermissionsEnum.can_add)
+                        && group.getRoleInGroup().get(i).getUserId().contains(user.getId())) {
                     continueFlag = Boolean.TRUE;
                     break;
                 }
             }
-            if (continueFlag == Boolean.FALSE) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You don't have permissions to save new version if this document!");
+            if (continueFlag == Boolean.FALSE)
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "You don't have permissions to save new version if this document!");
         }
         DocumentVersion version = new DocumentVersion();
         version.setDocumentContent(fileBytes);
         version.setVersion(document.getVersions().get(document.getVersions().size() - 1).getVersion() + 1);
         version.setDocument(document);
-
 
         List<DocumentVersion> versions = document.getVersions();
         versions.add(version);
@@ -213,26 +219,25 @@ public class DocumentController {
         document.setVersions(versions);
         documentRepo.save(document);
 
-
-
         return version;
     }
 
-    //==============================================================================================================
+    // ==============================================================================================================
 
     @PostMapping("/changeName/{groupId}/{documentId}")
-    public Document changeName(@PathVariable Long groupId, @PathVariable Long documentId, @RequestParam String name) throws Exception {
+    public Document changeName(@PathVariable Long groupId, @PathVariable Long documentId, @RequestParam String name)
+            throws Exception {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails principal = (UserDetails) authentication.getPrincipal();
-        User user =  userRepository.findByEmail(principal.getUsername()).get(0);
+        User user = userRepository.findByEmail(principal.getUsername()).get(0);
 
         UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
 
         Document document = documentRepo.findById(documentId).orElseThrow(Exception::new);
-        for (Folder folder : group.getFolders()){
-            if (folder.getDocuments().contains(document)){
-                for (RoleInGroup roleInGroup : group.getRoleInGroup()){
-                    if(roleInGroup.getUserId().contains(user.getId()) || group.getCreator() == user){
+        for (Folder folder : group.getFolders()) {
+            if (folder.getDocuments().contains(document)) {
+                for (RoleInGroup roleInGroup : group.getRoleInGroup()) {
+                    if (roleInGroup.getUserId().contains(user.getId()) || group.getCreator() == user) {
                         document.setName(name);
                         return documentRepo.save(document);
                     }
@@ -241,42 +246,6 @@ public class DocumentController {
             }
         }
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no such document!");
-    }
-
-    @GetMapping("getContent/{groupId}/{folderId}/{documentId}/{version}")
-    public String getContent(@PathVariable Long groupId, @PathVariable Long folderId, @PathVariable Long documentId, @PathVariable Long version) throws Exception {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetails principal = (UserDetails) authentication.getPrincipal();
-        User user =  userRepository.findByEmail(principal.getUsername()).get(0);
-        UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
-        Folder folder = folderRepo.findById(folderId).orElseThrow(Exception::new);
-        Document document = documentRepo.findById(documentId).orElseThrow(Exception::new);
-
-        if (!group.getUsers().contains(user) && group.getCreator() != user) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not in this group!");
-        if (!group.getFolders().contains(folder)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no such folder!");
-        if (!folder.getDocuments().contains(document)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no folder in this group!");
-        Boolean errorFlag = Boolean.FALSE;
-        if (group.getCreator() != user){
-            for(RoleInGroup role : document.getRoles()){
-                if (role.getUserId().contains(user.getId())) {
-                    errorFlag = Boolean.FALSE;
-                    break;
-                }
-                errorFlag = Boolean.TRUE;
-            }
-        }
-
-
-
-        if (errorFlag) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You don't have permissions!");
-        for (DocumentVersion documentVersion : document.getVersions()){
-            if (documentVersion.getVersion().longValue() == version){
-                return new String(documentVersion.getDocumentContent(), StandardCharsets.UTF_8);
-            }
-        }
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no such version 2");
-
-
     }
 
 }
