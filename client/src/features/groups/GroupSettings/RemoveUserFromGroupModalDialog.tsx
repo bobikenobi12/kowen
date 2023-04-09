@@ -10,13 +10,14 @@ import {
 	useToast,
 	useDisclosure,
 	IconButton,
+	CloseButton,
 } from "@chakra-ui/react";
 import {
 	type Group,
 	useRemoveUserFromGroupMutation,
 } from "../../../app/services/groups";
 import { User } from "../../../app/services/auth";
-import { DeleteIcon } from "@chakra-ui/icons";
+import { MdPersonRemove } from "react-icons/md";
 
 export default function RemoveUserFromGroupModal({
 	user,
@@ -33,8 +34,10 @@ export default function RemoveUserFromGroupModal({
 	return (
 		<>
 			<IconButton
+				colorScheme={"red"}
+				variant="outline"
 				aria-label="Remove user from group"
-				icon={<DeleteIcon />}
+				icon={<MdPersonRemove />}
 				onClick={onOpen}
 			/>
 			<AlertDialog
@@ -46,7 +49,12 @@ export default function RemoveUserFromGroupModal({
 						<AlertDialogHeader fontSize="lg" fontWeight="bold">
 							Remove {user.username} from group
 						</AlertDialogHeader>
-
+						<CloseButton
+							position="absolute"
+							right="8px"
+							top="8px"
+							onClick={onClose}
+						/>
 						<AlertDialogBody>
 							Are you sure? You can't undo this action afterwards.
 						</AlertDialogBody>

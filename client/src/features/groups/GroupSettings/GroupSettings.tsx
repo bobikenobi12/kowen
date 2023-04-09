@@ -36,7 +36,13 @@ export default function GroupSettings() {
 	const bg = useColorModeValue("white", "gray.800");
 
 	return (
-		<Flex direction="row" width="100%" height="100vh" overflow="hidden">
+		<Flex
+			direction="row"
+			width="100%"
+			height="100vh"
+			overflow="hidden"
+			alignItems={"center"}
+			justifyContent={"center"}>
 			<Flex direction="column" bg={bg} p={4} width="30%" height="100vh">
 				<Text fontSize="xl" fontWeight="bold" mb={4} textAlign="center">
 					{group?.name}

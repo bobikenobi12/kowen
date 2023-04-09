@@ -1,8 +1,6 @@
 import {
 	HStack,
-	Avatar,
 	Text,
-	VStack,
 	Box,
 	useColorModeValue,
 	useToast,
@@ -12,21 +10,25 @@ import {
 	Tr,
 	Th,
 	Td,
-	TableCaption,
-	Button,
+	List,
+	ListItem,
+	ListIcon,
 } from "@chakra-ui/react";
 
 import { useAppDispatch, useTypedSelector } from "../../../hooks/store";
 import {
 	type Group,
-	useGetRolesWithUsersQuery,
+	useGetRolesInGroupQuery,
 } from "../../../app/services/groups";
 
-import { selectCurrentUser } from "../../auth/authSlice";
-
 import CreateGroupRole from "./CreateGroupRole";
+import RemoveRoleFromGroupDialog from "./RemoveRoleFromGroupDialog";
 
 export default function GroupRoles({ group }: { group: Group }) {
+	const toast = useToast();
+	const dispatch = useAppDispatch();
+	const { data: roles, isLoading, error } = useGetRolesInGroupQuery(group.id);
+
 	return (
 		<Box
 			w="full"
@@ -44,11 +46,37 @@ export default function GroupRoles({ group }: { group: Group }) {
 					</Tr>
 				</Thead>
 				<Tbody>
-					{group.roleInGroup.userId.map(role => (
-						<Tr>
-							<Td>{role}</Td>
-						</Tr>
-					))}
+					{roles &&
+						roles.map(role => (
+							<Tr key={role.id}>
+								<Td>{role.roleUser.name}</Td>
+								<Td>
+									<List spacing={3} styleType="disc">
+										{role.roleUser.permissions.map(
+											(permission, idx) => (
+												<ListItem
+													key={idx}
+													fontSize="sm"
+													color={useColorModeValue(
+														"gray.600",
+														"gray.400"
+													)}>
+													{permission}
+												</ListItem>
+											)
+										)}
+									</List>
+								</Td>
+								<Td>
+									<HStack>
+										<RemoveRoleFromGroupDialog
+											group={group}
+											role={role.roleUser}
+										/>
+									</HStack>
+								</Td>
+							</Tr>
+						))}
 				</Tbody>
 			</Table>
 		</Box>

@@ -12,6 +12,7 @@ import {
 	useToast,
 	HStack,
 	Icon,
+	Button,
 } from "@chakra-ui/react";
 import { BsBoxArrowLeft } from "react-icons/bs";
 import { ChevronDownIcon } from "@chakra-ui/icons";
@@ -88,35 +89,17 @@ export default function GroupMenu() {
 										isClosable: true,
 									});
 								}}>
-								<HStack
-									p={2}
-									bg={useColorModeValue(
-										"gray.100",
-										"gray.700"
-									)}
-									color={useColorModeValue(
-										"red.300",
-										"red.700"
-									)}
-									_hover={{
-										bg: useColorModeValue(
-											"red.300",
-											"red.700"
-										),
-										color: useColorModeValue(
-											"gray.800",
-											"white"
-										),
-									}}
+								<Button
+									rightIcon={<BsBoxArrowLeft />}
+									colorScheme={"red"}
 									alignItems={"center"}
 									justifyContent={"space-between"}
 									w={"full"}
 									borderRadius={"md"}
 									cursor={"pointer"}
 									transition={"all .3s ease"}>
-									<Text as={"b"}>Leave Group</Text>
-									<Icon as={BsBoxArrowLeft} />
-								</HStack>
+									Leave Group
+								</Button>
 							</MenuItem>
 						</MenuList>
 					</>
