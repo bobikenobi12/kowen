@@ -17,8 +17,17 @@ export default function DocumentDropzone({ field, form, ...props }: any) {
 			<FormLabel htmlFor={field.name}>File</FormLabel>
 			<Box {...getRootProps()}>
 				<Input {...getInputProps()} />
-				<Box mt={2} mb={4}>
-					<Icon as={AiOutlineUpload} />
+				<Box
+					mt={2}
+					mb={4}
+					color="gray.500"
+					fontWeight="semibold"
+					p={4}
+					textAlign="center"
+					border="1px dashed"
+					borderColor="gray.300"
+					borderRadius="md">
+					<Icon as={AiOutlineUpload} fontSize="2xl" />
 				</Box>
 				{form.errors[field.name] && form.touched[field.name] && (
 					<Box mt={2} mb={4} color="red.500" fontWeight="semibold">

@@ -64,15 +64,11 @@ export const api = createApi({
 				method: "GET",
 			}),
 		}),
-		saveNewDocumentVersion: builder.mutation<void, saveNewDocumentVersion>({
-			query: ({ file, groupId, documentId }) => ({
+		saveNewDocumentVersion: builder.mutation<void, FormData>({
+			query: formData => ({
 				url: "document/saveNewVersion",
 				method: "POST",
-				params: {
-					file,
-					groupId,
-					documentId,
-				},
+				body: formData,
 			}),
 			invalidatesTags: ["Documents"],
 		}),

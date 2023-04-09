@@ -13,24 +13,36 @@ import {
 	FormLabel,
 	Input,
 	FormErrorMessage,
+	IconButton,
 } from "@chakra-ui/react";
+import { MdEditDocument } from "react-icons/md";
 
-import UploadDocumentForm from "./UploadDocumentForm";
+import SaveNewDocomentVersionForm from "./SaveNewDocumentVersionForm";
 
-export default function UploadDocument() {
+export default function SaveNewDocumentVersion({
+	documentId,
+}: {
+	documentId: number;
+}) {
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const toast = useToast();
 
 	return (
 		<>
-			<Button onClick={onOpen}>Upload Document</Button>
+			<IconButton
+				aria-label="Save New Document Version"
+				icon={<MdEditDocument />}
+				colorScheme="orange"
+				variant={"outline"}
+				onClick={onOpen}
+			/>
 			<Modal isOpen={isOpen} onClose={onClose}>
 				<ModalOverlay />
 				<ModalContent>
 					<ModalHeader>Upload Document</ModalHeader>
 					<ModalCloseButton />
 					<ModalBody>
-						<UploadDocumentForm />
+						<SaveNewDocomentVersionForm documentId={documentId} />
 					</ModalBody>
 				</ModalContent>
 			</Modal>

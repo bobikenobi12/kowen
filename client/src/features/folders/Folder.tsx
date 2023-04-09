@@ -12,13 +12,9 @@ import {
 	Text,
 } from "@chakra-ui/react";
 
-import { Link } from "react-router-dom";
-
 import { BsCloudDownload } from "react-icons/bs";
-import { AddIcon } from "@chakra-ui/icons";
 import { useTypedSelector } from "../../hooks/store";
 import { selectCurrentFolder, selectCurrentGroup } from "../groups/groupsSlice";
-import { selectCurrentUser } from "../auth/authSlice";
 import { type Folder } from "../../app/services/folders";
 import { type Group } from "../../app/services/groups";
 import {
@@ -28,6 +24,7 @@ import {
 } from "../../app/services/documents";
 
 import UploadDocument from "../documents/UploadDocument";
+import SaveNewDocumentVersion from "../documents/SaveNewDocumentVersion";
 
 export default function Folder() {
 	const folder = useTypedSelector(selectCurrentFolder) as Folder;
@@ -37,7 +34,6 @@ export default function Folder() {
 		folderId: folder.id,
 	}) as { data: Document[] };
 	const [downloadDocument] = useDownloadDocumentMutation();
-	const { isOpen, onOpen, onClose } = useDisclosure();
 
 	return (
 		<Flex
@@ -48,6 +44,8 @@ export default function Folder() {
 			<Flex
 				direction="row"
 				w="full"
+				p={2}
+				gap={10}
 				alignItems={"center"}
 				justifyContent={"space-between"}
 				bg={useColorModeValue("gray.100", "gray.700")}>
@@ -56,11 +54,6 @@ export default function Folder() {
 				</Heading>
 				<HStack mr={4}>
 					<UploadDocument />
-					<IconButton
-						aria-label="Create Document"
-						icon={<Icon as={BsCloudDownload} />}
-						onClick={onOpen}
-					/>
 				</HStack>
 			</Flex>
 			<Flex
@@ -74,6 +67,7 @@ export default function Folder() {
 							<HStack
 								key={document.id}
 								w="full"
+								p={2}
 								alignItems={"center"}
 								justifyContent={"space-between"}
 								bg={useColorModeValue("gray.100", "gray.700")}>
@@ -103,10 +97,8 @@ export default function Folder() {
 											}
 										}}
 									/>
-									<IconButton
-										aria-label="Delete Document"
-										icon={<Icon as={BsCloudDownload} />}
-										onClick={onOpen}
+									<SaveNewDocumentVersion
+										documentId={document.id}
 									/>
 								</HStack>
 							</HStack>
