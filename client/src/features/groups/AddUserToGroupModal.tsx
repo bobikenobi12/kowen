@@ -14,9 +14,10 @@ import {
 	FormLabel,
 	FormControl,
 	FormErrorMessage,
+	Text,
 } from "@chakra-ui/react";
 import { Formik, Form, FormikProps } from "formik";
-import { AddIcon } from "@chakra-ui/icons";
+import { IoMdPersonAdd } from "react-icons/io";
 import {
 	type Group,
 	useAddUserToGroupMutation,
@@ -34,11 +35,19 @@ export default function AddUserToGroupModal() {
 
 	return (
 		<>
-			<IconButton
+			<Button
+				w={"100%"}
+				colorScheme={"teal"}
 				aria-label="Add user to group"
-				icon={<AddIcon />}
 				onClick={onOpen}
-			/>
+				alignItems={"center"}
+				justifyContent={"space-between"}
+				borderRadius={"md"}
+				cursor={"pointer"}
+				transition={"all .3s ease"}>
+				<Text ml={2}>Add User</Text>
+				<IoMdPersonAdd />
+			</Button>
 			<Modal isOpen={isOpen} onClose={onClose}>
 				<ModalOverlay />
 				<ModalContent>
