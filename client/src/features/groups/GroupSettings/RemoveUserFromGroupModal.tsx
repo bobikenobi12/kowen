@@ -10,6 +10,7 @@ import {
 	useToast,
 	useDisclosure,
 	IconButton,
+	CloseButton,
 } from "@chakra-ui/react";
 import {
 	type Group,
@@ -48,7 +49,12 @@ export default function RemoveUserFromGroupModal({
 						<AlertDialogHeader fontSize="lg" fontWeight="bold">
 							Remove {user.username} from group
 						</AlertDialogHeader>
-
+						<CloseButton
+							position="absolute"
+							right="8px"
+							top="8px"
+							onClick={onClose}
+						/>
 						<AlertDialogBody>
 							Are you sure? You can't undo this action afterwards.
 						</AlertDialogBody>

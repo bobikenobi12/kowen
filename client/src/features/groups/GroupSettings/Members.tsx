@@ -23,7 +23,7 @@ import { IoMdRemoveCircleOutline } from "react-icons/io";
 import {
 	type Group,
 	useGetRolesWithUsersQuery,
-	useRemoveRoleFromGroupMutation,
+	useRemoveRoleFromUserMutation,
 } from "../../../app/services/groups";
 import { type User } from "../../../app/services/auth";
 import { selectCurrentUser } from "../../auth/authSlice";
@@ -34,7 +34,7 @@ import RemoveUserFromGroupModal from "./RemoveUserFromGroupModal";
 export default function GroupMembers({ group }: { group: Group }) {
 	const user = useTypedSelector(selectCurrentUser) as User;
 	const { data: rolesWithUsers } = useGetRolesWithUsersQuery(group.id);
-	const [removeRoleFromGroup] = useRemoveRoleFromGroupMutation();
+	const [removeRoleFromUser] = useRemoveRoleFromUserMutation();
 	const toast = useToast();
 
 	return (
@@ -127,11 +127,16 @@ export default function GroupMembers({ group }: { group: Group }) {
 															}}
 															onClick={async () => {
 																try {
-																	await removeRoleFromGroup(
+																	await removeRoleFromUser(
 																		{
 																			groupId:
 																				group.id,
 																			roleId: role.id,
+																			userId: parseInt(
+																				userWithRoles
+																					.user
+																					.id
+																			),
 																		}
 																	);
 																	toast({

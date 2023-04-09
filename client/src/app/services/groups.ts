@@ -184,6 +184,17 @@ export const api = createApi({
 			}),
 			invalidatesTags: ["Roles"],
 		}),
+		removeRoleFromUser: builder.mutation<
+			void,
+			{ groupId: number; userId: number; roleId: number }
+		>({
+			query: ({ groupId, userId, roleId }) => ({
+				url: "removeRoleFromUser",
+				method: "POST",
+				params: { groupId, userId, roleId },
+			}),
+			invalidatesTags: ["Roles"],
+		}),
 		addUserToGroup: builder.mutation<
 			void,
 			{ groupId: number; username: string }
@@ -263,6 +274,7 @@ export const {
 	useGetRolesWithUsersQuery,
 	useSaveGroupRoleMutation,
 	useRemoveRoleFromGroupMutation,
+	useRemoveRoleFromUserMutation,
 	useSetGroupRoleToUserMutation,
 	useGetRolesInGroupQuery,
 	useAddUserToGroupMutation,
