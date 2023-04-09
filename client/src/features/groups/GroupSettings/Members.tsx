@@ -3,7 +3,6 @@ import {
 	HStack,
 	VStack,
 	Table,
-	TableCaption,
 	Thead,
 	Tbody,
 	Tr,
@@ -12,19 +11,19 @@ import {
 	Box,
 	Avatar,
 	Badge,
-	IconButton,
 	Text,
 	useColorModeValue,
-	useToast,
 	Tooltip,
+	useToast,
+	Icon,
 } from "@chakra-ui/react";
-import { AddIcon } from "@chakra-ui/icons";
 
 import { useTypedSelector } from "../../../hooks/store";
-
+import { IoMdRemoveCircleOutline } from "react-icons/io";
 import {
 	type Group,
 	useGetRolesWithUsersQuery,
+	useRemoveRoleFromGroupMutation,
 } from "../../../app/services/groups";
 import { type User } from "../../../app/services/auth";
 import { selectCurrentUser } from "../../auth/authSlice";
@@ -35,6 +34,8 @@ import RemoveUserFromGroupModal from "./RemoveUserFromGroupModal";
 export default function GroupMembers({ group }: { group: Group }) {
 	const user = useTypedSelector(selectCurrentUser) as User;
 	const { data: rolesWithUsers } = useGetRolesWithUsersQuery(group.id);
+	const [removeRoleFromGroup] = useRemoveRoleFromGroupMutation();
+	const toast = useToast();
 
 	return (
 		<Box
@@ -104,7 +105,60 @@ export default function GroupMembers({ group }: { group: Group }) {
 												<Badge
 													colorScheme="green"
 													key={role.id}>
-													{role.roleUser.name}
+													<HStack spacing={1}>
+														<Text>
+															{role.roleUser.name}
+														</Text>
+														<Icon
+															as={
+																IoMdRemoveCircleOutline
+															}
+															cursor="pointer"
+															size="sm"
+															_hover={{
+																transform:
+																	"scale(1.1)",
+																transition:
+																	"all 0.2s ease-in-out",
+																color: useColorModeValue(
+																	"red.500",
+																	"red.100"
+																),
+															}}
+															onClick={async () => {
+																try {
+																	await removeRoleFromGroup(
+																		{
+																			groupId:
+																				group.id,
+																			roleId: role.id,
+																		}
+																	);
+																	toast({
+																		title: "Role removed",
+																		description: `You have removed the role ${role.roleUser.name} from ${userWithRoles.user.username}`,
+																		status: "success",
+																		duration: 5000,
+																		isClosable:
+																			true,
+																	});
+																} catch (err) {
+																	console.log(
+																		err
+																	);
+																	toast({
+																		title: "Error",
+																		description:
+																			"There was an error removing the role",
+																		status: "error",
+																		duration: 5000,
+																		isClosable:
+																			true,
+																	});
+																}
+															}}
+														/>
+													</HStack>
 												</Badge>
 											))}
 											{userWithRoles.roles.length > 3 && (

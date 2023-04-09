@@ -16,7 +16,7 @@ import {
 	useRemoveUserFromGroupMutation,
 } from "../../../app/services/groups";
 import { User } from "../../../app/services/auth";
-import { DeleteIcon } from "@chakra-ui/icons";
+import { MdPersonRemove } from "react-icons/md";
 
 export default function RemoveUserFromGroupModal({
 	user,
@@ -33,8 +33,10 @@ export default function RemoveUserFromGroupModal({
 	return (
 		<>
 			<IconButton
+				colorScheme={"red"}
+				variant="outline"
 				aria-label="Remove user from group"
-				icon={<DeleteIcon />}
+				icon={<MdPersonRemove />}
 				onClick={onOpen}
 			/>
 			<AlertDialog
