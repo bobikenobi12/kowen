@@ -9,7 +9,7 @@ export interface User {
 	firstName: string;
 	lastName: string;
 	lastLogin: string;
-	profilePicture: string;
+	profilePicture: any;
 	dateJoined: Date;
 }
 

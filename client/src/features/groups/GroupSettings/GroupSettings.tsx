@@ -137,10 +137,9 @@ export default function GroupSettings() {
 								payload: "overview",
 							});
 
-							navigate("/dashboard");
+							navigate(`/groups/${group?.id}`);
 						}}
 					/>
-
 					<Text
 						fontSize="xl"
 						fontWeight="bold"

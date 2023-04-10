@@ -28,6 +28,7 @@ import EditUserDetails from "./EditUserDetails";
 
 export default function UserSettings() {
 	const user = useTypedSelector(selectCurrentUser);
+	console.log(user);
 	const userProfileMode = useTypedSelector(selectUserProfileMode);
 
 	return (
@@ -54,8 +55,7 @@ export default function UserSettings() {
 					size="2xl"
 					name={user?.username}
 					position={"relative"}
-					// src={user?.profilePicture}
-				>
+					src={user?.profilePicture}>
 					<UploadProfilePicture />
 				</Avatar>
 				<Heading>{user?.username}</Heading>
