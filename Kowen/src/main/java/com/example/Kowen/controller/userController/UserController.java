@@ -241,7 +241,7 @@ public class UserController {
         UserDetails principal = (UserDetails) authentication.getPrincipal();
         User user =  userRepository.findByEmail(principal.getUsername()).get(0);
 
-        if (passwordEncoder.matches(dto.getPassword(), user.getPassword()) && Objects.equals(dto.getPassword(), dto.getConfirmPassword())){
+        if (passwordEncoder.matches(dto.getPassword(), user.getPassword()) && Objects.equals(dto.getNewPassword(), dto.getConfirmNewPassword())){
             user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
             return userRepository.save(user);
         }

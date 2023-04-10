@@ -28,6 +28,8 @@ public class UserDto {
 
     private String confirmPassword;
 
+    private String confirmNewPassword;
+
     private String newPassword;
 
 
