@@ -31,7 +31,7 @@ export default function UserSettings() {
 
 	return (
 		<Flex
-			direction="row"
+			direction="column"
 			w="full"
 			h={"100vh"}
 			justifyContent={"center"}
@@ -42,10 +42,12 @@ export default function UserSettings() {
 			px={6}
 			py={12}
 			gap={12}>
-			<Flex>
+			<Flex
+				w={"full"}
+				justifyContent={"center"}
+				alignItems={"center"}
+				gap={12}>
 				<Box
-					w={"fit-content"}
-					maxW={"30%"}
 					bg={useColorModeValue("white", "gray.900")}
 					boxShadow={"2xl"}
 					rounded={"lg"}
@@ -84,13 +86,12 @@ export default function UserSettings() {
 				bg={useColorModeValue("white", "gray.900")}
 				rounded={"lg"}
 				boxShadow={"2xl"}
-				p={8}
-				textAlign={"center"}>
+				p={4}
+				gap={4}>
 				<VStack
 					w={"full"}
 					bg={useColorModeValue("white", "gray.900")}
-					p={8}
-					textAlign={"center"}>
+					p={8}>
 					<Heading>Password and Security</Heading>
 					<ChangePasswordModal />
 					<Logout />
