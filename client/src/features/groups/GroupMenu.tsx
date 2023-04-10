@@ -69,9 +69,7 @@ export default function GroupMenu() {
 						<MenuList>
 							<MenuItem
 								onClick={() => {
-									navigate(
-										`/dashboard/group-settings/${group?.id}`
-									);
+									navigate(`/groups/${group?.id}/settings`);
 								}}>
 								Group Settings
 							</MenuItem>

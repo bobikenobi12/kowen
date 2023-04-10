@@ -23,18 +23,6 @@ const slice = createSlice({
 	name: "auth",
 	initialState,
 	reducers: {
-		// login: (state, { payload }) => {
-		// 	state.user = payload.user;
-		// 	localStorage.setItem("user", JSON.stringify(payload.user));
-		// 	state.token = payload.token;
-		// 	localStorage.setItem("token", JSON.stringify(payload.token));
-		// },
-		// logout: state => {
-		// 	state.user = null;
-		// 	state.token = null;
-		// 	localStorage.removeItem("user");
-		// 	localStorage.removeItem("token");
-		// },
 		setUserProfileMode: (state, { payload }) => {
 			state.userProfileMode = payload;
 		},
@@ -65,49 +53,48 @@ const slice = createSlice({
 				localStorage.removeItem("user");
 			}
 		);
-		builder.addMatcher(
-			api.endpoints.setProfilePicture.matchFulfilled,
-			(state, { payload }) => {
-				state.user = payload;
-				localStorage.setItem("user", JSON.stringify(payload));
-			}
-		);
-		builder.addMatcher(
-			api.endpoints.changeEmail.matchFulfilled,
-			(state, { payload }) => {
-				state.user = payload.user;
-				state.token = payload.token;
-				localStorage.setItem("user", JSON.stringify(payload.user));
-				localStorage.setItem("token", JSON.stringify(payload.token));
-			}
-		);
-		builder.addMatcher(
-			api.endpoints.changeFirstName.matchFulfilled,
-			(state, { payload }) => {
-				state.user = payload;
-				localStorage.setItem("user", JSON.stringify(payload));
-			}
-		);
-		builder.addMatcher(
-			api.endpoints.changeLastName.matchFulfilled,
-			(state, { payload }) => {
-				state.user = payload;
-				localStorage.setItem("user", JSON.stringify(payload));
-			}
-		);
-		builder.addMatcher(
-			api.endpoints.changeUsername.matchFulfilled,
-			(state, { payload }) => {
-				state.user = payload;
-				localStorage.setItem("user", JSON.stringify(payload));
-			}
-		);
+		// builder.addMatcher(
+		// 	api.endpoints.setProfilePicture.matchFulfilled,
+		// 	(state, { payload }) => {
+		// 		state.user = payload;
+		// 		localStorage.setItem("user", JSON.stringify(payload));
+		// 	}
+		// );
+		// builder.addMatcher(
+		// 	api.endpoints.changeEmail.matchFulfilled,
+		// 	(state, { payload }) => {
+		// 		state.user = payload.user;
+		// 		state.token = payload.token;
+		// 		localStorage.setItem("user", JSON.stringify(payload.user));
+		// 		localStorage.setItem("token", JSON.stringify(payload.token));
+		// 	}
+		// );
+		// builder.addMatcher(
+		// 	api.endpoints.changeFirstName.matchFulfilled,
+		// 	(state, { payload }) => {
+		// 		state.user = payload;
+		// 		localStorage.setItem("user", JSON.stringify(payload));
+		// 	}
+		// );
+		// builder.addMatcher(
+		// 	api.endpoints.changeLastName.matchFulfilled,
+		// 	(state, { payload }) => {
+		// 		state.user = payload;
+		// 		localStorage.setItem("user", JSON.stringify(payload));
+		// 	}
+		// );
+		// builder.addMatcher(
+		// 	api.endpoints.changeUsername.matchFulfilled,
+		// 	(state, { payload }) => {
+		// 		state.user = payload;
+		// 		localStorage.setItem("user", JSON.stringify(payload));
+		// 	}
+		// );
 	},
 });
 
 export default slice.reducer;
 
-// export const selectCurrentUser = (state: RootState) => state.auth.user;
 export const selectToken = (state: RootState) => state.auth.token;
 export const selectCurrentUser = (state: RootState) => state.auth.user;
 export const selectUserProfileMode = (state: RootState) =>

@@ -3,33 +3,28 @@ import {
 	FormControl,
 	FormLabel,
 	FormErrorMessage,
-	FormHelperText,
-	Input,
-	VStack,
-	Button,
-	Box,
-	useToast,
-	Flex,
 	useColorModeValue,
 	Stack,
 	Heading,
 	Text,
 	Link,
-	HStack,
 	InputGroup,
 	InputRightElement,
+	VStack,
+	Input,
+	Button,
+	useToast,
+	Flex,
 } from "@chakra-ui/react";
 import ThemeToggle from "../../components/common/ThemeToggle";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { Formik, FormikProps } from "formik";
 
 import { useNavigate, Link as ReactRouterLink } from "react-router-dom";
-import { useDispatch } from "react-redux";
 
 import { useLoginMutation } from "../../app/services/auth";
 import type { LoginRequest } from "../../app/services/auth";
 
-// import validateField from "../../utils/validateField";
 import { LoginSchema } from "../../utils/ValidationSchemas";
 
 export default function Register() {
@@ -81,7 +76,7 @@ export default function Register() {
 								duration: 5000,
 								isClosable: true,
 							});
-							navigate("/");
+							navigate("/groups");
 						} catch (error: any) {
 							if (error.status === 400) {
 								setErrors({

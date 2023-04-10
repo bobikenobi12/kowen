@@ -1,18 +1,19 @@
 import { Routes, Route } from "react-router-dom";
-import { Box, Center, VStack, Text } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 
 import { PrivateOutlet } from "./utils/PrivateOutlet";
 import { PublicOutlet } from "./utils/PublicOutlet";
 
 import Hero from "./components/Hero";
-import Navbar from "./components/Navigation/Navbar";
 
 import Login from "./features/auth/Login";
 import Register from "./features/auth/Register";
 
 import NotFound from "./components/common/NotFound";
 
-import Dashboard from "./components/Dashboard/Dashboard";
+import Groups from "./features/groups/Groups";
+import Group from "./features/groups/Group";
+import Folder from "./features/folders/Folder";
 
 import UserSettings from "./features/auth/UserSettings";
 import GroupSettings from "./features/groups/GroupSettings/GroupSettings";
@@ -22,15 +23,22 @@ function App() {
 		<Box>
 			<Routes>
 				<Route element={<PublicOutlet />}>
-					<Route index path="/" element={<Hero />} />
+					<Route path="/" element={<Hero />} />
 					<Route path="/login" element={<Login />} />
 					<Route path="/register" element={<Register />} />
 				</Route>
 				<Route element={<PrivateOutlet />}>
-					<Route index path="/dashboard" element={<Dashboard />} />
-					<Route path="/user-settings" element={<UserSettings />} />
+					<Route path="/groups/" element={<Groups />}>
+						<Route path=":groupId/" element={<Group />}>
+							<Route
+								path="folders/:folderId"
+								element={<Folder />}
+							/>
+						</Route>
+					</Route>
+					<Route path="/settings" element={<UserSettings />} />
 					<Route
-						path="dashboard/group-settings/:groupId"
+						path="/groups/:groupId/settings"
 						element={<GroupSettings />}
 					/>
 				</Route>

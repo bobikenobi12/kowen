@@ -1,13 +1,10 @@
 import fileDownload from "js-file-download";
 import {
-	Box,
-	Button,
 	Flex,
 	Heading,
 	HStack,
 	Icon,
 	IconButton,
-	useDisclosure,
 	useColorModeValue,
 	Text,
 } from "@chakra-ui/react";
