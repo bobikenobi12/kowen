@@ -23,6 +23,11 @@ const slice = createSlice({
 	name: "auth",
 	initialState,
 	reducers: {
+		logout: state => {
+			state.user = null;
+			state.token = null;
+			localStorage.clear();
+		},
 		setUserProfileMode: (state, { payload }) => {
 			state.userProfileMode = payload;
 		},
@@ -45,51 +50,49 @@ const slice = createSlice({
 			}
 		);
 		builder.addMatcher(
-			api.endpoints.logout.matchFulfilled,
+			api.endpoints.setProfilePicture.matchFulfilled,
 			(state, { payload }) => {
-				state.token = null;
-				localStorage.removeItem("token");
-				state.user = null;
-				localStorage.removeItem("user");
+				state.user = payload;
+				localStorage.setItem("user", JSON.stringify(payload));
 			}
 		);
-		// builder.addMatcher(
-		// 	api.endpoints.setProfilePicture.matchFulfilled,
-		// 	(state, { payload }) => {
-		// 		state.user = payload;
-		// 		localStorage.setItem("user", JSON.stringify(payload));
-		// 	}
-		// );
-		// builder.addMatcher(
-		// 	api.endpoints.changeEmail.matchFulfilled,
-		// 	(state, { payload }) => {
-		// 		state.user = payload.user;
-		// 		state.token = payload.token;
-		// 		localStorage.setItem("user", JSON.stringify(payload.user));
-		// 		localStorage.setItem("token", JSON.stringify(payload.token));
-		// 	}
-		// );
-		// builder.addMatcher(
-		// 	api.endpoints.changeFirstName.matchFulfilled,
-		// 	(state, { payload }) => {
-		// 		state.user = payload;
-		// 		localStorage.setItem("user", JSON.stringify(payload));
-		// 	}
-		// );
-		// builder.addMatcher(
-		// 	api.endpoints.changeLastName.matchFulfilled,
-		// 	(state, { payload }) => {
-		// 		state.user = payload;
-		// 		localStorage.setItem("user", JSON.stringify(payload));
-		// 	}
-		// );
-		// builder.addMatcher(
-		// 	api.endpoints.changeUsername.matchFulfilled,
-		// 	(state, { payload }) => {
-		// 		state.user = payload;
-		// 		localStorage.setItem("user", JSON.stringify(payload));
-		// 	}
-		// );
+		builder.addMatcher(
+			api.endpoints.changeEmail.matchFulfilled,
+			(state, { payload }) => {
+				state.user = payload.user;
+				state.token = payload.token;
+				localStorage.setItem("user", JSON.stringify(payload.user));
+				localStorage.setItem("token", JSON.stringify(payload.token));
+			}
+		);
+		builder.addMatcher(
+			api.endpoints.changeFirstName.matchFulfilled,
+			(state, { payload }) => {
+				state.user = payload;
+				localStorage.setItem("user", JSON.stringify(payload));
+			}
+		);
+		builder.addMatcher(
+			api.endpoints.changeLastName.matchFulfilled,
+			(state, { payload }) => {
+				state.user = payload;
+				localStorage.setItem("user", JSON.stringify(payload));
+			}
+		);
+		builder.addMatcher(
+			api.endpoints.changeUsername.matchFulfilled,
+			(state, { payload }) => {
+				state.user = payload;
+				localStorage.setItem("user", JSON.stringify(payload));
+			}
+		);
+		builder.addMatcher(
+			api.endpoints.changePassword.matchFulfilled,
+			(state, { payload }) => {
+				state.user = payload;
+				localStorage.setItem("user", JSON.stringify(payload));
+			}
+		);
 	},
 });
 

@@ -1,28 +1,15 @@
 // create a logout
 
-import {
-	Box,
-	Button,
-	Flex,
-	Heading,
-	Link,
-	Stack,
-	Text,
-	useColorModeValue,
-	useDisclosure,
-	useToast,
-} from "@chakra-ui/react";
+import { Box, Button, useToast } from "@chakra-ui/react";
 
 import { useLogoutMutation } from "../../app/services/auth";
 
-import { useTypedSelector, useAppDispatch } from "../../hooks/store";
-import { selectToken } from "./authSlice";
+import { useAppDispatch } from "../../hooks/store";
 
 export default function Logout() {
-	const dispatch = useAppDispatch();
-	const token = useTypedSelector(selectToken);
 	const [logout, { isLoading }] = useLogoutMutation();
 	const toast = useToast();
+	const dispatch = useAppDispatch();
 
 	return (
 		<Box>

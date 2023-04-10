@@ -151,3 +151,25 @@ export const AddUserToGroup = Yup.object().shape({
 export const UploadDocumentSchema = Yup.object().shape({
 	file: Yup.mixed().required("A file is required"),
 });
+
+export const ChangePasswordSchema = Yup.object().shape({
+	password: Yup.string()
+		.min(6, "Password must be at least 6 characters long")
+		.max(50, "Password must be at most 50 characters long")
+		.matches(
+			/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{6,})/,
+			"Password must contain at least one lowercase letter, one uppercase letter, and one number"
+		)
+		.required("Password is required"),
+	newPassword: Yup.string()
+		.min(6, "Password must be at least 6 characters long")
+		.max(50, "Password must be at most 50 characters long")
+		.matches(
+			/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{6,})/,
+			"Password must contain at least one lowercase letter, one uppercase letter, and one number"
+		)
+		.required("Password is required"),
+	confirmNewPassword: Yup.string()
+		.oneOf([Yup.ref("newPassword"), undefined], "Passwords do not match")
+		.required("Confirm password is required"),
+});

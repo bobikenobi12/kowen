@@ -31,7 +31,11 @@ export interface RegisterRequest {
 	password: string;
 }
 
-const boundary = `----${new Date().getTime()}`;
+export interface ChangePasswordRequest {
+	password: string;
+	newPassword: string;
+	confirmNewPassword: string;
+}
 
 export const api = createApi({
 	reducerPath: "authApi",
@@ -119,6 +123,13 @@ export const api = createApi({
 				body: { email, password },
 			}),
 		}),
+		changePassword: builder.mutation<User, ChangePasswordRequest>({
+			query: ({ password, newPassword, confirmNewPassword }) => ({
+				url: "changePassword",
+				method: "POST",
+				body: { password, newPassword, confirmNewPassword },
+			}),
+		}),
 		getUser: builder.query<User, void>({
 			query: () => ({
 				url: "getMe",
@@ -138,5 +149,6 @@ export const {
 	useChangeFirstNameMutation,
 	useChangeLastNameMutation,
 	useChangeEmailMutation,
+	useChangePasswordMutation,
 	useGetUserQuery,
 } = api;

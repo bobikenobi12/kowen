@@ -1,35 +1,33 @@
-import * as React from "react";
-
 import {
 	Box,
-	useToast,
 	useColorModeValue,
 	Avatar,
-	IconButton,
 	Heading,
-	Table,
-	TableCaption,
 	TableContainer,
 	Flex,
-	ButtonGroup,
+	Divider,
+	VStack,
+	Button,
 } from "@chakra-ui/react";
-
-import { EditIcon, CloseIcon, CheckIcon } from "@chakra-ui/icons";
-
-import { useNavigate, Link } from "react-router-dom";
 
 import { useTypedSelector } from "../../hooks/store";
 import { selectCurrentUser } from "../auth/authSlice";
 import { selectUserProfileMode } from "../auth/authSlice";
 
+import { useLogoutMutation } from "../../app/services/auth";
+
 import UploadProfilePicture from "./UploadProfilePicture";
 import ViewOnlyUserDetails from "./ViewOnlyUserDetails";
 import EditUserDetails from "./EditUserDetails";
+import ChangePasswordModal from "./ChangePasswordModal";
+import Logout from "./Logout";
+
+import { DataToSrc } from "../../utils/Uint8ArrayToSrc";
 
 export default function UserSettings() {
 	const user = useTypedSelector(selectCurrentUser);
-	console.log(user);
 	const userProfileMode = useTypedSelector(selectUserProfileMode);
+	const [logout] = useLogoutMutation();
 
 	return (
 		<Flex
@@ -44,35 +42,60 @@ export default function UserSettings() {
 			px={6}
 			py={12}
 			gap={12}>
-			<Box
-				w={"fit-content"}
-				bg={useColorModeValue("white", "gray.900")}
-				boxShadow={"2xl"}
-				rounded={"lg"}
-				p={12}
-				textAlign={"center"}>
-				<Avatar
-					size="2xl"
-					name={user?.username}
-					position={"relative"}
-					src={user?.profilePicture}>
-					<UploadProfilePicture />
-				</Avatar>
-				<Heading>{user?.username}</Heading>
-			</Box>
-			<TableContainer
+			<Flex>
+				<Box
+					w={"fit-content"}
+					maxW={"30%"}
+					bg={useColorModeValue("white", "gray.900")}
+					boxShadow={"2xl"}
+					rounded={"lg"}
+					p={12}
+					textAlign={"center"}>
+					<Avatar
+						size="2xl"
+						name={user?.username}
+						position={"relative"}
+						src={
+							user?.profilePicture
+								? DataToSrc(user.profilePicture)
+								: ""
+						}>
+						<UploadProfilePicture />
+					</Avatar>
+					<Heading>{user?.username}</Heading>
+				</Box>
+				<TableContainer
+					w={"full"}
+					bg={useColorModeValue("white", "gray.900")}
+					rounded={"lg"}
+					boxShadow={"2xl"}
+					p={8}
+					textAlign={"center"}>
+					{userProfileMode === "view" ? (
+						<ViewOnlyUserDetails />
+					) : (
+						<EditUserDetails />
+					)}
+				</TableContainer>
+			</Flex>
+			<Divider orientation="horizontal" />
+			<Flex
 				w={"full"}
 				bg={useColorModeValue("white", "gray.900")}
 				rounded={"lg"}
 				boxShadow={"2xl"}
 				p={8}
 				textAlign={"center"}>
-				{userProfileMode === "view" ? (
-					<ViewOnlyUserDetails />
-				) : (
-					<EditUserDetails />
-				)}
-			</TableContainer>
+				<VStack
+					w={"full"}
+					bg={useColorModeValue("white", "gray.900")}
+					p={8}
+					textAlign={"center"}>
+					<Heading>Password and Security</Heading>
+					<ChangePasswordModal />
+					<Logout />
+				</VStack>
+			</Flex>
 		</Flex>
 	);
 }
