@@ -1,4 +1,9 @@
-import { Routes, Route } from "react-router-dom";
+import {
+	Routes,
+	Route,
+	createBrowserRouter,
+	RouterProvider,
+} from "react-router-dom";
 import { Box } from "@chakra-ui/react";
 
 import { PrivateOutlet } from "./utils/PrivateOutlet";
@@ -18,32 +23,63 @@ import Folder from "./features/folders/Folder";
 import UserSettings from "./features/auth/UserSettings";
 import GroupSettings from "./features/groups/GroupSettings/GroupSettings";
 
+const router = createBrowserRouter([
+	{
+		element: <PrivateOutlet />,
+		children: [
+			{
+				path: "/groups/",
+				element: <Groups />,
+				children: [
+					{
+						path: ":groupId/",
+						element: <Group />,
+						children: [
+							{
+								path: "folders/:folderId",
+								element: <Folder />,
+							},
+						],
+					},
+				],
+			},
+			{
+				path: "/settings",
+				element: <UserSettings />,
+			},
+			{
+				path: "/groups/:groupId/settings",
+				element: <GroupSettings />,
+			},
+			{
+				path: "*",
+				element: <NotFound />,
+			},
+		],
+	},
+	{
+		element: <PublicOutlet />,
+		children: [
+			{
+				path: "/",
+				element: <Hero />,
+			},
+			{
+				path: "/login",
+				element: <Login />,
+			},
+			{
+				path: "/register",
+				element: <Register />,
+			},
+		],
+	},
+]);
+
 function App() {
 	return (
 		<Box>
-			<Routes>
-				<Route element={<PublicOutlet />}>
-					<Route path="/" element={<Hero />} />
-					<Route path="/login" element={<Login />} />
-					<Route path="/register" element={<Register />} />
-				</Route>
-				<Route element={<PrivateOutlet />}>
-					<Route path="/groups/" element={<Groups />}>
-						<Route path=":groupId/" element={<Group />}>
-							<Route
-								path="folders/:folderId"
-								element={<Folder />}
-							/>
-						</Route>
-					</Route>
-					<Route path="/settings" element={<UserSettings />} />
-					<Route
-						path="/groups/:groupId/settings"
-						element={<GroupSettings />}
-					/>
-				</Route>
-				<Route path="*" element={<NotFound />} />
-			</Routes>
+			<RouterProvider router={router} />
 		</Box>
 	);
 }

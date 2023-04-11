@@ -25,7 +25,6 @@ export const documentsSlice = createSlice({
 		builder.addMatcher(
 			api.endpoints.getDocumentsInGroup.matchFulfilled,
 			(state, action) => {
-				console.log("action.payload", action.payload);
 				state.documents = action.payload;
 			}
 		);
