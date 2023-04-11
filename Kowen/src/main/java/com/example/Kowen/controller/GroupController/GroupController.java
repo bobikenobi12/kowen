@@ -458,4 +458,30 @@ public class GroupController {
         role.getRoleUser().getPermissions().add(permission);
         return roleInGroupRepo.save(role);
     }
+
+    @GetMapping("/checkCreation/{groupId}")
+    public boolean checkCreation(@PathVariable Long groupId) throws Exception{
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        User user = userRepository.findByEmail(principal.getUsername()).get(0);
+        UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
+
+        return group.getCreator() == user;
+    }
+
+    @GetMapping("/getAvailableRoles/{groupId}/{userId}")
+    public List<RoleInGroup> getAvailableRoles(@PathVariable Long groupId, @PathVariable Long userId) throws Exception{
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        User user = userRepository.findByEmail(principal.getUsername()).get(0);
+        UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
+
+        if (group.getCreator() != user) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "you are not the creator of this group!");
+
+        List<RoleInGroup> resultList = new ArrayList<>();
+        for(RoleInGroup role : group.getRoleInGroup()){
+            if (!role.getUserId().contains(userId)) resultList.add(role);
+        }
+        return resultList;
+    }
 }
