@@ -19,7 +19,7 @@ import {
 import { EditIcon } from "@chakra-ui/icons";
 import { useChangeFolderNameMutation } from "../../app/services/folders";
 import { useTypedSelector } from "../../hooks/store";
-import { selectFolderById } from "./folderSlice";
+import { selectFolderById } from "./foldersSlice";
 import { Formik, FormikProps, Form, Field } from "formik";
 import { EditFolderSchema } from "../../utils/ValidationSchemas";
 import { useNavigate } from "react-router-dom";

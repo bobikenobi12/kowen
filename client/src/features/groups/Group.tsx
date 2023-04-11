@@ -12,12 +12,12 @@ import {
 	Tooltip,
 } from "@chakra-ui/react";
 
-import { useNavigate, Outlet } from "react-router-dom";
+import { useParams, useNavigate, Outlet } from "react-router-dom";
 
 import { useGetFoldersInGroupQuery } from "../../app/services/folders";
+import { useShowGroupQuery } from "../../app/services/groups";
 
 import { useTypedSelector, useAppDispatch } from "../../hooks/store";
-import { selectCurrentGroup } from "./groupsSlice";
 import { selectCurrentUser } from "../auth/authSlice";
 import { type Folder } from "../../app/services/folders";
 
@@ -34,12 +34,19 @@ import GroupMenu from "./GroupMenu";
 import ThemeToggle from "../../components/common/ThemeToggle";
 
 export default function Group() {
-	const group = useTypedSelector(selectCurrentGroup);
+	const { data: group, error } = useShowGroupQuery(
+		parseInt(useParams<{ groupId: string }>().groupId as string)
+	);
 	const user = useTypedSelector(selectCurrentUser);
-	const { data: folders } = useGetFoldersInGroupQuery(group!.id);
+	const { data: folders } = useGetFoldersInGroupQuery(
+		parseInt(useParams<{ groupId: string }>().groupId as string)
+	);
 	const navigate = useNavigate();
 	const dispatch = useAppDispatch();
 
+	if (error) {
+		navigate("/404");
+	}
 	const [hoveredFolder, setHoveredFolder] = React.useState<Folder | null>(
 		null
 	);
@@ -69,7 +76,7 @@ export default function Group() {
 						color={useColorModeValue("gray.500", "gray.400")}>
 						Folders
 					</Text>
-					<CreateFolder groupId={group!.id} />
+					{group?.id && <CreateFolder groupId={group.id} />}
 				</Flex>
 
 				<VStack
@@ -121,18 +128,19 @@ export default function Group() {
 											{FormatFolderName(folder.name)}
 										</Text>
 									</HStack>
-									{hoveredFolder?.id === folder.id && (
-										<HStack>
-											<EditFolder
-												groupId={group!.id}
-												folderId={folder.id}
-											/>
-											<DeleteFolder
-												folderId={folder.id}
-												groupId={group!.id}
-											/>
-										</HStack>
-									)}
+									{hoveredFolder?.id === folder.id &&
+										group?.id && (
+											<HStack>
+												<EditFolder
+													groupId={group!.id}
+													folderId={folder.id}
+												/>
+												<DeleteFolder
+													folderId={folder.id}
+													groupId={group!.id}
+												/>
+											</HStack>
+										)}
 								</Flex>
 							);
 						})

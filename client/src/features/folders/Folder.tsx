@@ -9,11 +9,12 @@ import {
 	Text,
 } from "@chakra-ui/react";
 
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 import { BsCloudDownload } from "react-icons/bs";
 import { useTypedSelector } from "../../hooks/store";
-import { selectCurrentFolder, selectCurrentGroup } from "../groups/groupsSlice";
+import { selectCurrentGroup } from "../groups/groupsSlice";
+import { useGetFolderInGroupQuery } from "../../app/services/folders";
 import { type Folder } from "../../app/services/folders";
 import { type Group } from "../../app/services/groups";
 import {
@@ -26,7 +27,20 @@ import UploadDocument from "../documents/UploadDocument";
 import SaveNewDocumentVersion from "../documents/SaveNewDocumentVersion";
 
 export default function Folder() {
-	const folder = useTypedSelector(selectCurrentFolder) as Folder;
+	const { data: folder, error } = useGetFolderInGroupQuery({
+		folderId: parseInt(
+			useParams<{ groupId: string; folderId: string }>()
+				.folderId as string
+		),
+		groupId: parseInt(
+			useParams<{ groupId: string; folderId: string }>().groupId as string
+		),
+	}) as { data: Folder; error: any };
+	const navigate = useNavigate();
+	if (error) {
+		navigate("/404");
+	}
+
 	const group = useTypedSelector(selectCurrentGroup) as Group;
 	const { data: documents } = useGetDocumentsInGroupQuery({
 		groupId: group.id,

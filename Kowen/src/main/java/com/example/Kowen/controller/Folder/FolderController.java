@@ -39,9 +39,10 @@ public class FolderController {
     public Folder saveFolder(@PathVariable Long groupId, @RequestParam String name) throws Exception {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails principal = (UserDetails) authentication.getPrincipal();
-        User user =  userRepository.findByEmail(principal.getUsername()).get(0);
+        User user = userRepository.findByEmail(principal.getUsername()).get(0);
         UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
-        if (!group.getUsers().contains(user) && group.getCreator() != user) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not in this group!");
+        if (!group.getUsers().contains(user) && group.getCreator() != user)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not in this group!");
         Folder folder = new Folder();
         folder.setName(name);
         List<Folder> folderList = group.getFolders();
@@ -56,41 +57,60 @@ public class FolderController {
     public List<Folder> getFoldersInGroup(@RequestParam Long groupId) throws Exception {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails principal = (UserDetails) authentication.getPrincipal();
-        User user =  userRepository.findByEmail(principal.getUsername()).get(0);
-
+        User user = userRepository.findByEmail(principal.getUsername()).get(0);
 
         UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
-        if (!group.getUsers().contains(user) && group.getCreator() != user) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not in this group!");
+        if (!group.getUsers().contains(user) && group.getCreator() != user)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not in this group!");
 
         return group.getFolders();
+    }
+
+    @PostMapping("/getFolderInGroup")
+    public Folder getFolderInGroup(@RequestParam Long groupId, @RequestParam Long folderId) throws Exception {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        User user = userRepository.findByEmail(principal.getUsername()).get(0);
+
+        UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
+        if (!group.getUsers().contains(user) && group.getCreator() != user)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not in this group!");
+
+        for (Folder folder : group.getFolders()) {
+            if (folder.getId() == folderId) {
+                return folder;
+            }
+        }
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no such folder!");
     }
 
     @PostMapping("/delete")
     public Folder deleteFolder(@RequestParam Long groupId, @RequestParam Long folderId) throws Exception {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails principal = (UserDetails) authentication.getPrincipal();
-        User user =  userRepository.findByEmail(principal.getUsername()).get(0);
+        User user = userRepository.findByEmail(principal.getUsername()).get(0);
 
         UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
 
-        if (group.getCreator() == user){
+        if (group.getCreator() == user) {
             return folderService.deleteFolder(groupId, folderId);
-        }
-        else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not creator of this group!");
+        } else
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not creator of this group!");
     }
 
-    //================================Changes===================================
+    // ================================Changes===================================
 
     @PostMapping("/changeName/{groupId}/{folderId}")
-    public Folder changeName(@PathVariable Long groupId, @PathVariable Long folderId, @RequestParam String name) throws Exception {
+    public Folder changeName(@PathVariable Long groupId, @PathVariable Long folderId, @RequestParam String name)
+            throws Exception {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails principal = (UserDetails) authentication.getPrincipal();
-        User user =  userRepository.findByEmail(principal.getUsername()).get(0);
+        User user = userRepository.findByEmail(principal.getUsername()).get(0);
 
         UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
 
-        for (Folder folder : group.getFolders()){
-            if (folder.getId() == folderId && group.getCreator() == user){
+        for (Folder folder : group.getFolders()) {
+            if (folder.getId() == folderId && group.getCreator() == user) {
                 return folderService.changeName(folderId, name);
             }
         }

@@ -9,7 +9,6 @@ import { type getRolesInGroupResponse } from "../../app/services/groups";
 export interface GroupsState {
 	groups: Group[];
 	currentGroup: Group | null;
-	currentFolder: Folder | null;
 	roles: getRolesInGroupResponse[] | null;
 	selectedSection: string;
 }
@@ -17,7 +16,6 @@ export interface GroupsState {
 const initialState: GroupsState = {
 	groups: [],
 	currentGroup: JSON.parse(localStorage.getItem("currentGroup") || "null"),
-	currentFolder: null,
 	roles: null,
 	selectedSection: "overview",
 };
@@ -30,13 +28,6 @@ const slice = createSlice({
 			state.currentGroup = action.payload;
 			localStorage.setItem(
 				"currentGroup",
-				JSON.stringify(action.payload)
-			);
-		},
-		setCurrentFolder(state, action: PayloadAction<Folder>) {
-			state.currentFolder = action.payload;
-			localStorage.setItem(
-				"currentFolder",
 				JSON.stringify(action.payload)
 			);
 		},
@@ -56,7 +47,6 @@ const slice = createSlice({
 			(state, action) => {
 				state.currentGroup = null;
 				localStorage.removeItem("currentGroup");
-				state.currentFolder = null;
 				localStorage.removeItem("currentFolder");
 			}
 		);
@@ -84,8 +74,6 @@ export default slice.reducer;
 export const selectGroups = (state: RootState) => state.groups.groups;
 export const selectCurrentGroup = (state: RootState) =>
 	state.groups.currentGroup;
-export const selectCurrentFolder = (state: RootState) =>
-	state.groups.currentFolder;
 export const selectSelectedSection = (state: RootState) =>
 	state.groups.selectedSection;
 export const selectRoles = (state: RootState) => state.groups.roles;

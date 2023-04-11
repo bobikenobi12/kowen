@@ -6,7 +6,7 @@ import { api as documentsApi } from "./services/documents";
 import authReducer from "../features/auth/authSlice";
 import groupsReducer from "../features/groups/groupsSlice";
 import routerReducer from "../features/router/routerSlice";
-import foldersReducer from "../features/folders/folderSlice";
+import foldersReducer from "../features/folders/foldersSlice";
 import documentReducer from "../features/documents/documentSlice";
 
 export const store = configureStore({

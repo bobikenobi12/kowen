@@ -8,6 +8,6 @@ export function PublicOutlet() {
 	return auth.token === null ? (
 		<Outlet />
 	) : (
-		<Navigate to="/" state={{ from: location }} />
+		<Navigate to="/groups" state={{ from: location }} />
 	);
 }

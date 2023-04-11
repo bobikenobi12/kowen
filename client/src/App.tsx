@@ -30,6 +30,7 @@ const router = createBrowserRouter([
 			{
 				path: "/groups/",
 				element: <Groups />,
+				errorElement: <NotFound />,
 				children: [
 					{
 						path: ":groupId/",
@@ -50,6 +51,10 @@ const router = createBrowserRouter([
 			{
 				path: "/groups/:groupId/settings",
 				element: <GroupSettings />,
+			},
+			{
+				path: "/404",
+				element: <NotFound />,
 			},
 			{
 				path: "*",

@@ -19,7 +19,7 @@ import {
 import { Formik, Form, Field, FormikProps } from "formik";
 import { useNavigate } from "react-router-dom";
 import { useTypedSelector } from "../../hooks/store";
-import { selectFolderById } from "./folderSlice";
+import { selectFolderById } from "./foldersSlice";
 import {
 	useDeleteFolderFromGroupMutation,
 	useGetFoldersInGroupQuery,

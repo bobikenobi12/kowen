@@ -14,7 +14,8 @@ import { type Group } from "../../app/services/groups";
 import { type Folder } from "../../app/services/folders";
 import { useTypedSelector } from "../../hooks/store";
 
-import { selectCurrentGroup, selectCurrentFolder } from "../groups/groupsSlice";
+import { selectCurrentGroup } from "../groups/groupsSlice";
+import { selectCurrentFolder } from "../folders/foldersSlice";
 
 import { useSaveDocumentMutation } from "../../app/services/documents";
 import { useGetRolesInGroupQuery } from "../../app/services/groups";
