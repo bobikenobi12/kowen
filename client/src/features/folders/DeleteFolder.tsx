@@ -49,18 +49,10 @@ export default function DeleteFolder({
 		<>
 			<IconButton
 				aria-label="Delete folder"
-				icon={
-					<DeleteIcon
-						cursor="pointer"
-						_hover={{
-							transform: "scale(1.1)",
-							borderRadius: "30%",
-						}}
-						// color="red.500"
-					/>
-				}
+				icon={<DeleteIcon />}
 				onClick={onOpen}
 				colorScheme="red"
+				variant={"outline"}
 			/>
 			<AlertDialog
 				isOpen={isOpen}

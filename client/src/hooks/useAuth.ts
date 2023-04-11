@@ -6,6 +6,6 @@ import { selectCurrentUser } from "../features/auth/authSlice";
 export const useAuth = () => {
 	const token = useTypedSelector(selectToken);
 	const user = useTypedSelector(selectCurrentUser);
-	// localStorage.clear();
+	localStorage.clear();
 	return useMemo(() => ({ token, user }), [token, user]);
 };

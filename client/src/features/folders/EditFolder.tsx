@@ -45,17 +45,10 @@ export default function EditFolder({
 		<>
 			<IconButton
 				aria-label="Edit folder"
-				icon={
-					<EditIcon
-						cursor="pointer"
-						_hover={{
-							transform: "scale(1.1)",
-							borderRadius: "30%",
-						}}
-					/>
-				}
+				icon={<EditIcon />}
 				onClick={onOpen}
-				variant="unstyled"
+				variant="solid"
+				colorScheme="blue"
 			/>
 			<Modal isOpen={isOpen} onClose={onClose} isCentered>
 				<ModalOverlay />

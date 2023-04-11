@@ -15,6 +15,14 @@ import {
 	useColorModeValue,
 	useToast,
 	Icon,
+	Popover,
+	PopoverTrigger,
+	PopoverContent,
+	PopoverHeader,
+	PopoverBody,
+	PopoverArrow,
+	PopoverCloseButton,
+	Flex,
 } from "@chakra-ui/react";
 
 import { useTypedSelector } from "../../../hooks/store";
@@ -29,6 +37,7 @@ import { selectCurrentUser } from "../../auth/authSlice";
 
 import RoleMenu from "./RoleMenu";
 import RemoveUserFromGroupModal from "./RemoveUserFromGroupModalDialog";
+import RoleBadge from "./RoleBadge";
 
 export default function GroupMembers({ group }: { group: Group }) {
 	const user = useTypedSelector(selectCurrentUser) as User;
@@ -51,6 +60,7 @@ export default function GroupMembers({ group }: { group: Group }) {
 					<Tr>
 						<Th>Member</Th>
 						<Th>Role</Th>
+						<Th>Actions</Th>
 					</Tr>
 				</Thead>
 				<Tbody>
@@ -68,7 +78,7 @@ export default function GroupMembers({ group }: { group: Group }) {
 								</VStack>
 							</HStack>
 						</Td>
-						<Td>
+						<Td colSpan={2}>
 							<Badge colorScheme="green">Member</Badge>
 						</Td>
 					</Tr>
@@ -96,112 +106,151 @@ export default function GroupMembers({ group }: { group: Group }) {
 									</HStack>
 								</Td>
 								<Td>
-									<HStack spacing={4}>
+									<HStack spacing={3}>
 										<HStack spacing={2}>
+											{/* display the users roles up to 3 */}
+											{/* if there are more than 3 roles, display the 3 roles and a badge with the number of remaining roles */}
 											{userWithRoles.roles &&
-												userWithRoles.roles.map(
-													role => (
-														<Badge
-															colorScheme="green"
-															key={role.id}>
-															<HStack spacing={1}>
-																<Text>
-																	{
-																		role
-																			.roleUser
-																			.name
-																	}
-																</Text>
-																<Icon
-																	as={
-																		IoMdRemoveCircleOutline
-																	}
-																	cursor="pointer"
-																	size="sm"
-																	_hover={{
-																		transform:
-																			"scale(1.1)",
-																		transition:
-																			"all 0.2s ease-in-out",
-																		color: useColorModeValue(
-																			"red.500",
-																			"red.100"
-																		),
-																	}}
-																	onClick={async () => {
-																		try {
-																			await removeRoleFromUser(
-																				{
-																					groupId:
-																						group.id,
-																					roleId: role.id,
-																					userId: parseInt(
-																						userWithRoles
-																							.user
-																							.id
-																					),
-																				}
-																			);
-																			toast(
-																				{
-																					title: "Role removed",
-																					description: `You have removed the role ${role.roleUser.name} from ${userWithRoles.user.username}`,
-																					status: "success",
-																					duration: 5000,
-																					isClosable:
-																						true,
-																				}
-																			);
-																		} catch (err) {
-																			console.log(
-																				err
-																			);
-																			toast(
-																				{
-																					title: "Error",
-																					description:
-																						"There was an error removing the role",
-																					status: "error",
-																					duration: 5000,
-																					isClosable:
-																						true,
-																				}
-																			);
-																		}
-																	}}
-																/>
-															</HStack>
-														</Badge>
-													)
-												)}
-											{/* {userWithRoles.roles.length > 3 && (
-												<Tooltip
-													hasArrow
-													bg={useColorModeValue(
-														"white",
-														"gray.500"
-													)}
-													label={userWithRoles.roles
-														.slice(3)
-														.map(role => (
+												userWithRoles.roles
+													.slice(0, 3)
+													.map(role => (
+														<RoleBadge
+															key={role.id}
+															roleId={role.id}
+															roleName={
+																role.roleUser
+																	.name
+															}
+															userId={parseInt(
+																userWithRoles
+																	.user.id
+															)}
+															groupId={group.id}
+															username={
+																userWithRoles
+																	.user
+																	.username
+															}
+														/>
+													))}
+											{userWithRoles.roles &&
+												userWithRoles.roles.length >
+													3 && (
+													<Popover>
+														<PopoverTrigger>
 															<Badge
 																colorScheme="green"
-																key={role.id}>
-																{
-																	role
-																		.roleUser
-																		.name
-																}
+																cursor="pointer">
+																+
+																{userWithRoles
+																	.roles
+																	.length - 3}
 															</Badge>
-														))}>
-													<Badge colorScheme="green">
-														{userWithRoles.roles
-															.length - 3}{" "}
-														more
-													</Badge>
-												</Tooltip>
-											)} */}
+														</PopoverTrigger>
+														<PopoverContent>
+															<PopoverArrow />
+															<PopoverCloseButton />
+															<PopoverHeader>
+																Roles
+															</PopoverHeader>
+															<PopoverBody>
+																<Flex
+																	alignItems="center"
+																	wrap={
+																		"wrap"
+																	}
+																	w="fit-content"
+																	gap={2}>
+																	{userWithRoles.roles.map(
+																		role => (
+																			<Badge
+																				colorScheme="green"
+																				key={
+																					role.id
+																				}>
+																				<HStack
+																					spacing={
+																						2
+																					}>
+																					<Text>
+																						{
+																							role
+																								.roleUser
+																								.name
+																						}
+																					</Text>
+																					<Icon
+																						as={
+																							IoMdRemoveCircleOutline
+																						}
+																						cursor="pointer"
+																						size="sm"
+																						_hover={{
+																							transform:
+																								"scale(1.1)",
+																							transition:
+																								"all 0.2s ease-in-out",
+																							color: useColorModeValue(
+																								"red.500",
+																								"red.100"
+																							),
+																						}}
+																						onClick={async () => {
+																							try {
+																								await removeRoleFromUser(
+																									{
+																										groupId:
+																											group.id,
+																										roleId: role.id,
+																										userId: parseInt(
+																											userWithRoles
+																												.user
+																												.id
+																										),
+																									}
+																								);
+																								toast(
+																									{
+																										title: "Role removed",
+																										description: `You have removed the role ${role.roleUser.name} from ${userWithRoles.user.username}`,
+																										status: "success",
+																										duration: 5000,
+																										isClosable:
+																											true,
+																									}
+																								);
+																							} catch (err) {
+																								console.log(
+																									err
+																								);
+																								toast(
+																									{
+																										title: "Error",
+																										description:
+																											"There was an error removing the role",
+																										status: "error",
+																										duration: 5000,
+																										isClosable:
+																											true,
+																									}
+																								);
+																							}
+																						}}
+																					/>
+																				</HStack>
+																			</Badge>
+																		)
+																	)}
+																</Flex>
+															</PopoverBody>
+														</PopoverContent>
+													</Popover>
+												)}
 										</HStack>
+									</HStack>
+								</Td>
+								<Td>
+									<HStack spacing={4}>
 										<RoleMenu
 											user={userWithRoles.user}
 											group={group}
