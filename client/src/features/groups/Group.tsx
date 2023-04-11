@@ -100,15 +100,15 @@ export default function Group() {
 										setHoveredFolder(null);
 									}}
 									onClick={() => {
+										dispatch({
+											type: "groups/setCurrentFolder",
+											payload: folder,
+										});
 										navigate(
 											`/groups/${group!.id}/folders/${
 												folder.id
 											}`
 										);
-										dispatch({
-											type: "groups/setCurrentFolder",
-											payload: folder,
-										});
 									}}>
 									<HStack alignItems={"center"}>
 										<Icon

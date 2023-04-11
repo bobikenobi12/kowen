@@ -35,6 +35,10 @@ const slice = createSlice({
 		},
 		setCurrentFolder(state, action: PayloadAction<Folder>) {
 			state.currentFolder = action.payload;
+			localStorage.setItem(
+				"currentFolder",
+				JSON.stringify(action.payload)
+			);
 		},
 		setSelectedSection(state, action: PayloadAction<string>) {
 			state.selectedSection = action.payload;
@@ -52,6 +56,8 @@ const slice = createSlice({
 			(state, action) => {
 				state.currentGroup = null;
 				localStorage.removeItem("currentGroup");
+				state.currentFolder = null;
+				localStorage.removeItem("currentFolder");
 			}
 		);
 		builder.addMatcher(

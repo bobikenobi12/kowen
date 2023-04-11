@@ -64,13 +64,24 @@ export const api = createApi({
 			}),
 			invalidatesTags: ["Documents"],
 		}),
-		// downLoad document response is supposed to be a ByteArrayResource
-		downloadDocument: builder.mutation<Blob, downloadDocument>({
+		downloadDocument: builder.mutation<any, downloadDocument>({
 			query: ({ folderId, documentId, version }) => ({
 				url: `document/download/${folderId}/${documentId}/${version}`,
 				method: "GET",
 			}),
+			transformResponse: (response, meta, arg) => {
+				if (meta?.request) {
+					const blob = new Blob([response as Uint8Array], {
+						type: "application/octet-stream",
+					});
+					const link = document.createElement("a");
+					link.href = window.URL.createObjectURL(blob);
+					link.download = `${arg.documentId}_${arg.version}`;
+					link.click();
+				}
+			},
 		}),
+
 		saveNewDocumentVersion: builder.mutation<void, FormData>({
 			query: formData => ({
 				url: "document/saveNewVersion",

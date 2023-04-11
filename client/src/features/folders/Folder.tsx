@@ -9,6 +9,8 @@ import {
 	Text,
 } from "@chakra-ui/react";
 
+import { useParams } from "react-router-dom";
+
 import { BsCloudDownload } from "react-icons/bs";
 import { useTypedSelector } from "../../hooks/store";
 import { selectCurrentFolder, selectCurrentGroup } from "../groups/groupsSlice";
@@ -28,7 +30,9 @@ export default function Folder() {
 	const group = useTypedSelector(selectCurrentGroup) as Group;
 	const { data: documents } = useGetDocumentsInGroupQuery({
 		groupId: group.id,
-		folderId: folder.id,
+		folderId: parseInt(
+			useParams<{ folderId: string }>().folderId as string
+		),
 	}) as { data: Document[] };
 	const [downloadDocument] = useDownloadDocumentMutation();
 
@@ -53,7 +57,7 @@ export default function Folder() {
 					zIndex: 1,
 				}}>
 				<Heading ml={4} size="md">
-					{folder.name}
+					{folder && folder.name}
 				</Heading>
 				<HStack mr={4}>
 					<UploadDocument />
@@ -93,16 +97,18 @@ export default function Folder() {
 										icon={<Icon as={BsCloudDownload} />}
 										onClick={async () => {
 											try {
-												const { data } =
-													(await downloadDocument({
-														folderId: folder.id,
-														documentId: document.id,
-														version: 1,
-													})) as { data: Blob };
-												fileDownload(
-													data,
-													document.name
-												);
+												// const { data } =
+												// (
+												await downloadDocument({
+													folderId: folder.id,
+													documentId: document.id,
+													version: 1,
+												});
+												// ) as { data: Blob };
+												// fileDownload(
+												// 	data,
+												// 	document.name
+												// );
 											} catch (error) {
 												console.log(error);
 											}
