@@ -1,6 +1,7 @@
 package com.example.Kowen.service.group;
 
 import com.example.Kowen.entity.*;
+import com.example.Kowen.enums.PermissionsEnum;
 import jdk.dynalink.linker.LinkerServices;
 import org.springframework.stereotype.Service;
 
@@ -39,4 +40,6 @@ public interface GroupService {
     List<RoleInGroup> removeRoleFromGroup(Long groupId, Long roleId) throws Exception;
 
     List<Long> removeRoleFromUser(Long groupId, Long roleId, Long userId) throws Exception;
+
+    boolean checkForPermissions(Long userId, Long groupId, PermissionsEnum permission) throws Exception;
 }
