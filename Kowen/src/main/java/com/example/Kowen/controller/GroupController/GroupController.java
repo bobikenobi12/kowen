@@ -336,7 +336,7 @@ public class GroupController {
         User user = userRepository.findByEmail(principal.getUsername()).get(0);
         UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
 
-        if (group.getCreator() == user){
+        if (group.getCreator() == user || group.getUsers().contains(user)){
             return groupService.getRolesWithUsers(groupId);
         }
         else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not the creator of this group!");
