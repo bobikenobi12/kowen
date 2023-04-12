@@ -39,7 +39,7 @@ public class UserGroup {
     @Column(nullable = true)
     private List<Long> waitingUsersId;
 
-    @JsonIgnore
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "creator_id")
     private User creator;
