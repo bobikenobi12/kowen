@@ -2,8 +2,8 @@ package com.example.Kowen.service.group;
 
 
 import com.example.Kowen.entity.*;
+import com.example.Kowen.enums.PermissionsEnum;
 import com.example.Kowen.service.folder.FolderRepo;
-import com.example.Kowen.service.role.RoleRepository;
 import com.example.Kowen.service.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -235,5 +235,18 @@ public class GroupServiceImpl implements GroupService {
             return ids;
         }
         else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This user hasn't this role!");
+    }
+
+    @Override
+    public boolean checkForPermissions(Long userId, Long groupId, PermissionsEnum permission) throws Exception {
+        User user = userRepository.findById(userId).orElseThrow(Exception::new);
+        UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
+        if (group.getCreator() == user) return true;
+        List<RoleInGroup> roles = group.getRoleInGroup();
+
+        for (RoleInGroup role : roles){
+            if (role.getUserId().contains(userId) && role.getRoleUser().getPermissions().contains(permission)) return true;
+        }
+        return false;
     }
 }
