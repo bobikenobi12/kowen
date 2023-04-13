@@ -17,5 +17,7 @@ public enum PermissionsEnum {
     add_document,
     remove_document,
     download_document,
-    save_new_document_version
+    save_new_document_version,
+    preview_document,
+    edit_document
 }

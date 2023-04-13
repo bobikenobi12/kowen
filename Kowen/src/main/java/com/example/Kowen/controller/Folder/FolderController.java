@@ -1,9 +1,11 @@
 package com.example.Kowen.controller.Folder;
 
 import com.example.Kowen.entity.*;
+import com.example.Kowen.enums.PermissionsEnum;
 import com.example.Kowen.service.folder.FolderRepo;
 import com.example.Kowen.service.folder.FolderService;
 import com.example.Kowen.service.group.GroupRepo;
+import com.example.Kowen.service.group.GroupService;
 import com.example.Kowen.service.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -35,6 +37,9 @@ public class FolderController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private GroupService groupService;
+
     @PostMapping("/saveTo/group/{groupId}")
     public Folder saveFolder(@PathVariable Long groupId, @RequestParam String name) throws Exception {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -43,6 +48,7 @@ public class FolderController {
         UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
         if (!group.getUsers().contains(user) && group.getCreator() != user)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not in this group!");
+        if (!groupService.checkForPermissions(user.getId(), groupId, PermissionsEnum.add_folder)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You don't have permissions!");
         Folder folder = new Folder();
         folder.setName(name);
         List<Folder> folderList = group.getFolders();
@@ -92,10 +98,9 @@ public class FolderController {
 
         UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
 
-        if (group.getCreator() == user) {
-            return folderService.deleteFolder(groupId, folderId);
-        } else
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not creator of this group!");
+        if (!groupService.checkForPermissions(user.getId(), groupId, PermissionsEnum.delete_folder)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You don't have permissions!");
+        return folderService.deleteFolder(groupId, folderId);
+
     }
 
     // ================================Changes===================================
@@ -108,12 +113,12 @@ public class FolderController {
         User user = userRepository.findByEmail(principal.getUsername()).get(0);
 
         UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
-
+        if (!groupService.checkForPermissions(user.getId(), groupId, PermissionsEnum.edit_folder)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You don't have permissions!");
         for (Folder folder : group.getFolders()) {
-            if (folder.getId() == folderId && group.getCreator() == user) {
+            if (folder.getId() == folderId) {
                 return folderService.changeName(folderId, name);
             }
         }
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no such document!");
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no such folder!");
     }
 }
