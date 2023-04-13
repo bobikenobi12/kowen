@@ -37,6 +37,11 @@ public class Document {
     @JoinColumn(name = "creator_id")
     private User publisher; //
 
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "folder_id")
+    private Folder folder;
+
 
     @JsonIgnore
     @OneToMany(mappedBy = "document", cascade = CascadeType.ALL, orphanRemoval = true)

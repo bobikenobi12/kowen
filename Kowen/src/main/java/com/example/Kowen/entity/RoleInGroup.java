@@ -24,7 +24,7 @@ public class RoleInGroup {
     private List<Long> userId;
 
     @JsonIgnore
-    @ManyToMany(mappedBy = "roles")
+    @ManyToMany(mappedBy = "roles", cascade = CascadeType.ALL)
     private List<Document> documents;
 
     @OneToOne(cascade = CascadeType.ALL)

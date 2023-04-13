@@ -28,7 +28,7 @@ public class DocumentVersion {
     @Column(columnDefinition="BLOB", nullable = false)
     private byte[] documentContent;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "document_id")
     private Document document;
 }

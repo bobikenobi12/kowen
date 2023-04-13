@@ -6,6 +6,7 @@ import com.example.Kowen.controller.RoleInGroupRequest;
 import com.example.Kowen.controller.SettingRoleRequest;
 import com.example.Kowen.entity.*;
 import com.example.Kowen.enums.PermissionsEnum;
+import com.example.Kowen.service.document.DocumentRepo;
 import com.example.Kowen.service.folder.FolderRepo;
 import com.example.Kowen.service.group.GroupRepo;
 import com.example.Kowen.service.group.GroupService;
@@ -52,6 +53,9 @@ public class GroupController {
     @Autowired
     private RoleInGroupRepo roleInGroupRepo;
 
+    @Autowired
+    private DocumentRepo documentRepo;
+
     @PostMapping("/create")
     public UserGroup create(@RequestBody GroupRequest groupRequest) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -88,7 +92,9 @@ public class GroupController {
                 groups.remove(group);
                 user.setGroups(groups);
                 userRepository.save(user);
-                groupRepo.deleteById(group.getId());
+                group.setCreator(null);
+
+                groupRepo.delete(group);
                 return true;
             } else {
                 List<UserGroup> groups = user.getUserGroups();
