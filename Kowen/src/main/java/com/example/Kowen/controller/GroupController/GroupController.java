@@ -490,4 +490,22 @@ public class GroupController {
         }
         return resultList;
     }
+
+    @GetMapping("/getPermissionsInGroup/{groupId}")
+    public List<PermissionsEnum> getPermissionsInGroup(@PathVariable Long groupId) throws Exception {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        User user = userRepository.findByEmail(principal.getUsername()).get(0);
+        UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
+
+        List<PermissionsEnum> resultList = new ArrayList<>();
+
+        for (RoleInGroup role : group.getRoleInGroup()){
+            if (role.getUserId().contains(user.getId())){
+                resultList.addAll(role.getRoleUser().getPermissions());
+            }
+        }
+
+        return  resultList;
+    }
 }
