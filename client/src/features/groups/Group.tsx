@@ -32,6 +32,7 @@ import CreateFolder from "../folders/CreateFolder";
 import DeleteFolder from "../folders/DeleteFolder";
 import GroupMenu from "./GroupMenu";
 import ThemeToggle from "../../components/common/ThemeToggle";
+import MemberList from "./MemberList";
 
 export default function Group() {
 	const { data: group, error } = useShowGroupQuery(
@@ -200,6 +201,7 @@ export default function Group() {
 				</Flex>
 			</Flex>
 			<Outlet />
+			<MemberList />
 		</Flex>
 	);
 }

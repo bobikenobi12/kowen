@@ -28,6 +28,7 @@ export interface Group {
 	id: number;
 	name: string;
 	description: string;
+	creator: User;
 	users: User[];
 	waitingUsersId: number[];
 	groupPicture: any;

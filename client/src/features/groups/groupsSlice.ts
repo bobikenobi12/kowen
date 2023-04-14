@@ -76,4 +76,6 @@ export const selectCurrentGroup = (state: RootState) =>
 	state.groups.currentGroup;
 export const selectSelectedSection = (state: RootState) =>
 	state.groups.selectedSection;
+export const selectGroupById = (state: RootState, id: number) =>
+	state.groups.groups.find(group => group.id === id);
 export const selectRoles = (state: RootState) => state.groups.roles;
