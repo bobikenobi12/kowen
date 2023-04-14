@@ -60,7 +60,7 @@ public class UserController {
         if (roleRepository.findByName("USER").isEmpty()) {
             Role role = new Role();
             List<PermissionsEnum> permissionsEnums = new ArrayList<>();
-            permissionsEnums.add(PermissionsEnum.can_add);
+//            permissionsEnums.add(PermissionsEnum.can_add);
             role.setPermissions(permissionsEnums);
             role.setName("USER");
             roleRepository.save(role);

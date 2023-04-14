@@ -145,12 +145,12 @@ public class GroupController {
     public UserGroup addGroupPic(@RequestParam MultipartFile picture, @RequestParam Long groupId) throws Exception {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails principal = (UserDetails) authentication.getPrincipal();
-        User creator = userRepository.findByEmail(principal.getUsername()).get(0);
+        User user = userRepository.findByEmail(principal.getUsername()).get(0);
         UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
 
-        if (group.getCreator() != creator)
+        if (!groupService.checkForPermissions(user.getId(), groupId, PermissionsEnum.edit_group))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "You can't add group picture because you aren't the creator!");
+                    "You can't add group picture because you don't have permissions!");
         group.setGroupPicture(picture.getBytes());
         return groupRepo.save(group);
     }
@@ -184,10 +184,10 @@ public class GroupController {
         User user = userRepository.findByEmail(principal.getUsername()).get(0);
         UserGroup group = groupRepo.findById(roleInGroupRequest.getGroupId()).orElseThrow(Exception::new);
 
-        if (user == group.getCreator()) {
+        if (user == group.getCreator() || groupService.checkForPermissions(user.getId(), group.getId(), PermissionsEnum.add_role)) {
             return groupService.saveGroupRole(roleInGroupRequest.getGroupId(), roleInGroupRequest.getRole());
         } else
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not creator of this group!");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You don't have permissions!");
 
     }
     // @GetMapping("/showGroupRoles/{groupId}")
@@ -213,7 +213,7 @@ public class GroupController {
         UserDetails principal = (UserDetails) authentication.getPrincipal();
         User user = userRepository.findByEmail(principal.getUsername()).get(0);
         UserGroup group = groupRepo.findById(settingRoleRequest.getGroupId()).orElseThrow(Exception::new);
-        if (user == group.getCreator()) {
+        if (user == group.getCreator() || groupService.checkForPermissions(user.getId(), group.getId(), PermissionsEnum.apply_role)) {
             return groupService.setUserGroupRole(settingRoleRequest.getUserId(), settingRoleRequest.getGroupId(),
                     settingRoleRequest.getRoleId());
         } else
@@ -232,7 +232,7 @@ public class GroupController {
         User userToAdd = userRepository.findByUsername(groupId.getUsername()).get(0);
         UserGroup group = groupRepo.findById(groupId.getGroupId()).orElseThrow(Exception::new);
 
-        if (user == group.getCreator()) {
+        if (user == group.getCreator() || groupService.checkForPermissions(user.getId(), group.getId(), PermissionsEnum.add_user)) {
             return groupService.addUserToGroup(userToAdd, groupId.getGroupId());
         } else
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
@@ -315,10 +315,10 @@ public class GroupController {
 
         UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
 
-        if (group.getCreator() == user) {
+        if (group.getCreator() == user || groupService.checkForPermissions(user.getId(), groupId, PermissionsEnum.edit_group)) {
             return groupService.changeName(groupId, name);
         } else
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not able to change group name!");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You don't have permissions to change group name!");
     }
 
     @PostMapping("/changeDescr/{groupId}")
@@ -329,7 +329,7 @@ public class GroupController {
 
         UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
 
-        if (group.getCreator() == user) {
+        if (group.getCreator() == user || groupService.checkForPermissions(user.getId(), groupId, PermissionsEnum.edit_group)) {
             return groupService.changeDescr(groupId, description);
         } else
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not able to change group description!");
@@ -368,10 +368,10 @@ public class GroupController {
         User user = userRepository.findByEmail(principal.getUsername()).get(0);
         UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
 
-        if (group.getCreator() == user){
+        if (group.getCreator() == user || groupService.checkForPermissions(user.getId(), groupId, PermissionsEnum.remove_user)){
             return groupService.removeUserFromGroup(groupId, userId);
         }
-        else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not the creator of this group!");
+        else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You don't have permissions!");
     }
 
 
@@ -382,7 +382,7 @@ public class GroupController {
         User user = userRepository.findByEmail(principal.getUsername()).get(0);
         UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
 
-        if (group.getCreator() == user){
+        if (group.getCreator() == user || groupService.checkForPermissions(user.getId(), groupId, PermissionsEnum.remove_role)){
             return groupService.removeRoleFromGroup(groupId, roleId);
         }
         else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not the creator of this group!");
@@ -397,7 +397,7 @@ public class GroupController {
         User userInGroup = userRepository.findById(userId).orElseThrow(Exception::new);
         RoleInGroup role = roleInGroupRepo.findById(roleId).orElseThrow(Exception::new);
 
-        if (group.getCreator() == user){
+        if (group.getCreator() == user || groupService.checkForPermissions(user.getId(), groupId, PermissionsEnum.remove_role)){
             if (group.getUsers().contains(userInGroup)){
                 if (group.getRoleInGroup().contains(role)){
                     return groupService.removeRoleFromUser(groupId, roleId, userId);
@@ -435,7 +435,7 @@ public class GroupController {
         UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
         RoleInGroup role = roleInGroupRepo.findById(roleId).orElseThrow(Exception::new);
 
-        if (group.getCreator() != user) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "you are not the creator of this group!");
+        if (group.getCreator() != user || groupService.checkForPermissions(user.getId(), groupId, PermissionsEnum.edit_role)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You don't have permissions!");
         if (!group.getRoleInGroup().contains(role)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no such role in this group!");
         for(PermissionsEnum permissionEnum : role.getRoleUser().getPermissions()){
             if (Objects.equals(permissionEnum.toString(), permission)){
@@ -459,7 +459,7 @@ public class GroupController {
         UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
         RoleInGroup role = roleInGroupRepo.findById(roleId).orElseThrow(Exception::new);
 
-        if (group.getCreator() != user) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "you are not the creator of this group!");
+        if (group.getCreator() != user || groupService.checkForPermissions(user.getId(), groupId, PermissionsEnum.edit_role)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You don't have permissions!");
         if (!group.getRoleInGroup().contains(role)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no such role in this group!");
         role.getRoleUser().getPermissions().add(permission);
         return roleInGroupRepo.save(role);

@@ -1,13 +1,10 @@
 package com.example.Kowen.enums;
 
 public enum PermissionsEnum {
-    can_view,
-    can_edit,
-    can_delete,
-    can_add,
     add_role,
-    delete_role,
+    apply_role,
     edit_role,
+    remove_role,
     remove_user,
     add_user,
     edit_group,
