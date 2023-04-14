@@ -175,7 +175,7 @@ public class DocumentController {
             continueFlag = Boolean.TRUE;
         } else {
             for (int i = 0; i < group.getRoleInGroup().size(); i++) {
-                if (group.getRoleInGroup().get(i).getRoleUser().getPermissions().contains(PermissionsEnum.add_document)
+                if (group.getRoleInGroup().get(i).getRoleUser().getPermissions().contains(PermissionsEnum.save_new_document_version)
                         && group.getRoleInGroup().get(i).getUserId().contains(user.getId())) {
                     continueFlag = Boolean.TRUE;
                     break;
