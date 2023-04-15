@@ -16,5 +16,6 @@ public enum PermissionsEnum {
     download_document,
     save_new_document_version,
     preview_document,
-    edit_document
+    edit_document,
+    access_chat
 }
