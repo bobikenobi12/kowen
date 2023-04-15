@@ -10,7 +10,7 @@ export interface CreateGroupRequest {
 export interface Role {
 	id: number;
 	name: string;
-	permissions: GroupRolePermissions[];
+	permissions: Permissions[];
 }
 
 export interface SetGroupRoleToUserRequest {
@@ -52,11 +52,23 @@ export interface RolesWithUsers {
 	users: User[];
 }
 
-export enum GroupRolePermissions {
-	can_view = "can_view",
-	can_edit = "can_edit",
-	can_delete = "can_delete",
-	can_add = "can_add",
+export enum Permissions {
+	add_role,
+	apply_role,
+	edit_role,
+	remove_role,
+	remove_user,
+	add_user,
+	edit_group,
+	add_folder,
+	delete_folder,
+	edit_folder,
+	add_document,
+	remove_document,
+	download_document,
+	save_new_document_version,
+	preview_document,
+	edit_document,
 }
 
 export interface saveGroupRoleRequest {
@@ -67,7 +79,7 @@ export interface saveGroupRoleRequest {
 export interface saveGroupRoleResponse {
 	id: number;
 	name: string;
-	permissions: GroupRolePermissions[];
+	permissions: Permissions[];
 	users: User[] | [];
 }
 
