@@ -3,6 +3,7 @@ package com.example.Kowen.service.group;
 
 import com.example.Kowen.entity.*;
 import com.example.Kowen.enums.PermissionsEnum;
+import com.example.Kowen.service.chat.ChatRepo;
 import com.example.Kowen.service.folder.FolderRepo;
 import com.example.Kowen.service.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,9 @@ public class GroupServiceImpl implements GroupService {
     @Autowired
     private RoleInGroupRepo roleRepository;
 
+    @Autowired
+    private ChatRepo chatRepo;
+
     @Override
     public UserGroup create(String name, String description, User user) {
         UserGroup userGroup = new UserGroup();
@@ -37,6 +41,9 @@ public class GroupServiceImpl implements GroupService {
         userGroup.setName(name);
         userGroup.setDescription(description);
 
+        GroupChat chat = new GroupChat();
+        chat.setGroup(userGroup);
+        userGroup.setGroupChat(chat);
         return groupRepo.save(userGroup);
     }
 

@@ -56,4 +56,8 @@ public class UserGroup {
 
     @OneToMany(cascade = CascadeType.ALL)
     private List<Folder> folders;
+
+
+    @OneToOne(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
+    private GroupChat groupChat;
 }
