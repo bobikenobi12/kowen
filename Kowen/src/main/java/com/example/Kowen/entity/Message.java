@@ -24,8 +24,9 @@ public class Message {
     @JoinColumn(name = "chat_id", nullable = false)
     private GroupChat chat;
 
-    @Column
-    private Long senderId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sender_id")
+    private User sender;
 
     @Column
     private String content;

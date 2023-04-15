@@ -56,7 +56,7 @@ public class ChatController {
         Message chatMessage = new Message();
         chatMessage.setChat(group.getGroupChat());
         chatMessage.setContent(message);
-        chatMessage.setSenderId(user.getId());
+        chatMessage.setSender(user);
         messageRepo.save(chatMessage);
         List<Message> messages = group.getGroupChat().getMessages();
         messages.add(chatMessage);
