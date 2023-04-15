@@ -28,9 +28,15 @@ import { selectGroupById } from "./groupsSlice";
 import RoleBadge from "./GroupSettings/RoleBadge";
 
 export default function MemberList() {
+	const { groupId } = useParams();
+	if (!groupId) {
+		return null;
+	}
+
 	const { data: roles } = useGetRolesWithUsersQuery(
-		parseInt(useParams<{ groupId: string }>().groupId as string)
+		parseInt(groupId as string)
 	);
+
 	const group = useTypedSelector(state =>
 		selectGroupById(
 			state,

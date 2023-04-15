@@ -2,8 +2,6 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { api } from "../../app/services/groups";
 import { RootState } from "../../app/store";
 import { type Group } from "../../app/services/groups";
-import { type Folder } from "../../app/services/folders";
-import { type getDocuments } from "../../app/services/documents";
 import { type getRolesInGroupResponse } from "../../app/services/groups";
 
 export interface GroupsState {

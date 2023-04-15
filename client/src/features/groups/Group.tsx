@@ -17,6 +17,8 @@ import { useParams, useNavigate, Outlet } from "react-router-dom";
 import { useGetFoldersInGroupQuery } from "../../app/services/folders";
 import { useShowGroupQuery } from "../../app/services/groups";
 
+import { selectGroupById } from "./groupsSlice";
+
 import { useTypedSelector, useAppDispatch } from "../../hooks/store";
 import { selectCurrentUser } from "../auth/authSlice";
 import { type Folder } from "../../app/services/folders";
@@ -35,19 +37,33 @@ import ThemeToggle from "../../components/common/ThemeToggle";
 import MemberList from "./MemberList";
 
 export default function Group() {
-	const { data: group, error } = useShowGroupQuery(
-		parseInt(useParams<{ groupId: string }>().groupId as string)
-	);
-	const user = useTypedSelector(selectCurrentUser);
-	const { data: folders } = useGetFoldersInGroupQuery(
-		parseInt(useParams<{ groupId: string }>().groupId as string)
-	);
 	const navigate = useNavigate();
-	const dispatch = useAppDispatch();
+
+	const { groupId } = useParams();
+	if (!groupId) {
+		navigate("/404");
+	}
+
+	const group = useTypedSelector(state =>
+		selectGroupById(state, parseInt(groupId as string))
+	);
+
+	const { data: folders, error } = useGetFoldersInGroupQuery(
+		parseInt(groupId as string)
+	);
 
 	if (error) {
 		navigate("/404");
 	}
+
+	const user = useTypedSelector(selectCurrentUser);
+
+	if (!user) {
+		navigate("/login");
+	}
+
+	const dispatch = useAppDispatch();
+
 	const [hoveredFolder, setHoveredFolder] = React.useState<Folder | null>(
 		null
 	);
@@ -84,7 +100,8 @@ export default function Group() {
 					w="full"
 					h="full"
 					gap={2}
-					bg={useColorModeValue("gray.100", "gray.700")}>
+					bg={useColorModeValue("gray.100", "gray.700")}
+					overflowY="scroll">
 					{folders ? (
 						folders.map((folder: Folder) => {
 							return (
@@ -160,7 +177,7 @@ export default function Group() {
 						name={user!.username}
 						src={
 							user?.profilePicture
-								? DataToSrc(user.profilePicture)
+								? DataToSrc(user?.profilePicture)
 								: ""
 						}
 					/>
@@ -177,8 +194,8 @@ export default function Group() {
 						<HStack
 							alignItems={"flex-start"}
 							justifyContent={"center"}>
-							<Text>{user?.firstName}</Text>
-							<Text>{user?.lastName}</Text>
+							<Text>{user!.firstName}</Text>
+							<Text>{user!.lastName}</Text>
 						</HStack>
 					</VStack>
 					<HStack spacing={2} ml="auto">

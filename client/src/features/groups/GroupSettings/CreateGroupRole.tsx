@@ -14,6 +14,7 @@ import {
 	Input,
 	Box,
 	useToast,
+	Flex,
 } from "@chakra-ui/react";
 import { Formik, FormikProps, Form, Field } from "formik";
 import { CreateGroupRoleSchema } from "../../../utils/ValidationSchemas";
@@ -22,8 +23,10 @@ import {
 	type Group,
 	type Role,
 	useSaveGroupRoleMutation,
-	GroupRolePermissions,
+	Permissions,
 } from "../../../app/services/groups";
+
+import { CheckBoxInput } from "./CheckBoxInput";
 
 export default function CreateGroupRole({ group }: { group: Group }) {
 	const { isOpen, onOpen, onClose } = useDisclosure();
@@ -41,7 +44,7 @@ export default function CreateGroupRole({ group }: { group: Group }) {
 					<Formik
 						initialValues={{
 							name: "",
-							permissions: [GroupRolePermissions.can_view],
+							permissions: [],
 						}}
 						validationSchema={CreateGroupRoleSchema}
 						onSubmit={async values => {
@@ -91,46 +94,33 @@ export default function CreateGroupRole({ group }: { group: Group }) {
 											<FormLabel htmlFor="permissions">
 												Permissions
 											</FormLabel>
-											<FormLabel>
-												<Field
-													type="checkbox"
-													name="permissions"
-													value={
-														GroupRolePermissions.can_view
-													}
-												/>
-												can_view
-											</FormLabel>
-											<FormLabel>
-												<Field
-													type="checkbox"
-													name="permissions"
-													value={
-														GroupRolePermissions.can_edit
-													}
-												/>
-												can_edit
-											</FormLabel>
-											<FormLabel>
-												<Field
-													type="checkbox"
-													name="permissions"
-													value={
-														GroupRolePermissions.can_delete
-													}
-												/>
-												can_delete
-											</FormLabel>
-											<FormLabel>
-												<Field
-													type="checkbox"
-													name="permissions"
-													value={
-														GroupRolePermissions.can_add
-													}
-												/>
-												can_add
-											</FormLabel>
+											<Flex wrap="wrap">
+												{Object.keys(Permissions)
+													.filter(
+														(permission: any) =>
+															!isNaN(
+																Number(
+																	Permissions[
+																		permission as keyof typeof Permissions
+																	]
+																)
+															)
+													)
+													.map(
+														(
+															permission,
+															idx: number
+														) => (
+															<CheckBoxInput
+																key={idx}
+																permission={
+																	permission
+																}
+																{...props}
+															/>
+														)
+													)}
+											</Flex>
 											<FormErrorMessage>
 												{props.errors.permissions}
 											</FormErrorMessage>
