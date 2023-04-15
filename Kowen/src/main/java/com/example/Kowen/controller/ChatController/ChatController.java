@@ -1,5 +1,6 @@
 package com.example.Kowen.controller.ChatController;
 
+import com.example.Kowen.entity.GroupChat;
 import com.example.Kowen.entity.Message;
 import com.example.Kowen.entity.User;
 import com.example.Kowen.entity.UserGroup;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -63,6 +65,24 @@ public class ChatController {
         group.getGroupChat().setMessages(messages);
         groupRepo.save(group);
         return messages;
+    }
+
+    @GetMapping("/clearChat/{groupId}")
+    public GroupChat clearChat(@PathVariable Long groupId) throws Exception {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        User user = userRepository.findByEmail(principal.getUsername()).get(0);
+        UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
+
+        if (!groupService.checkForPermissions(user.getId(), groupId, PermissionsEnum.access_chat)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You don't have permissions!");
+        for (Message message : group.getGroupChat().getMessages()){
+            messageRepo.delete(message);
+        }
+
+        group.getGroupChat().setMessages(new ArrayList<>());
+        chatRepo.save(group.getGroupChat());
+        groupRepo.save(group);
+        return group.getGroupChat();
     }
 
 }
