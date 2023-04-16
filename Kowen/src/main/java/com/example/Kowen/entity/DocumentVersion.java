@@ -1,6 +1,7 @@
 package com.example.Kowen.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,6 +29,7 @@ public class DocumentVersion {
     @Column(columnDefinition="BLOB", nullable = false)
     private byte[] documentContent;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "document_id")
     private Document document;
