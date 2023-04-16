@@ -71,17 +71,32 @@ export default function GroupMenu() {
 							<Text>{group.name}</Text>
 						</MenuButton>
 						<MenuList>
-							<MenuItem
-								onClick={() => {
-									navigate(`/groups/${group.id}/settings`);
-								}}
-								onMouseOver={() => {
-									// usePrefetch(
-									// 	"getUserPermissionsForGroup",
-									// );
-								}}>
-								Group Settings
-							</MenuItem>
+							{permissions &&
+								(permissions.some((permission: Permission) => {
+									return (
+										permission === Permission.add_role ||
+										permission === Permission.apply_role ||
+										permission === Permission.edit_role ||
+										permission === Permission.remove_role ||
+										permission === Permission.edit_group ||
+										permission === Permission.remove_user
+									);
+								}) ||
+									isCreator) && (
+									<MenuItem
+										onClick={() => {
+											navigate(
+												`/groups/${group.id}/settings`
+											);
+										}}
+										onMouseOver={() => {
+											// usePrefetch(
+											// 	"getUserPermissionsForGroup",
+											// );
+										}}>
+										Group Settings
+									</MenuItem>
+								)}
 							{permissions &&
 								(permissions.includes(Permission.add_user) ||
 									isCreator) && (
