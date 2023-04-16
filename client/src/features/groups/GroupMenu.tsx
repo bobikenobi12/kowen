@@ -18,10 +18,9 @@ import { useLeaveGroupMutation, Permission } from "../../app/services/groups";
 import { useTypedSelector } from "../../hooks/store";
 import {
 	selectCurrentGroup,
+	selectIsCreator,
 	selectCurrentGroupPermissions,
 } from "./groupsSlice";
-
-import { selectCurrentUser } from "../auth/authSlice";
 
 import { useNavigate } from "react-router-dom";
 
@@ -31,8 +30,7 @@ export default function GroupMenu() {
 	const [leaveGroup] = useLeaveGroupMutation();
 	const group = useTypedSelector(selectCurrentGroup);
 	const permissions = useTypedSelector(selectCurrentGroupPermissions);
-	const user = useTypedSelector(selectCurrentUser);
-
+	const isCreator = useTypedSelector(selectIsCreator);
 	if (!group) return null;
 
 	const toast = useToast();
@@ -85,13 +83,12 @@ export default function GroupMenu() {
 								Group Settings
 							</MenuItem>
 							{permissions &&
-								user &&
 								(permissions.includes(Permission.add_user) ||
-									(group.creator.id === user.id && (
-										<MenuItem>
-											<AddUserToGroupModal />
-										</MenuItem>
-									)))}
+									isCreator) && (
+									<MenuItem>
+										<AddUserToGroupModal />
+									</MenuItem>
+								)}
 							<MenuItem
 								onClick={async () => {
 									await leaveGroup(group.id);

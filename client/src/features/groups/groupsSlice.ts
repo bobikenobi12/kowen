@@ -88,3 +88,8 @@ export const selectGroupById = (state: RootState, id: number) =>
 export const selectCurrentGroupPermissions = (state: RootState) =>
 	state.groups.currentGroupPermissions;
 export const selectRoles = (state: RootState) => state.groups.roles;
+export const selectIsCreator = (state: RootState) => {
+	if (state.groups.currentGroup?.creator.id === state.auth.user?.id) {
+		return true;
+	}
+};
