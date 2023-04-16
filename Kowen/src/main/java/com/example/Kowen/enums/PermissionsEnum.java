@@ -17,5 +17,6 @@ public enum PermissionsEnum {
     save_new_document_version,
     preview_document,
     edit_document,
-    access_chat
+    send_message,
+    clear_chat
 }

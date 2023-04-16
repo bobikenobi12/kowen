@@ -53,7 +53,7 @@ public class ChatController {
         UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
 
         if (!group.getUsers().contains(user) && group.getCreator() != user) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not in this group!");
-        if (!groupService.checkForPermissions(user.getId(), groupId, PermissionsEnum.access_chat)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You don't have permissions!");
+        if (!groupService.checkForPermissions(user.getId(), groupId, PermissionsEnum.send_message)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You don't have permissions!");
 
         Message chatMessage = new Message();
         chatMessage.setChat(group.getGroupChat());
@@ -74,7 +74,7 @@ public class ChatController {
         User user = userRepository.findByEmail(principal.getUsername()).get(0);
         UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
 
-        if (!groupService.checkForPermissions(user.getId(), groupId, PermissionsEnum.access_chat)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You don't have permissions!");
+        if (!groupService.checkForPermissions(user.getId(), groupId, PermissionsEnum.clear_chat)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You don't have permissions!");
         for (Message message : group.getGroupChat().getMessages()){
             messageRepo.delete(message);
         }
