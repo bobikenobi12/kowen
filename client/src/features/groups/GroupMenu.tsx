@@ -1,5 +1,3 @@
-import { usePrefetchImmediately } from "../../hooks/usePrefetchImmediately";
-
 import {
 	Flex,
 	Menu,
@@ -10,18 +8,20 @@ import {
 	useColorModeValue,
 	IconButton,
 	CloseButton,
-	useDisclosure,
 	useToast,
-	HStack,
-	Icon,
 	Button,
 } from "@chakra-ui/react";
 import { BsBoxArrowLeft } from "react-icons/bs";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 
-import { useLeaveGroupMutation, usePrefetch } from "../../app/services/groups";
+import { useLeaveGroupMutation, Permission } from "../../app/services/groups";
 import { useTypedSelector } from "../../hooks/store";
-import { selectCurrentGroup } from "./groupsSlice";
+import {
+	selectCurrentGroup,
+	selectCurrentGroupPermissions,
+} from "./groupsSlice";
+
+import { selectCurrentUser } from "../auth/authSlice";
 
 import { useNavigate } from "react-router-dom";
 
@@ -30,6 +30,8 @@ import AddUserToGroupModal from "./AddUserToGroupModal";
 export default function GroupMenu() {
 	const [leaveGroup] = useLeaveGroupMutation();
 	const group = useTypedSelector(selectCurrentGroup);
+	const permissions = useTypedSelector(selectCurrentGroupPermissions);
+	const user = useTypedSelector(selectCurrentUser);
 
 	if (!group) return null;
 
@@ -82,9 +84,14 @@ export default function GroupMenu() {
 								}}>
 								Group Settings
 							</MenuItem>
-							<MenuItem>
-								<AddUserToGroupModal />
-							</MenuItem>
+							{permissions &&
+								user &&
+								(permissions.includes(Permission.add_user) ||
+									(group.creator.id === user.id && (
+										<MenuItem>
+											<AddUserToGroupModal />
+										</MenuItem>
+									)))}
 							<MenuItem
 								onClick={async () => {
 									await leaveGroup(group.id);

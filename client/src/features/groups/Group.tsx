@@ -15,7 +15,7 @@ import {
 import { useParams, useNavigate, Outlet } from "react-router-dom";
 
 import { useGetFoldersInGroupQuery } from "../../app/services/folders";
-import { useShowGroupQuery } from "../../app/services/groups";
+import { useGetUserPermissionsForGroupQuery } from "../../app/services/groups";
 
 import { selectGroupById } from "./groupsSlice";
 
@@ -37,36 +37,40 @@ import ThemeToggle from "../../components/common/ThemeToggle";
 import MemberList from "./MemberList";
 
 export default function Group() {
+	const { groupId } = useParams();
+
 	const navigate = useNavigate();
 
-	const { groupId } = useParams();
-	if (!groupId) {
-		navigate("/404");
-	}
+	const dispatch = useAppDispatch();
 
+	const user = useTypedSelector(selectCurrentUser);
 	const group = useTypedSelector(state =>
 		selectGroupById(state, parseInt(groupId as string))
 	);
 
-	const { data: folders, error } = useGetFoldersInGroupQuery(
-		parseInt(groupId as string)
-	);
-
-	if (error) {
-		navigate("/404");
-	}
-
-	const user = useTypedSelector(selectCurrentUser);
-
-	if (!user) {
-		navigate("/login");
-	}
-
-	const dispatch = useAppDispatch();
-
 	const [hoveredFolder, setHoveredFolder] = React.useState<Folder | null>(
 		null
 	);
+
+	const {
+		data: permissions,
+		error: permissionsError,
+		isLoading: permissionsLoading,
+	} = useGetUserPermissionsForGroupQuery(parseInt(groupId as string));
+
+	const {
+		data: folders,
+		isLoading,
+		error,
+	} = useGetFoldersInGroupQuery(parseInt(groupId as string));
+
+	if (permissionsError || error) {
+		return <div>Error: {JSON.stringify(error ?? permissionsError)}</div>;
+	}
+
+	if (isLoading || permissionsLoading) {
+		return <div>Loading...</div>;
+	}
 
 	return (
 		<Flex
