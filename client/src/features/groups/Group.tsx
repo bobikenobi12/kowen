@@ -15,9 +15,12 @@ import {
 import { useParams, useNavigate, Outlet } from "react-router-dom";
 
 import { useGetFoldersInGroupQuery } from "../../app/services/folders";
-import { useGetUserPermissionsForGroupQuery } from "../../app/services/groups";
+import {
+	useGetUserPermissionsForGroupQuery,
+	Permission,
+} from "../../app/services/groups";
 
-import { selectGroupById } from "./groupsSlice";
+import { selectGroupById, selectIsCreator } from "./groupsSlice";
 
 import { useTypedSelector, useAppDispatch } from "../../hooks/store";
 import { selectCurrentUser } from "../auth/authSlice";
@@ -44,6 +47,7 @@ export default function Group() {
 	const dispatch = useAppDispatch();
 
 	const user = useTypedSelector(selectCurrentUser);
+	const isCreator = useTypedSelector(selectIsCreator);
 	const group = useTypedSelector(state =>
 		selectGroupById(state, parseInt(groupId as string))
 	);
@@ -56,13 +60,13 @@ export default function Group() {
 		data: permissions,
 		error: permissionsError,
 		isLoading: permissionsLoading,
-	} = useGetUserPermissionsForGroupQuery(parseInt(groupId as string));
+	} = useGetUserPermissionsForGroupQuery(Number(groupId));
 
 	const {
 		data: folders,
 		isLoading,
 		error,
-	} = useGetFoldersInGroupQuery(parseInt(groupId as string));
+	} = useGetFoldersInGroupQuery(Number(groupId));
 
 	if (permissionsError || error) {
 		return <div>Error: {JSON.stringify(error ?? permissionsError)}</div>;
@@ -70,6 +74,10 @@ export default function Group() {
 
 	if (isLoading || permissionsLoading) {
 		return <div>Loading...</div>;
+	}
+
+	if (!group) {
+		return <div>Group not found</div>;
 	}
 
 	return (
@@ -89,6 +97,7 @@ export default function Group() {
 					w="full"
 					alignItems={"center"}
 					justifyContent={"space-between"}
+					p={2}
 					bg={useColorModeValue("gray.100", "gray.700")}>
 					<Text
 						ml={4}
@@ -97,7 +106,11 @@ export default function Group() {
 						color={useColorModeValue("gray.500", "gray.400")}>
 						Folders
 					</Text>
-					{group?.id && <CreateFolder groupId={group.id} />}
+					{permissions &&
+						(isCreator ||
+							permissions?.includes(Permission.add_folder)) && (
+							<CreateFolder groupId={group.id} />
+						)}
 				</Flex>
 
 				<VStack
@@ -106,7 +119,7 @@ export default function Group() {
 					gap={2}
 					bg={useColorModeValue("gray.100", "gray.700")}
 					overflowY="scroll">
-					{folders ? (
+					{folders && folders.length > 0 ? (
 						folders.map((folder: Folder) => {
 							return (
 								<Flex
@@ -122,6 +135,12 @@ export default function Group() {
 										"gray.100",
 										"gray.700"
 									)}
+									_hover={{
+										bg: useColorModeValue(
+											"gray.200",
+											"gray.500"
+										),
+									}}
 									onMouseEnter={() => {
 										setHoveredFolder(folder);
 									}}
@@ -150,17 +169,31 @@ export default function Group() {
 											{FormatFolderName(folder.name)}
 										</Text>
 									</HStack>
-									{hoveredFolder?.id === folder.id &&
-										group?.id && (
+									{hoveredFolder &&
+										group &&
+										hoveredFolder?.id === folder.id &&
+										group.id && (
 											<HStack>
-												<EditFolder
-													groupId={group!.id}
-													folderId={folder.id}
-												/>
-												<DeleteFolder
-													folderId={folder.id}
-													groupId={group!.id}
-												/>
+												{permissions &&
+													(isCreator ||
+														permissions.includes(
+															Permission.edit_folder
+														)) && (
+														<EditFolder
+															groupId={group!.id}
+															folderId={folder.id}
+														/>
+													)}
+												{permissions &&
+													(isCreator ||
+														permissions.includes(
+															Permission.delete_folder
+														)) && (
+														<DeleteFolder
+															folderId={folder.id}
+															groupId={group!.id}
+														/>
+													)}
 											</HStack>
 										)}
 								</Flex>
