@@ -23,7 +23,7 @@ import {
 	type Group,
 	type Role,
 	useSaveGroupRoleMutation,
-	Permissions,
+	Permission,
 } from "../../../app/services/groups";
 
 import { CheckBoxInput } from "./CheckBoxInput";

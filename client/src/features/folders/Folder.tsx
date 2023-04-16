@@ -111,18 +111,16 @@ export default function Folder() {
 										icon={<Icon as={BsCloudDownload} />}
 										onClick={async () => {
 											try {
-												// const { data } =
-												// (
-												await downloadDocument({
-													folderId: folder.id,
-													documentId: document.id,
-													version: 1,
-												});
-												// ) as { data: Blob };
-												// fileDownload(
-												// 	data,
-												// 	document.name
-												// );
+												const { data } =
+													(await downloadDocument({
+														folderId: folder.id,
+														documentId: document.id,
+														version: 1,
+													})) as { data: Blob };
+												fileDownload(
+													data,
+													document.name
+												);
 											} catch (error) {
 												console.log(error);
 											}

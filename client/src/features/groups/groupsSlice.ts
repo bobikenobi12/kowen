@@ -3,12 +3,14 @@ import { api } from "../../app/services/groups";
 import { RootState } from "../../app/store";
 import { type Group } from "../../app/services/groups";
 import { type getRolesInGroupResponse } from "../../app/services/groups";
+import { Permission } from "../../app/services/groups";
 
 export interface GroupsState {
 	groups: Group[];
 	currentGroup: Group | null;
 	roles: getRolesInGroupResponse[] | null;
 	selectedSection: string;
+	currentGroupPermissions: Permission[] | null;
 }
 
 const initialState: GroupsState = {
@@ -16,6 +18,7 @@ const initialState: GroupsState = {
 	currentGroup: JSON.parse(localStorage.getItem("currentGroup") || "null"),
 	roles: null,
 	selectedSection: "overview",
+	currentGroupPermissions: null,
 };
 
 const slice = createSlice({
@@ -64,6 +67,12 @@ const slice = createSlice({
 				state.roles = action.payload;
 			}
 		);
+		builder.addMatcher(
+			api.endpoints.getUserPermissionsForGroup.matchFulfilled,
+			(state, action) => {
+				state.currentGroupPermissions = action.payload;
+			}
+		);
 	},
 });
 
@@ -76,4 +85,6 @@ export const selectSelectedSection = (state: RootState) =>
 	state.groups.selectedSection;
 export const selectGroupById = (state: RootState, id: number) =>
 	state.groups.groups.find(group => group.id === id);
+export const selectCurrentGroupPermissions = (state: RootState) =>
+	state.groups.currentGroupPermissions;
 export const selectRoles = (state: RootState) => state.groups.roles;

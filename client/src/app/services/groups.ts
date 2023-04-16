@@ -10,7 +10,7 @@ export interface CreateGroupRequest {
 export interface Role {
 	id: number;
 	name: string;
-	permissions: Permissions[];
+	permissions: Permission[];
 }
 
 export interface SetGroupRoleToUserRequest {
@@ -52,23 +52,23 @@ export interface RolesWithUsers {
 	users: User[];
 }
 
-export enum Permissions {
-	add_role,
-	apply_role,
-	edit_role,
-	remove_role,
-	remove_user,
-	add_user,
-	edit_group,
-	add_folder,
-	delete_folder,
-	edit_folder,
-	add_document,
-	remove_document,
-	download_document,
-	save_new_document_version,
-	preview_document,
-	edit_document,
+export enum Permission {
+	add_role = "add_role",
+	apply_role = "apply_role",
+	edit_role = "edit_role",
+	remove_role = "remove_role",
+	remove_user = "remove_user",
+	add_user = "add_user",
+	edit_group = "edit_group",
+	add_folder = "add_folder",
+	delete_folder = "delete_folder",
+	edit_folder = "edit_folder",
+	add_document = "add_document",
+	remove_document = "remove_document",
+	download_document = "download_document",
+	save_new_document_version = "save_new_document_version",
+	preview_document = "preview_document",
+	edit_document = "edit_document",
 }
 
 export interface saveGroupRoleRequest {
@@ -79,7 +79,7 @@ export interface saveGroupRoleRequest {
 export interface saveGroupRoleResponse {
 	id: number;
 	name: string;
-	permissions: Permissions[];
+	permissions: Permission[];
 	users: User[] | [];
 }
 
@@ -256,6 +256,12 @@ export const api = createApi({
 			}),
 			invalidatesTags: ["Group"],
 		}),
+		getUserPermissionsForGroup: builder.query<Permission[], number>({
+			query: groupId => ({
+				url: `getPermissionsInGroup/${groupId}`,
+				method: "GET",
+			}),
+		}),
 	}),
 });
 
@@ -278,4 +284,6 @@ export const {
 	useGetWaitingUsersQuery,
 	useGetUsersInGroupQuery,
 	useLeaveGroupMutation,
+	useGetUserPermissionsForGroupQuery,
+	usePrefetch,
 } = api;

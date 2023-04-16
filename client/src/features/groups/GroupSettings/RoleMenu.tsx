@@ -25,7 +25,6 @@ export default function RoleMenu({
 	user: User;
 }) {
 	const { data: roles } = useGetRolesInGroupQuery(group.id);
-	console.log(roles);
 	const [setGroupRoleToUser] = useSetGroupRoleToUserMutation();
 	const toast = useToast();
 

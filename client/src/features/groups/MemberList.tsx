@@ -22,13 +22,13 @@ import { useParams } from "react-router-dom";
 
 import { FormatDate } from "../../utils/FormatDate";
 
-import { selectCurrentUser } from "../auth/authSlice";
 import { selectGroupById } from "./groupsSlice";
 
 import RoleBadge from "./GroupSettings/RoleBadge";
 
 export default function MemberList() {
 	const { groupId } = useParams();
+
 	if (!groupId) {
 		return null;
 	}
@@ -52,7 +52,7 @@ export default function MemberList() {
 			bg={useColorModeValue("gray.100", "gray.700")}
 			alignItems="center"
 			right={0}>
-			{roles?.map(userWithRoles => (
+			{/* {roles?.map(userWithRoles => (
 				<Popover key={userWithRoles.user.id} placement="left">
 					<PopoverTrigger>
 						<HStack
@@ -129,7 +129,7 @@ export default function MemberList() {
 						</PopoverBody>
 					</PopoverContent>
 				</Popover>
-			))}
+			))} */}
 		</Flex>
 	);
 }

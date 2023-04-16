@@ -1,8 +1,15 @@
 import { configureStore } from "@reduxjs/toolkit";
+
+// Middleware
+import { asyncFunctionMiddleware } from "./middleware/asyncFucntionMiddleware";
+
+// Api
 import { api as authApi } from "./services/auth";
 import { api as groupApi } from "./services/groups";
 import { api as folderApi } from "./services/folders";
 import { api as documentsApi } from "./services/documents";
+
+// Reducers
 import authReducer from "../features/auth/authSlice";
 import groupsReducer from "../features/groups/groupsSlice";
 import routerReducer from "../features/router/routerSlice";
@@ -26,7 +33,8 @@ export const store = configureStore({
 			authApi.middleware,
 			groupApi.middleware,
 			folderApi.middleware,
-			documentsApi.middleware
+			documentsApi.middleware,
+			asyncFunctionMiddleware
 		),
 });
 

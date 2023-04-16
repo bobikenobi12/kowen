@@ -1,3 +1,5 @@
+import { usePrefetchImmediately } from "../../hooks/usePrefetchImmediately";
+
 import {
 	Flex,
 	Menu,
@@ -17,7 +19,7 @@ import {
 import { BsBoxArrowLeft } from "react-icons/bs";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 
-import { useLeaveGroupMutation } from "../../app/services/groups";
+import { useLeaveGroupMutation, usePrefetch } from "../../app/services/groups";
 import { useTypedSelector } from "../../hooks/store";
 import { selectCurrentGroup } from "./groupsSlice";
 
@@ -27,8 +29,10 @@ import AddUserToGroupModal from "./AddUserToGroupModal";
 
 export default function GroupMenu() {
 	const [leaveGroup] = useLeaveGroupMutation();
-	const { isOpen, onOpen, onClose } = useDisclosure();
 	const group = useTypedSelector(selectCurrentGroup);
+
+	if (!group) return null;
+
 	const toast = useToast();
 	const navigate = useNavigate();
 	return (
@@ -64,12 +68,17 @@ export default function GroupMenu() {
 							isActive={isOpen}
 							as={IconButton}
 							aria-label="Group Options">
-							<Text>{group?.name}</Text>
+							<Text>{group.name}</Text>
 						</MenuButton>
 						<MenuList>
 							<MenuItem
 								onClick={() => {
-									navigate(`/groups/${group?.id}/settings`);
+									navigate(`/groups/${group.id}/settings`);
+								}}
+								onMouseOver={() => {
+									// usePrefetch(
+									// 	"getUserPermissionsForGroup",
+									// );
 								}}>
 								Group Settings
 							</MenuItem>
@@ -78,10 +87,10 @@ export default function GroupMenu() {
 							</MenuItem>
 							<MenuItem
 								onClick={async () => {
-									await leaveGroup(group!.id);
+									await leaveGroup(group.id);
 									toast({
 										title: "Left Group",
-										description: `You have left the group ${group?.name}`,
+										description: `You have left the group ${group.name}`,
 										status: "info",
 										duration: 5000,
 										isClosable: true,
