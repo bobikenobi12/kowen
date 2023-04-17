@@ -69,6 +69,8 @@ export enum Permission {
 	save_new_document_version = "save_new_document_version",
 	preview_document = "preview_document",
 	edit_document = "edit_document",
+	send_message = "send_message",
+	clear_chat = "clear_chat",
 }
 
 export interface saveGroupRoleRequest {

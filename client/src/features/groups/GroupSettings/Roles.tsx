@@ -1,6 +1,5 @@
 import {
 	HStack,
-	Text,
 	Box,
 	useColorModeValue,
 	useToast,
@@ -12,10 +11,9 @@ import {
 	Td,
 	List,
 	ListItem,
-	ListIcon,
 } from "@chakra-ui/react";
 
-import { useAppDispatch, useTypedSelector } from "../../../hooks/store";
+import { useAppDispatch } from "../../../hooks/store";
 import {
 	type Group,
 	useGetRolesInGroupQuery,
@@ -28,6 +26,9 @@ export default function GroupRoles({ group }: { group: Group }) {
 	const toast = useToast();
 	const dispatch = useAppDispatch();
 	const { data: roles, isLoading, error } = useGetRolesInGroupQuery(group.id);
+
+	if (isLoading) return <Box>Loading...</Box>;
+	if (error) return <Box>Error: {JSON.stringify(error)}</Box>;
 
 	return (
 		<Box

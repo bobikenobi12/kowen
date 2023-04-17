@@ -16,7 +16,7 @@ import {
 	useToast,
 	Flex,
 } from "@chakra-ui/react";
-import { Formik, FormikProps, Form, Field } from "formik";
+import { Formik, FormikProps, Form, Field, ErrorMessage } from "formik";
 import { CreateGroupRoleSchema } from "../../../utils/ValidationSchemas";
 
 import {
@@ -44,26 +44,35 @@ export default function CreateGroupRole({ group }: { group: Group }) {
 					<Formik
 						initialValues={{
 							name: "",
-							permissions: [],
+							permissions: [] as Permission[],
 						}}
 						validationSchema={CreateGroupRoleSchema}
 						onSubmit={async values => {
-							console.log(values);
-							await saveGroupRole({
-								groupId: group.id,
-								role: {
-									name: values.name,
-									permissions: values.permissions,
-								},
-							});
-							onClose();
-							toast({
-								title: "Role Created",
-								description: `You have created the role ${values.name} for the group ${group.name}`,
-								status: "info",
-								duration: 5000,
-								isClosable: true,
-							});
+							try {
+								await saveGroupRole({
+									groupId: group.id,
+									role: {
+										name: values.name,
+										permissions: values.permissions,
+									},
+								}).unwrap();
+								toast({
+									title: "Role Created",
+									description: `You have created the role ${values.name} for the group ${group.name}`,
+									status: "info",
+									duration: 5000,
+									isClosable: true,
+								});
+								onClose();
+							} catch (err: any) {
+								toast({
+									title: "Error",
+									description: JSON.stringify(err),
+									status: "error",
+									duration: 5000,
+									isClosable: true,
+								});
+							}
 						}}>
 						{(props: FormikProps<Partial<Role>>) => (
 							<ModalBody>
@@ -90,38 +99,30 @@ export default function CreateGroupRole({ group }: { group: Group }) {
 										)}
 									</Field>
 									<Box mt={4} mb={4}>
-										<FormControl>
+										<FormControl
+											isInvalid={Boolean(
+												props.errors.permissions
+											)}>
 											<FormLabel htmlFor="permissions">
 												Permissions
 											</FormLabel>
 											<Flex wrap="wrap">
-												{Object.keys(Permissions)
-													.filter(
-														(permission: any) =>
-															!isNaN(
-																Number(
-																	Permissions[
-																		permission as keyof typeof Permissions
-																	]
-																)
-															)
+												{Object.values(Permission).map(
+													(
+														permission,
+														idx: number
+													) => (
+														<CheckBoxInput
+															key={idx}
+															permission={
+																permission
+															}
+															{...props}
+														/>
 													)
-													.map(
-														(
-															permission,
-															idx: number
-														) => (
-															<CheckBoxInput
-																key={idx}
-																permission={
-																	permission
-																}
-																{...props}
-															/>
-														)
-													)}
+												)}
 											</Flex>
-											<FormErrorMessage>
+											<FormErrorMessage mt={2}>
 												{props.errors.permissions}
 											</FormErrorMessage>
 										</FormControl>
