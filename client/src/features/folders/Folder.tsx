@@ -31,6 +31,7 @@ import {
 
 import UploadDocument from "../documents/UploadDocument";
 import SaveNewDocumentVersion from "../documents/SaveNewDocumentVersion";
+import { version } from "react";
 
 export default function Folder() {
 	const navigate = useNavigate();
@@ -148,7 +149,7 @@ export default function Folder() {
 												}
 												onClick={async () => {
 													try {
-														const { data, error } =
+														const response =
 															await downloadDocument(
 																{
 																	groupId:
@@ -161,12 +162,21 @@ export default function Folder() {
 																	version:
 																		document
 																			.versions[
-																			length -
+																			document
+																				.versions
+																				.length -
 																				1
 																		]
 																			.version,
 																}
 															).unwrap();
+
+														// const blob = new Blob(
+														// 	[response],
+														// 	{
+														// 		type: "application/octet-stream",
+														// 	}
+														// );
 													} catch (error: any) {
 														fileDownload(
 															error.data,
