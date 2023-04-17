@@ -158,7 +158,13 @@ export default function Folder() {
 																			.id,
 																	documentId:
 																		document.id,
-																	version: 1,
+																	version:
+																		document
+																			.versions[
+																			length -
+																				1
+																		]
+																			.version,
 																}
 															).unwrap();
 													} catch (error: any) {

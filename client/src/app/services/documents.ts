@@ -69,6 +69,7 @@ export const api = createApi({
 			query: ({ groupId, folderId, documentId, version }) => ({
 				url: `document/download/${groupId}/${folderId}/${documentId}/${version}`,
 				method: "GET",
+				keepsUnusedDataFor: 0,
 			}),
 		}),
 
