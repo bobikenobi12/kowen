@@ -50,7 +50,7 @@ public class Document {
     @Column
     private String documentExtension; //
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    private List<RoleInGroup> roles; //
+//    @ManyToMany(cascade = CascadeType.ALL)
+//    private List<RoleInGroup> roles; //
 
 }
