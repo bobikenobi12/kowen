@@ -58,7 +58,7 @@ public class DocumentController {
 
     @PostMapping("/save")
     public Document save(@RequestParam(name = "file") MultipartFile file, @RequestParam Long groupId,
-            @RequestParam Long folderId, @RequestParam List<Long> roleIds) throws Exception {
+            @RequestParam Long folderId) throws Exception {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails principal = (UserDetails) authentication.getPrincipal();
         User user = userRepository.findByEmail(principal.getUsername()).get(0);
@@ -101,20 +101,13 @@ public class DocumentController {
                         "You don't have permissions to save add new document!");
         }
 
-        for (Long id : roleIds) {
-            RoleInGroup role = roleInGroupRepo.findById(id).orElseThrow(Exception::new);
-            if (group.getRoleInGroup().contains(role)) {
-                roles.add(role);
-            } else
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no such role!");
 
-        }
 
         Folder folder = folderRepo.findById(folderId).orElseThrow(Exception::new);
         if (!group.getFolders().contains(folder))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "there is no such folder in this group");
 
-        document.setRoles(roles);
+
         documentRepo.save(document);
         List<Document> docs = folder.getDocuments();
         docs.add(document);

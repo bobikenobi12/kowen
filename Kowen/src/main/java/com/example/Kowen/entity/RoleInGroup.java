@@ -23,9 +23,9 @@ public class RoleInGroup {
     @Column(nullable = true)
     private List<Long> userId;
 
-    @JsonIgnore
-    @ManyToMany(mappedBy = "roles", cascade = CascadeType.ALL)
-    private List<Document> documents;
+//    @JsonIgnore
+//    @ManyToMany(mappedBy = "roles", cascade = CascadeType.ALL)
+//    private List<Document> documents;
 
     @OneToOne(cascade = CascadeType.ALL)
     private RoleInGroupEntity roleUser;
