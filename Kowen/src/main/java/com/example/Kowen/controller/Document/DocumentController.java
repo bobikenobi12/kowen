@@ -151,6 +151,28 @@ public class DocumentController {
 
     }
 
+    @GetMapping("/remove/{groupId}/{folderId}/{documentId}")
+    public void downloadFile(@PathVariable Long groupId, @PathVariable("documentId") Long documentId, @PathVariable("folderId") Long folderId) throws Exception {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        User user = userRepository.findByEmail(principal.getUsername()).get(0);
+        UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
+        Document document = documentRepo.findById(documentId).orElseThrow(Exception::new);
+        Folder folder = folderRepo.findById(folderId).orElseThrow(Exception::new);
+
+        if (!group.getUsers().contains(user) && group.getCreator() != user) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not in this group!");
+        if (!group.getFolders().contains(folder)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no such folder in this group!");
+        if (!folder.getDocuments().contains(document)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no such document in this folder!");
+
+        if (!groupService.checkForPermissions(user.getId(), groupId, PermissionsEnum.remove_document)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You don't have permissions!");
+
+        folder.getDocuments().remove(document);
+        folderRepo.save(folder);
+        documentRepo.delete(document);
+
+
+    }
+
     @PostMapping("/saveNewVersion")
     public DocumentVersion saveNewVersion(@RequestParam(name = "file") MultipartFile file, @RequestParam Long groupId,
             @RequestParam Long documentId) throws Exception {
