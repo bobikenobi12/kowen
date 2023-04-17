@@ -10,6 +10,7 @@ export interface getDocuments {
 }
 
 export interface downloadDocument {
+	groupId: number;
 	folderId: number;
 	documentId: number;
 	version: number;
@@ -65,21 +66,10 @@ export const api = createApi({
 			invalidatesTags: ["Documents"],
 		}),
 		downloadDocument: builder.mutation<any, downloadDocument>({
-			query: ({ folderId, documentId, version }) => ({
-				url: `document/download/${folderId}/${documentId}/${version}`,
+			query: ({ groupId, folderId, documentId, version }) => ({
+				url: `document/download/${groupId}/${folderId}/${documentId}/${version}`,
 				method: "GET",
 			}),
-			transformResponse: (response, meta, arg) => {
-				if (meta?.request) {
-					const blob = new Blob([response as Uint8Array], {
-						type: "application/octet-stream",
-					});
-					const link = document.createElement("a");
-					link.href = window.URL.createObjectURL(blob);
-					link.download = `${arg.documentId}_${arg.version}`;
-					link.click();
-				}
-			},
 		}),
 
 		saveNewDocumentVersion: builder.mutation<void, FormData>({

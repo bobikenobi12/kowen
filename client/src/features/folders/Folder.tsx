@@ -1,4 +1,6 @@
 import fileDownload from "js-file-download";
+import { UseLazyQuery } from "@reduxjs/toolkit/dist/query/react/buildHooks";
+
 import {
 	Flex,
 	Heading,
@@ -119,7 +121,6 @@ export default function Folder() {
 								alignItems={"center"}
 								justifyContent={"space-between"}
 								bg={useColorModeValue("gray.100", "gray.700")}
-								// make it pop
 								cursor="pointer"
 								_hover={{
 									bg: useColorModeValue(
@@ -147,9 +148,11 @@ export default function Folder() {
 												}
 												onClick={async () => {
 													try {
-														const { data } =
-															(await downloadDocument(
+														const { data, error } =
+															await downloadDocument(
 																{
+																	groupId:
+																		group.id,
 																	folderId:
 																		folder!
 																			.id,
@@ -157,15 +160,12 @@ export default function Folder() {
 																		document.id,
 																	version: 1,
 																}
-															)) as {
-																data: Blob;
-															};
+															).unwrap();
+													} catch (error: any) {
 														fileDownload(
-															data,
+															error.data,
 															document.name
 														);
-													} catch (error) {
-														console.log(error);
 													}
 												}}
 											/>

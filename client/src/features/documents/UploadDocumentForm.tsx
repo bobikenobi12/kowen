@@ -52,7 +52,6 @@ export default function UploadDocumentForm() {
 		<Formik
 			initialValues={{
 				file: "",
-				roleIds: [] as number[],
 			}}
 			validationSchema={UploadDocumentSchema}
 			onSubmit={async (values, { setSubmitting, resetForm }) => {
@@ -61,9 +60,6 @@ export default function UploadDocumentForm() {
 				formData.append("file", values.file);
 				formData.append("folderId", currentFolder.id.toString());
 				formData.append("groupId", currentGroup.id.toString());
-				values.roleIds.forEach((roleId: number) => {
-					formData.append("roleIds", roleId.toString());
-				});
 				try {
 					await saveDocument(formData).unwrap();
 					toast({
@@ -87,72 +83,22 @@ export default function UploadDocumentForm() {
 				}
 			}}>
 			{({ isSubmitting, values, errors, touched }) => (
-				<>
-					<Text
-						as="h1"
-						fontSize="2xl"
-						fontWeight="bold"
-						mb={4}
-						textAlign="center">
-						Values:
-						{values.roleIds.map((roleId: number) => (
-							<Text key={roleId}>{roleId}</Text>
-						))}
-					</Text>
+				<Form encType="multipart/form-data">
+					<Stack spacing={4}>
+						<Field name="file">
+							{({ field, form }: FieldProps) => (
+								<DocumentDropzone field={field} form={form} />
+							)}
+						</Field>
 
-					<Form encType="multipart/form-data">
-						<Stack spacing={4}>
-							<Field name="file">
-								{({ field, form }: FieldProps) => (
-									<DocumentDropzone
-										field={field}
-										form={form}
-									/>
-								)}
-							</Field>
-							<Box mt={4} mb={4}>
-								<FormControl
-									isInvalid={Boolean(
-										errors.roleIds && touched.roleIds
-									)}>
-									<FormLabel htmlFor={"roleIds"}>
-										Roles
-									</FormLabel>
-									<Flex
-										flexWrap="wrap"
-										justifyContent="flex-start"
-										alignItems="center">
-										{roles &&
-											roles.map(role => (
-												<Box
-													key={role.id}
-													mr={2}
-													mb={2}>
-													<CheckBoxInput
-														// key={role.id}
-														label="roleIds"
-														value={role.roleUser.id}
-														customValue={
-															role.roleUser.name
-														}
-													/>
-												</Box>
-											))}
-									</Flex>
-									<FormErrorMessage>
-										{errors.roleIds}
-									</FormErrorMessage>
-								</FormControl>
-							</Box>
-							<Button
-								type="submit"
-								colorScheme="blue"
-								isLoading={isSubmitting || isLoading}>
-								Upload
-							</Button>
-						</Stack>
-					</Form>
-				</>
+						<Button
+							type="submit"
+							colorScheme="blue"
+							isLoading={isSubmitting || isLoading}>
+							Upload
+						</Button>
+					</Stack>
+				</Form>
 			)}
 		</Formik>
 	);
