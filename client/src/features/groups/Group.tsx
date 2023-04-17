@@ -138,7 +138,7 @@ export default function Group() {
 									_hover={{
 										bg: useColorModeValue(
 											"gray.200",
-											"gray.500"
+											"gray.600"
 										),
 									}}
 									onMouseEnter={() => {

@@ -114,9 +114,10 @@ export default function CreateGroupRole({ group }: { group: Group }) {
 													) => (
 														<CheckBoxInput
 															key={idx}
-															permission={
-																permission
+															label={
+																"permissions"
 															}
+															value={permission}
 															{...props}
 														/>
 													)

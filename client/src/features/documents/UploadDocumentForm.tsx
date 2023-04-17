@@ -1,4 +1,3 @@
-import * as React from "react";
 import {
 	Button,
 	FormControl,
@@ -6,7 +5,9 @@ import {
 	FormLabel,
 	Stack,
 	useToast,
-	Select,
+	Flex,
+	Box,
+	Text,
 } from "@chakra-ui/react";
 import { Field, FieldProps, Form, Formik } from "formik";
 
@@ -22,15 +23,31 @@ import { useGetRolesInGroupQuery } from "../../app/services/groups";
 
 import { UploadDocumentSchema } from "../../utils/ValidationSchemas";
 
+import { CheckBoxInput } from "../groups/GroupSettings/CheckBoxInput";
+
 import DocumentDropzone from "./DocumentDropzone";
 
 export default function UploadDocumentForm() {
+	const toast = useToast();
+
 	const currentGroup = useTypedSelector(selectCurrentGroup) as Group;
-	const { data: roles } = useGetRolesInGroupQuery(currentGroup.id);
 	const currentFolder = useTypedSelector(selectCurrentFolder) as Folder;
+
+	const {
+		data: roles,
+		isLoading: rolesLoading,
+		error: rolesError,
+	} = useGetRolesInGroupQuery(currentGroup.id);
 	const [saveDocument, { isLoading }] = useSaveDocumentMutation();
 
-	const toast = useToast();
+	if (rolesLoading) {
+		return <Text>Loading...</Text>;
+	}
+
+	if (rolesError) {
+		return <Text>An error occurred.</Text>;
+	}
+
 	return (
 		<Formik
 			initialValues={{
@@ -69,74 +86,73 @@ export default function UploadDocumentForm() {
 					resetForm();
 				}
 			}}>
-			{({ isSubmitting, values, setFieldValue }) => (
-				<Form encType="multipart/form-data">
-					<Stack spacing={4}>
-						<Field name="file">
-							{({ field, form }: FieldProps) => (
-								<DocumentDropzone field={field} form={form} />
-							)}
-						</Field>
-						<Field name="roleIds">
-							{({ field, form }: FieldProps) => (
+			{({ isSubmitting, values, errors, touched }) => (
+				<>
+					<Text
+						as="h1"
+						fontSize="2xl"
+						fontWeight="bold"
+						mb={4}
+						textAlign="center">
+						Values:
+						{values.roleIds.map((roleId: number) => (
+							<Text key={roleId}>{roleId}</Text>
+						))}
+					</Text>
+
+					<Form encType="multipart/form-data">
+						<Stack spacing={4}>
+							<Field name="file">
+								{({ field, form }: FieldProps) => (
+									<DocumentDropzone
+										field={field}
+										form={form}
+									/>
+								)}
+							</Field>
+							<Box mt={4} mb={4}>
 								<FormControl
 									isInvalid={Boolean(
-										form.errors[field.name] &&
-											form.touched[field.name]
+										errors.roleIds && touched.roleIds
 									)}>
-									<FormLabel htmlFor={field.name}>
+									<FormLabel htmlFor={"roleIds"}>
 										Roles
 									</FormLabel>
-									{/* <Select
-										{...field}
-										multiple
-										size="md"
-										placeholder="Select roles"
-										value={values.roleIds}>
+									<Flex
+										flexWrap="wrap"
+										justifyContent="flex-start"
+										alignItems="center">
 										{roles &&
 											roles.map(role => (
-												<option
+												<Box
 													key={role.id}
-													value={role.roleUser.id}>
-													{role.roleUser.name}
-												</option>
+													mr={2}
+													mb={2}>
+													<CheckBoxInput
+														// key={role.id}
+														label="roleIds"
+														value={role.roleUser.id}
+														customValue={
+															role.roleUser.name
+														}
+													/>
+												</Box>
 											))}
-									</Select> */}
-									<Select
-										multiple
-										{...field}
-										placeholder="Select roles"
-										value={values.roleIds.toString()}>
-										{roles &&
-											roles.map(role => (
-												<option
-													key={role.id}
-													value={role.roleUser.id}>
-													{role.roleUser.name}
-												</option>
-											))}
-									</Select>
-									{form.errors[field.name] &&
-										form.touched[field.name] && (
-											<FormErrorMessage>
-												{
-													form.errors[
-														field.name
-													] as string
-												}
-											</FormErrorMessage>
-										)}
+									</Flex>
+									<FormErrorMessage>
+										{errors.roleIds}
+									</FormErrorMessage>
 								</FormControl>
-							)}
-						</Field>
-						<Button
-							type="submit"
-							colorScheme="blue"
-							isLoading={isSubmitting || isLoading}>
-							Upload
-						</Button>
-					</Stack>
-				</Form>
+							</Box>
+							<Button
+								type="submit"
+								colorScheme="blue"
+								isLoading={isSubmitting || isLoading}>
+								Upload
+							</Button>
+						</Stack>
+					</Form>
+				</>
 			)}
 		</Formik>
 	);

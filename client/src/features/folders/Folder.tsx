@@ -13,10 +13,14 @@ import { useParams, useNavigate } from "react-router-dom";
 
 import { BsCloudDownload } from "react-icons/bs";
 import { useTypedSelector } from "../../hooks/store";
-import { selectCurrentGroup } from "../groups/groupsSlice";
+import { selectCurrentGroup, selectIsCreator } from "../groups/groupsSlice";
 import { useGetFolderInGroupQuery } from "../../app/services/folders";
 import { type Folder } from "../../app/services/folders";
-import { type Group } from "../../app/services/groups";
+import {
+	type Group,
+	useGetUserPermissionsForGroupQuery,
+	Permission,
+} from "../../app/services/groups";
 import {
 	type Document,
 	useGetDocumentsInGroupQuery,
@@ -27,28 +31,49 @@ import UploadDocument from "../documents/UploadDocument";
 import SaveNewDocumentVersion from "../documents/SaveNewDocumentVersion";
 
 export default function Folder() {
-	const { data: folder, error } = useGetFolderInGroupQuery({
-		folderId: parseInt(
-			useParams<{ groupId: string; folderId: string }>()
-				.folderId as string
-		),
-		groupId: parseInt(
-			useParams<{ groupId: string; folderId: string }>().groupId as string
-		),
-	}) as { data: Folder; error: any };
 	const navigate = useNavigate();
-	if (error) {
-		navigate("/404");
-	}
 
 	const group = useTypedSelector(selectCurrentGroup) as Group;
-	const { data: documents } = useGetDocumentsInGroupQuery({
+	const isCreator = useTypedSelector(selectIsCreator);
+
+	const {
+		data: folder,
+		isLoading: folderLoading,
+		error: folderError,
+	} = useGetFolderInGroupQuery({
+		folderId: Number(
+			useParams<{ groupId: string; folderId: string }>().folderId
+		),
+		groupId: Number(
+			useParams<{ groupId: string; folderId: string }>().groupId
+		),
+	});
+
+	const {
+		data: permissions,
+		isLoading: permissionsLoading,
+		error: permissionsError,
+	} = useGetUserPermissionsForGroupQuery(group.id);
+
+	const {
+		data: documents,
+		isLoading: documentsLoading,
+		error: documentsError,
+	} = useGetDocumentsInGroupQuery({
 		groupId: group.id,
 		folderId: parseInt(
 			useParams<{ folderId: string }>().folderId as string
 		),
-	}) as { data: Document[] };
+	});
 	const [downloadDocument] = useDownloadDocumentMutation();
+
+	if (folderLoading || documentsLoading || permissionsLoading) {
+		return <Text>Loading...</Text>;
+	}
+
+	if (folderError || documentsError || permissionsError) {
+		return <Text>An error occurred.</Text>;
+	}
 
 	return (
 		<Flex
@@ -74,7 +99,9 @@ export default function Folder() {
 					{folder && folder.name}
 				</Heading>
 				<HStack mr={4}>
-					<UploadDocument />
+					{permissions &&
+						(permissions.includes(Permission.add_document) ||
+							isCreator) && <UploadDocument />}
 				</HStack>
 			</Flex>
 			<Flex
@@ -104,31 +131,54 @@ export default function Folder() {
 									{document.name}
 								</Text>
 								<HStack mr={4}>
-									<IconButton
-										aria-label="Download Document"
-										colorScheme={"blue"}
-										variant={"outline"}
-										icon={<Icon as={BsCloudDownload} />}
-										onClick={async () => {
-											try {
-												const { data } =
-													(await downloadDocument({
-														folderId: folder.id,
-														documentId: document.id,
-														version: 1,
-													})) as { data: Blob };
-												fileDownload(
-													data,
-													document.name
-												);
-											} catch (error) {
-												console.log(error);
-											}
-										}}
-									/>
-									<SaveNewDocumentVersion
-										documentId={document.id}
-									/>
+									{permissions &&
+										(permissions.includes(
+											Permission.download_document
+										) ||
+											isCreator) && (
+											<IconButton
+												aria-label="Download Document"
+												colorScheme={"blue"}
+												variant={"outline"}
+												icon={
+													<Icon
+														as={BsCloudDownload}
+													/>
+												}
+												onClick={async () => {
+													try {
+														const { data } =
+															(await downloadDocument(
+																{
+																	folderId:
+																		folder!
+																			.id,
+																	documentId:
+																		document.id,
+																	version: 1,
+																}
+															)) as {
+																data: Blob;
+															};
+														fileDownload(
+															data,
+															document.name
+														);
+													} catch (error) {
+														console.log(error);
+													}
+												}}
+											/>
+										)}
+									{permissions &&
+										(permissions.includes(
+											Permission.save_new_document_version
+										) ||
+											isCreator) && (
+											<SaveNewDocumentVersion
+												documentId={document.id}
+											/>
+										)}
 								</HStack>
 							</HStack>
 						);

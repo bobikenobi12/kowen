@@ -1,12 +1,15 @@
-import { Badge, Text, FormControl, Input, FormLabel } from "@chakra-ui/react";
+import { Badge, Text, FormLabel } from "@chakra-ui/react";
 
 import { Field } from "formik";
-
 export function CheckBoxInput({
-	permission,
+	label,
+	value,
+	customValue,
 	...props
 }: {
-	permission: string;
+	label: string;
+	value: string | number;
+	customValue?: string;
 }) {
 	return (
 		<FormLabel {...props}>
@@ -20,8 +23,8 @@ export function CheckBoxInput({
 				_hover={{
 					bg: "green.500",
 				}}>
-				<Field type="checkbox" name="permissions" value={permission} />
-				<Text>{permission}</Text>
+				<Field type="checkbox" name={label} value={value} />
+				<Text>{customValue ?? value}</Text>
 			</Badge>
 		</FormLabel>
 	);
