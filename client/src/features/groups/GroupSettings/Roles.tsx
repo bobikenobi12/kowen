@@ -2,7 +2,6 @@ import {
 	HStack,
 	Box,
 	useColorModeValue,
-	useToast,
 	Table,
 	Thead,
 	Tbody,
@@ -11,24 +10,37 @@ import {
 	Td,
 	List,
 	ListItem,
+	Button,
 } from "@chakra-ui/react";
 
-import { useAppDispatch } from "../../../hooks/store";
+import { useTypedSelector } from "../../../hooks/store";
+
 import {
 	type Group,
+	Permission,
 	useGetRolesInGroupQuery,
+	useGetUserPermissionsForGroupQuery,
 } from "../../../app/services/groups";
+
+import { selectIsCreator } from "../groupsSlice";
 
 import CreateGroupRole from "./CreateGroupRole";
 import RemoveRoleFromGroupDialog from "./RemoveRoleFromGroupDialog";
 
 export default function GroupRoles({ group }: { group: Group }) {
-	const toast = useToast();
-	const dispatch = useAppDispatch();
-	const { data: roles, isLoading, error } = useGetRolesInGroupQuery(group.id);
+	const isCreator = useTypedSelector(selectIsCreator);
 
-	if (isLoading) return <Box>Loading...</Box>;
+	const { data: roles, isLoading, error } = useGetRolesInGroupQuery(group.id);
+	const {
+		data: permissions,
+		isLoading: permissionsLoading,
+		error: permissionsError,
+	} = useGetUserPermissionsForGroupQuery(group.id);
+
+	if (isLoading || permissionsLoading) return <Box>Loading...</Box>;
 	if (error) return <Box>Error: {JSON.stringify(error)}</Box>;
+	if (permissionsError)
+		return <Box>Error: {JSON.stringify(permissionsError)}</Box>;
 
 	return (
 		<Box
@@ -37,7 +49,10 @@ export default function GroupRoles({ group }: { group: Group }) {
 			bg={useColorModeValue("white", "gray.800")}
 			p={4}
 			rounded="md">
-			<CreateGroupRole group={group} />
+			{permissions &&
+				(permissions.includes(Permission.add_role) || isCreator) && (
+					<CreateGroupRole group={group} />
+				)}
 			<Table variant="simple">
 				<Thead>
 					<Tr>
@@ -70,10 +85,32 @@ export default function GroupRoles({ group }: { group: Group }) {
 								</Td>
 								<Td>
 									<HStack>
-										<RemoveRoleFromGroupDialog
-											group={group}
-											role={role.roleUser}
-										/>
+										{permissions &&
+											(permissions.includes(
+												Permission.edit_role
+											) ||
+												isCreator) && (
+												<Button
+													colorScheme="blue"
+													size="sm"
+													onClick={() => {
+														console.log(
+															"Edit role"
+														);
+													}}>
+													Edit
+												</Button>
+											)}
+										{permissions &&
+											(permissions.includes(
+												Permission.remove_role
+											) ||
+												isCreator) && (
+												<RemoveRoleFromGroupDialog
+													group={group}
+													role={role.roleUser}
+												/>
+											)}
 									</HStack>
 								</Td>
 							</Tr>

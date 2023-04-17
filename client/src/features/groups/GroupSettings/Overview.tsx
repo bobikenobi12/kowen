@@ -5,11 +5,32 @@ import {
 	VStack,
 	Box,
 	useColorModeValue,
+	Button,
 } from "@chakra-ui/react";
-import { type Group } from "../../../app/services/groups";
+
+import { useTypedSelector } from "../../../hooks/store";
+
+import {
+	type Group,
+	Permission,
+	useGetUserPermissionsForGroupQuery,
+} from "../../../app/services/groups";
+
+import { selectIsCreator } from "../groupsSlice";
 
 export default function GroupOverview({ group }: { group: Group }) {
 	const bg = useColorModeValue("white", "gray.800");
+
+	const isCreator = useTypedSelector(selectIsCreator);
+
+	const {
+		data: permissions,
+		isLoading,
+		error,
+	} = useGetUserPermissionsForGroupQuery(group.id);
+
+	if (isLoading) return <Box>Loading...</Box>;
+	if (error) return <Box>Error: {JSON.stringify(error)}</Box>;
 
 	return (
 		<Box
@@ -35,6 +56,12 @@ export default function GroupOverview({ group }: { group: Group }) {
 					</Text>
 				</VStack>
 			</HStack>
+			{permissions &&
+				(isCreator || permissions.includes(Permission.edit_group)) && (
+					<Button mt={4} colorScheme="blue">
+						Edit Group
+					</Button>
+				)}
 		</Box>
 	);
 }

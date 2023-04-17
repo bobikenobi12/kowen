@@ -159,6 +159,28 @@ export const api = createApi({
 			}),
 			invalidatesTags: ["Roles"],
 		}),
+		removePermissionFromRole: builder.mutation<
+			void,
+			{ groupId: number; roleId: number; permission: Permission }
+		>({
+			query: ({ groupId, roleId, permission }) => ({
+				url: `removePermissionFromRole/${groupId}/${roleId}`,
+				method: "POST",
+				params: { permission },
+			}),
+			invalidatesTags: ["Roles"],
+		}),
+		addPermissionToRole: builder.mutation<
+			void,
+			{ groupId: number; roleId: number; permission: Permission }
+		>({
+			query: ({ groupId, roleId, permission }) => ({
+				url: `addPermissionToRole/${groupId}/${roleId}`,
+				method: "POST",
+				params: { permission },
+			}),
+			invalidatesTags: ["Roles"],
+		}),
 		setGroupRoleToUser: builder.mutation<void, SetGroupRoleToUserRequest>({
 			query: role => ({
 				url: "setGroupRoleToUser",
@@ -274,6 +296,8 @@ export const {
 	useSetGroupPictureMutation,
 	useGetRolesWithUsersQuery,
 	useSaveGroupRoleMutation,
+	useRemovePermissionFromRoleMutation,
+	useAddPermissionToRoleMutation,
 	useRemoveRoleFromGroupMutation,
 	useRemoveRoleFromUserMutation,
 	useSetGroupRoleToUserMutation,

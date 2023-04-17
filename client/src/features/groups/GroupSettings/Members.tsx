@@ -25,25 +25,45 @@ import {
 	Flex,
 } from "@chakra-ui/react";
 
-import { useTypedSelector } from "../../../hooks/store";
 import { IoMdRemoveCircleOutline } from "react-icons/io";
+
+import { useTypedSelector } from "../../../hooks/store";
+
 import {
 	type Group,
+	Permission,
 	useGetRolesWithUsersQuery,
 	useRemoveRoleFromUserMutation,
+	useGetUserPermissionsForGroupQuery,
 } from "../../../app/services/groups";
-import { type User } from "../../../app/services/auth";
-import { selectCurrentUser } from "../../auth/authSlice";
+
+import { selectIsCreator } from "../groupsSlice";
 
 import RoleMenu from "./RoleMenu";
 import RemoveUserFromGroupModal from "./RemoveUserFromGroupModalDialog";
 import RoleBadge from "./RoleBadge";
 
 export default function GroupMembers({ group }: { group: Group }) {
-	const user = useTypedSelector(selectCurrentUser) as User;
-	const { data: rolesWithUsers } = useGetRolesWithUsersQuery(group.id);
-	const [removeRoleFromUser] = useRemoveRoleFromUserMutation();
 	const toast = useToast();
+
+	const isCreator = useTypedSelector(selectIsCreator);
+
+	const [removeRoleFromUser] = useRemoveRoleFromUserMutation();
+
+	const {
+		data: permissions,
+		isLoading,
+		error,
+	} = useGetUserPermissionsForGroupQuery(group.id);
+	const {
+		data: rolesWithUsers,
+		isLoading: rolesLoading,
+		error: rolesError,
+	} = useGetRolesWithUsersQuery(group.id);
+
+	if (isLoading || rolesLoading) return <Box>Loading...</Box>;
+	if (error) return <Box>Error: {JSON.stringify(error)}</Box>;
+	if (rolesError) return <Box>Error: {JSON.stringify(rolesError)}</Box>;
 
 	return (
 		<Box
@@ -67,19 +87,23 @@ export default function GroupMembers({ group }: { group: Group }) {
 					<Tr>
 						<Td>
 							<HStack spacing={4}>
-								<Avatar size="sm" name={user.username} />
+								<Avatar
+									size="sm"
+									name={group.creator.username}
+								/>
 								<VStack align="start" spacing={1}>
 									<Text>
-										{user.firstName} {user.lastName}
+										{group.creator.firstName}{" "}
+										{group.creator.lastName}
 									</Text>
 									<Text fontSize="sm" color="gray.500">
-										{user.username}
+										{group.creator.username}
 									</Text>
 								</VStack>
 							</HStack>
 						</Td>
 						<Td colSpan={2}>
-							<Badge colorScheme="green">Member</Badge>
+							<Badge colorScheme="green">Creator</Badge>
 						</Td>
 					</Tr>
 
@@ -108,8 +132,6 @@ export default function GroupMembers({ group }: { group: Group }) {
 								<Td>
 									<HStack spacing={3}>
 										<HStack spacing={2}>
-											{/* display the users roles up to 3 */}
-											{/* if there are more than 3 roles, display the 3 roles and a badge with the number of remaining roles */}
 											{userWithRoles.roles &&
 												userWithRoles.roles
 													.slice(0, 3)
@@ -251,14 +273,26 @@ export default function GroupMembers({ group }: { group: Group }) {
 								</Td>
 								<Td>
 									<HStack spacing={4}>
-										<RoleMenu
-											user={userWithRoles.user}
-											group={group}
-										/>
-										<RemoveUserFromGroupModal
-											user={userWithRoles.user}
-											group={group}
-										/>
+										{permissions &&
+											(permissions.includes(
+												Permission.apply_role
+											) ||
+												isCreator) && (
+												<RoleMenu
+													user={userWithRoles.user}
+													group={group}
+												/>
+											)}
+										{permissions &&
+											(permissions.includes(
+												Permission.remove_user
+											) ||
+												isCreator) && (
+												<RemoveUserFromGroupModal
+													user={userWithRoles.user}
+													group={group}
+												/>
+											)}
 									</HStack>
 								</Td>
 							</Tr>
