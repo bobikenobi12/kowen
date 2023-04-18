@@ -25,6 +25,9 @@ public class DocumentVersion {
     @Column
     private Long version;
 
+    @Column
+    private String type; //
+
     @Lob
     @Column(columnDefinition="BLOB", nullable = false)
     private byte[] documentContent;

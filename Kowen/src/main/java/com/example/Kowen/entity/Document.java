@@ -47,8 +47,7 @@ public class Document {
     @OneToMany(mappedBy = "document", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DocumentVersion> versions = new ArrayList<>();
 
-    @Column
-    private String documentExtension; //
+
 
 //    @ManyToMany(cascade = CascadeType.ALL)
 //    private List<RoleInGroup> roles; //

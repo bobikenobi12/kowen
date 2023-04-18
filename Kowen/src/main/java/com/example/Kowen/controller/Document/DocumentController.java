@@ -72,6 +72,7 @@ public class DocumentController {
         // document.setDocumentContent(fileBytes);
         DocumentVersion version = new DocumentVersion();
         version.setDocumentContent(fileBytes);
+        version.setType(file.getContentType());
         version.setVersion(1L);
         version.setDocument(document);
 
@@ -79,7 +80,7 @@ public class DocumentController {
         versions.add(version);
         document.setVersions(versions);
 
-        document.setDocumentExtension(file.getContentType());
+
         List<RoleInGroup> roles = new ArrayList<>();
         UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
         Boolean continueFlag = Boolean.FALSE;
@@ -203,6 +204,7 @@ public class DocumentController {
         DocumentVersion version = new DocumentVersion();
         version.setDocumentContent(fileBytes);
         version.setVersion(document.getVersions().get(document.getVersions().size() - 1).getVersion() + 1);
+        version.setType(file.getContentType());
         version.setDocument(document);
 
         List<DocumentVersion> versions = document.getVersions();
