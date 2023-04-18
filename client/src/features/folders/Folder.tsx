@@ -1,5 +1,4 @@
 import fileDownload from "js-file-download";
-import { UseLazyQuery } from "@reduxjs/toolkit/dist/query/react/buildHooks";
 
 import {
 	Flex,
@@ -9,6 +8,7 @@ import {
 	IconButton,
 	useColorModeValue,
 	Text,
+	Tooltip,
 } from "@chakra-ui/react";
 
 import { useParams } from "react-router-dom";
@@ -27,10 +27,12 @@ import {
 	type Document,
 	useGetDocumentsInGroupQuery,
 	useLazyDownloadDocumentQuery,
+	useRemoveDocumentMutation,
 } from "../../app/services/documents";
 
 import UploadDocument from "../documents/UploadDocument";
 import SaveNewDocumentVersion from "../documents/SaveNewDocumentVersion";
+import DeleteDocumentDialog from "../documents/DeleteDocumentDialog";
 
 export default function Folder() {
 	const group = useTypedSelector(selectCurrentGroup) as Group;
@@ -135,44 +137,58 @@ export default function Folder() {
 											Permission.download_document
 										) ||
 											isCreator) && (
-											<IconButton
-												aria-label="Download Document"
-												colorScheme={"blue"}
-												variant={"outline"}
-												icon={
-													<Icon
-														as={BsCloudDownload}
+											<>
+												<Tooltip
+													label={`Download ${document.name}`}
+													aria-label={`Download ${document.name}`}
+													hasArrow>
+													<IconButton
+														aria-label="Download Document"
+														colorScheme={"blue"}
+														variant={"outline"}
+														icon={
+															<Icon
+																as={
+																	BsCloudDownload
+																}
+															/>
+														}
+														onClick={async () => {
+															try {
+																await trigger({
+																	groupId:
+																		group.id,
+																	folderId:
+																		folder!
+																			.id,
+																	documentId:
+																		document.id,
+																	version:
+																		document
+																			.versions[
+																			document
+																				.versions
+																				.length -
+																				1
+																		]
+																			.version,
+																});
+																console.log(
+																	document.documentExtension
+																);
+																fileDownload(
+																	result.data as Blob,
+																	document.name
+																);
+															} catch (error) {
+																console.log(
+																	error
+																);
+															}
+														}}
 													/>
-												}
-												onClick={async () => {
-													try {
-														await trigger({
-															groupId: group.id,
-															folderId:
-																folder!.id,
-															documentId:
-																document.id,
-															version:
-																document
-																	.versions[
-																	document
-																		.versions
-																		.length -
-																		1
-																].version,
-														});
-														console.log(
-															document.documentExtension
-														);
-														fileDownload(
-															result.data as Blob,
-															document.name
-														);
-													} catch (error) {
-														console.log(error);
-													}
-												}}
-											/>
+												</Tooltip>
+											</>
 										)}
 									{permissions &&
 										(permissions.includes(
@@ -181,6 +197,18 @@ export default function Folder() {
 											isCreator) && (
 											<SaveNewDocumentVersion
 												documentId={document.id}
+											/>
+										)}
+
+									{permissions &&
+										(permissions.includes(
+											Permission.remove_document
+										) ||
+											isCreator) && (
+											<DeleteDocumentDialog
+												group={group}
+												folder={folder!}
+												document={document}
 											/>
 										)}
 								</HStack>
