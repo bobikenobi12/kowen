@@ -65,10 +65,13 @@ export const api = createApi({
 			}),
 			invalidatesTags: ["Documents"],
 		}),
-		downloadDocument: builder.mutation<any, downloadDocument>({
+		downloadDocument: builder.query<Blob, downloadDocument>({
 			query: ({ groupId, folderId, documentId, version }) => ({
 				url: `document/download/${groupId}/${folderId}/${documentId}/${version}`,
 				method: "GET",
+				responseHandler: response => {
+					return response.blob();
+				},
 			}),
 		}),
 
@@ -86,6 +89,6 @@ export const api = createApi({
 export const {
 	useGetDocumentsInGroupQuery,
 	useSaveDocumentMutation,
-	useDownloadDocumentMutation,
+	useLazyDownloadDocumentQuery,
 	useSaveNewDocumentVersionMutation,
 } = api;

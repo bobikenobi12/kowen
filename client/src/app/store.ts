@@ -29,7 +29,9 @@ export const store = configureStore({
 		[documentsApi.reducerPath]: documentsApi.reducer,
 	},
 	middleware: getDefaultMiddleware =>
-		getDefaultMiddleware().concat(
+		getDefaultMiddleware({
+			serializableCheck: false,
+		}).concat(
 			authApi.middleware,
 			groupApi.middleware,
 			folderApi.middleware,

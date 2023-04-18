@@ -11,7 +11,7 @@ import {
 	Text,
 } from "@chakra-ui/react";
 
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 import { BsCloudDownload } from "react-icons/bs";
 import { useTypedSelector } from "../../hooks/store";
@@ -26,16 +26,13 @@ import {
 import {
 	type Document,
 	useGetDocumentsInGroupQuery,
-	useDownloadDocumentMutation,
+	useLazyDownloadDocumentQuery,
 } from "../../app/services/documents";
 
 import UploadDocument from "../documents/UploadDocument";
 import SaveNewDocumentVersion from "../documents/SaveNewDocumentVersion";
-import { version } from "react";
 
 export default function Folder() {
-	const navigate = useNavigate();
-
 	const group = useTypedSelector(selectCurrentGroup) as Group;
 	const isCreator = useTypedSelector(selectIsCreator);
 
@@ -68,7 +65,7 @@ export default function Folder() {
 			useParams<{ folderId: string }>().folderId as string
 		),
 	});
-	const [downloadDocument] = useDownloadDocumentMutation();
+	const [trigger, result, lastPromiseInfo] = useLazyDownloadDocumentQuery();
 
 	if (folderLoading || documentsLoading || permissionsLoading) {
 		return <Text>Loading...</Text>;
@@ -149,39 +146,30 @@ export default function Folder() {
 												}
 												onClick={async () => {
 													try {
-														const response =
-															await downloadDocument(
-																{
-																	groupId:
-																		group.id,
-																	folderId:
-																		folder!
-																			.id,
-																	documentId:
-																		document.id,
-																	version:
-																		document
-																			.versions[
-																			document
-																				.versions
-																				.length -
-																				1
-																		]
-																			.version,
-																}
-															).unwrap();
-
-														// const blob = new Blob(
-														// 	[response],
-														// 	{
-														// 		type: "application/octet-stream",
-														// 	}
-														// );
-													} catch (error: any) {
+														await trigger({
+															groupId: group.id,
+															folderId:
+																folder!.id,
+															documentId:
+																document.id,
+															version:
+																document
+																	.versions[
+																	document
+																		.versions
+																		.length -
+																		1
+																].version,
+														});
+														console.log(
+															document.documentExtension
+														);
 														fileDownload(
-															error.data,
+															result.data as Blob,
 															document.name
 														);
+													} catch (error) {
+														console.log(error);
 													}
 												}}
 											/>
