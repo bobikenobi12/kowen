@@ -89,10 +89,35 @@ export const api = createApi({
 			{ groupId: number; folderId: number; documentId: number }
 		>({
 			query: ({ groupId, folderId, documentId }) => ({
-				url: `/remove/${groupId}/${folderId}/${documentId}`,
+				url: `document/remove/${groupId}/${folderId}/${documentId}`,
 				method: "GET",
 			}),
 			invalidatesTags: ["Documents"],
+		}),
+		editDocumentName: builder.mutation<
+			void,
+			{
+				groupId: number;
+				folderId: number;
+				documentId: number;
+				name: string;
+			}
+		>({
+			query: ({ groupId, folderId, documentId, name }) => ({
+				url: `document/changeName/${groupId}/${folderId}/${documentId}`,
+				method: "POST",
+				params: { name },
+			}),
+			invalidatesTags: ["Documents"],
+		}),
+		getDocumentContent: builder.query<Blob, downloadDocument>({
+			query: ({ groupId, folderId, documentId, version }) => ({
+				url: `document/getContent/${groupId}/${folderId}/${documentId}/${version}`,
+				method: "GET",
+				responseHandler: response => {
+					return response.blob();
+				},
+			}),
 		}),
 	}),
 });
@@ -103,4 +128,6 @@ export const {
 	useLazyDownloadDocumentQuery,
 	useSaveNewDocumentVersionMutation,
 	useRemoveDocumentMutation,
+	useEditDocumentNameMutation,
+	useLazyGetDocumentContentQuery,
 } = api;

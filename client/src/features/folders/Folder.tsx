@@ -24,10 +24,9 @@ import {
 	Permission,
 } from "../../app/services/groups";
 import {
-	type Document,
 	useGetDocumentsInGroupQuery,
 	useLazyDownloadDocumentQuery,
-	useRemoveDocumentMutation,
+	useLazyGetDocumentContentQuery,
 } from "../../app/services/documents";
 
 import UploadDocument from "../documents/UploadDocument";
@@ -67,7 +66,9 @@ export default function Folder() {
 			useParams<{ folderId: string }>().folderId as string
 		),
 	});
-	const [trigger, result, lastPromiseInfo] = useLazyDownloadDocumentQuery();
+	const [downloadDocument, downloadedDocument] =
+		useLazyDownloadDocumentQuery();
+	const [getDocumentContent, content] = useLazyGetDocumentContentQuery();
 
 	if (folderLoading || documentsLoading || permissionsLoading) {
 		return <Text>Loading...</Text>;
@@ -127,8 +128,36 @@ export default function Folder() {
 										"gray.200",
 										"gray.600"
 									),
-								}}>
-								<Text ml={4} size="md">
+								}}
+								shadow="md">
+								<Text
+									ml={4}
+									size="md"
+									onClick={async () => {
+										try {
+											await getDocumentContent({
+												groupId: group.id,
+												folderId: folder!.id,
+												documentId: document.id,
+												version:
+													document.versions[
+														document.versions
+															.length - 1
+													].version,
+											});
+											const file = new Blob(
+												[content.data as Blob],
+												{
+													type: content.data?.type,
+												}
+											);
+											const fileURL =
+												URL.createObjectURL(file);
+											window.open(fileURL);
+										} catch (error) {
+											console.log(error);
+										}
+									}}>
 									{document.name}
 								</Text>
 								<HStack mr={4}>
@@ -155,29 +184,28 @@ export default function Folder() {
 														}
 														onClick={async () => {
 															try {
-																await trigger({
-																	groupId:
-																		group.id,
-																	folderId:
-																		folder!
-																			.id,
-																	documentId:
-																		document.id,
-																	version:
-																		document
-																			.versions[
+																await downloadDocument(
+																	{
+																		groupId:
+																			group.id,
+																		folderId:
+																			folder!
+																				.id,
+																		documentId:
+																			document.id,
+																		version:
 																			document
-																				.versions
-																				.length -
-																				1
-																		]
-																			.version,
-																});
-																console.log(
-																	document.documentExtension
+																				.versions[
+																				document
+																					.versions
+																					.length -
+																					1
+																			]
+																				.version,
+																	}
 																);
 																fileDownload(
-																	result.data as Blob,
+																	downloadedDocument.data as Blob,
 																	document.name
 																);
 															} catch (error) {
