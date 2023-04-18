@@ -15,6 +15,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RoleWithUsers {
-    private User user;
-    private List<RoleInGroup> roles;
+    private RoleInGroup role;
+    private List<User> users;
 }
