@@ -1,10 +1,6 @@
 import * as React from "react";
 import {
 	IconButton,
-	FormControl,
-	FormLabel,
-	Input,
-	FormErrorMessage,
 	useToast,
 	useDisclosure,
 	Button,
@@ -15,15 +11,12 @@ import {
 	AlertDialogContent,
 	AlertDialogOverlay,
 	AlertDialogCloseButton,
+	Tooltip,
 } from "@chakra-ui/react";
-import { Formik, Form, Field, FormikProps } from "formik";
-import { useNavigate } from "react-router-dom";
+
 import { useTypedSelector } from "../../hooks/store";
 import { selectFolderById } from "./foldersSlice";
-import {
-	useDeleteFolderFromGroupMutation,
-	useGetFoldersInGroupQuery,
-} from "../../app/services/folders";
+import { useDeleteFolderFromGroupMutation } from "../../app/services/folders";
 
 import { DeleteIcon } from "@chakra-ui/icons";
 
@@ -43,17 +36,20 @@ export default function DeleteFolder({
 
 	const folder = useTypedSelector(state => selectFolderById(state, folderId));
 
-	const navigate = useNavigate();
-
 	return (
 		<>
-			<IconButton
-				aria-label="Delete folder"
-				icon={<DeleteIcon />}
-				onClick={onOpen}
-				colorScheme="red"
-				variant={"outline"}
-			/>
+			<Tooltip
+				label={`Delete ${folder?.name} folder`}
+				aria-label={`Delete ${folder?.name} folder`}
+				hasArrow>
+				<IconButton
+					aria-label="Delete folder"
+					icon={<DeleteIcon />}
+					onClick={onOpen}
+					colorScheme="red"
+					variant={"outline"}
+				/>
+			</Tooltip>
 			<AlertDialog
 				isOpen={isOpen}
 				leastDestructiveRef={cancelRef}

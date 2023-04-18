@@ -14,6 +14,7 @@ import {
 	useDisclosure,
 	Button,
 	FormHelperText,
+	Tooltip,
 } from "@chakra-ui/react";
 
 import { EditIcon } from "@chakra-ui/icons";
@@ -43,13 +44,18 @@ export default function EditFolder({
 
 	return (
 		<>
-			<IconButton
-				aria-label="Edit folder"
-				icon={<EditIcon />}
-				onClick={onOpen}
-				variant="solid"
-				colorScheme="blue"
-			/>
+			<Tooltip
+				label={`Edit ${folder?.name} folder`}
+				aria-label={`Edit ${folder?.name} folder`}
+				hasArrow>
+				<IconButton
+					aria-label="Edit folder"
+					icon={<EditIcon />}
+					onClick={onOpen}
+					variant="solid"
+					colorScheme="blue"
+				/>
+			</Tooltip>
 			<Modal isOpen={isOpen} onClose={onClose} isCentered>
 				<ModalOverlay />
 				<ModalContent>

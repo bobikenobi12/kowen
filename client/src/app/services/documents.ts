@@ -83,6 +83,17 @@ export const api = createApi({
 			}),
 			invalidatesTags: ["Documents"],
 		}),
+
+		removeDocument: builder.mutation<
+			void,
+			{ groupId: number; folderId: number; documentId: number }
+		>({
+			query: ({ groupId, folderId, documentId }) => ({
+				url: `/remove/${groupId}/${folderId}/${documentId}`,
+				method: "GET",
+			}),
+			invalidatesTags: ["Documents"],
+		}),
 	}),
 });
 
@@ -91,4 +102,5 @@ export const {
 	useSaveDocumentMutation,
 	useLazyDownloadDocumentQuery,
 	useSaveNewDocumentVersionMutation,
+	useRemoveDocumentMutation,
 } = api;
