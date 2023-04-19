@@ -15,15 +15,16 @@ export default function Groups() {
 	useShowGroupsQuery();
 
 	return (
-		<Flex w="full" h={"100vh"} alignItems={"center"}>
+		<Flex w="full" h={"100vh"}>
 			<Flex
-				w="fit-content"
+				// width should fit the avatars size + padding
+				w={{ base: "80px", md: "110px" }}
 				direction={"column"}
 				alignItems={"center"}
-				p={4}
 				h={"100vh"}
 				gap={3}
 				overflowY={"scroll"}
+				overflowX={"hidden"}
 				bg={useColorModeValue("gray.100", "inherit")}>
 				{groups.map((group: Group) => (
 					<Tooltip

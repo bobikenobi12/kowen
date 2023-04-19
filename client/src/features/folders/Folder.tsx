@@ -81,14 +81,12 @@ export default function Folder() {
 	return (
 		<Flex
 			direction="column"
-			w="full"
+			flex={1}
 			h="full"
 			bg={useColorModeValue("gray.100", "inherit")}>
 			<Flex
 				direction="row"
 				w="full"
-				p={2}
-				gap={10}
 				alignItems={"center"}
 				justifyContent={"space-between"}
 				bg={useColorModeValue("gray.100", "gray.700")}
