@@ -209,14 +209,18 @@ export default function Chat() {
 							<IconButton
 								aria-label="Send message"
 								icon={<IoSend />}
-								disabled={
-									!isCreator ||
+								isDisabled={
+									!isCreator &&
 									!userPermissions?.some(
 										permission =>
 											permission ===
 											Permission.send_message
 									)
 								}
+								_disabled={{
+									bg: "gray.400",
+									cursor: "not-allowed",
+								}}
 								onClick={async () => {
 									await handleSendMessage();
 								}}
