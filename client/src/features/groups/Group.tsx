@@ -83,7 +83,7 @@ export default function Group() {
 	return (
 		<Flex
 			direction="row"
-			w="fit-content"
+			w="full"
 			h="full"
 			bg={useColorModeValue("gray.100", "gray.700")}>
 			<Flex

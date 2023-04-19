@@ -73,6 +73,7 @@ export const api = createApi({
 					return response.blob();
 				},
 			}),
+			keepUnusedDataFor: 0,
 		}),
 
 		saveNewDocumentVersion: builder.mutation<void, FormData>({
@@ -118,6 +119,7 @@ export const api = createApi({
 					return response.blob();
 				},
 			}),
+			keepUnusedDataFor: 0,
 		}),
 	}),
 });
