@@ -121,6 +121,7 @@ public class ChatController {
         message.setContent(newMessage);
         messageRepo.save(message);
         groupRepo.save(group);
+        return group.getGroupChat().getMessages();
     }
 
 
