@@ -28,6 +28,6 @@ public class GroupChat {
     @JoinColumn(name = "group_id", nullable = false)
     private UserGroup group;
 
-    @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL)
     private List<Message> messages = new ArrayList<>();
 }
