@@ -14,6 +14,8 @@ import {
 
 import { useParams, useNavigate, Outlet } from "react-router-dom";
 
+import { BsFillChatDotsFill } from "react-icons/bs";
+
 import { useGetFoldersInGroupQuery } from "../../app/services/folders";
 import {
 	useGetUserPermissionsForGroupQuery,
@@ -47,7 +49,9 @@ export default function Group() {
 	const dispatch = useAppDispatch();
 
 	const user = useTypedSelector(selectCurrentUser);
-	const isCreator = useTypedSelector(selectIsCreator);
+	const isCreator = useTypedSelector(state =>
+		selectIsCreator(state, Number(groupId))
+	);
 	const group = useTypedSelector(state =>
 		selectGroupById(state, parseInt(groupId as string))
 	);
@@ -115,6 +119,31 @@ export default function Group() {
 					gap={2}
 					bg={useColorModeValue("gray.100", "gray.700")}
 					overflowY="scroll">
+					<Flex
+						direction="row"
+						alignItems={"center"}
+						justifyContent={"space-between"}
+						w="full"
+						h={12}
+						p={4}
+						cursor={"pointer"}
+						bg={useColorModeValue("gray.100", "gray.700")}
+						_hover={{
+							bg: useColorModeValue("gray.200", "gray.600"),
+						}}
+						onClick={() => {
+							navigate(`/groups/${group!.id}/chat`);
+						}}>
+						<HStack alignItems={"center"}>
+							<Icon
+								as={BsFillChatDotsFill}
+								cursor="pointer"
+								color="twitter.500"
+							/>
+							<Text>Group Chat</Text>
+						</HStack>
+					</Flex>
+
 					{folders && folders.length > 0 ? (
 						folders.map((folder: Folder) => {
 							return (
@@ -144,14 +173,8 @@ export default function Group() {
 										setHoveredFolder(null);
 									}}
 									onClick={() => {
-										dispatch({
-											type: "groups/setCurrentFolder",
-											payload: folder,
-										});
 										navigate(
-											`/groups/${group!.id}/folders/${
-												folder.id
-											}`
+											`/groups/${group!.id}/${folder.id}`
 										);
 									}}>
 									<HStack alignItems={"center"}>

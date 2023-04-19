@@ -15,7 +15,7 @@ import { useParams } from "react-router-dom";
 
 import { BsCloudDownload } from "react-icons/bs";
 import { useTypedSelector } from "../../hooks/store";
-import { selectCurrentGroup, selectIsCreator } from "../groups/groupsSlice";
+import { selectGroupById, selectIsCreator } from "../groups/groupsSlice";
 import { useGetFolderInGroupQuery } from "../../app/services/folders";
 import { type Folder } from "../../app/services/folders";
 import {
@@ -34,37 +34,36 @@ import SaveNewDocumentVersion from "../documents/SaveNewDocumentVersion";
 import DeleteDocumentDialog from "../documents/DeleteDocumentDialog";
 
 export default function Folder() {
-	const group = useTypedSelector(selectCurrentGroup) as Group;
-	const isCreator = useTypedSelector(selectIsCreator);
+	const { groupId, folderId } = useParams();
+	const group = useTypedSelector(state =>
+		selectGroupById(state, Number(groupId))
+	) as Group;
+	const isCreator = useTypedSelector(state =>
+		selectIsCreator(state, Number(groupId))
+	);
 
 	const {
 		data: folder,
 		isLoading: folderLoading,
 		error: folderError,
 	} = useGetFolderInGroupQuery({
-		folderId: Number(
-			useParams<{ groupId: string; folderId: string }>().folderId
-		),
-		groupId: Number(
-			useParams<{ groupId: string; folderId: string }>().groupId
-		),
+		folderId: Number(folderId),
+		groupId: Number(groupId),
 	});
 
 	const {
 		data: permissions,
 		isLoading: permissionsLoading,
 		error: permissionsError,
-	} = useGetUserPermissionsForGroupQuery(group.id);
+	} = useGetUserPermissionsForGroupQuery(Number(groupId));
 
 	const {
 		data: documents,
 		isLoading: documentsLoading,
 		error: documentsError,
 	} = useGetDocumentsInGroupQuery({
-		groupId: group.id,
-		folderId: parseInt(
-			useParams<{ folderId: string }>().folderId as string
-		),
+		groupId: Number(groupId),
+		folderId: Number(folderId),
 	});
 	const [downloadDocument, downloadedDocument] =
 		useLazyDownloadDocumentQuery();

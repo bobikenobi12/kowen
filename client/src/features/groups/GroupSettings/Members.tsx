@@ -46,7 +46,9 @@ import RoleBadge from "./RoleBadge";
 export default function GroupMembers({ group }: { group: Group }) {
 	const toast = useToast();
 
-	const isCreator = useTypedSelector(selectIsCreator);
+	const isCreator = useTypedSelector(state =>
+		selectIsCreator(state, group.id)
+	);
 
 	const [removeRoleFromUser] = useRemoveRoleFromUserMutation();
 

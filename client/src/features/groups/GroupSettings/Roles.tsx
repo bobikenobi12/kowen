@@ -28,7 +28,9 @@ import CreateGroupRole from "./CreateGroupRole";
 import RemoveRoleFromGroupDialog from "./RemoveRoleFromGroupDialog";
 
 export default function GroupRoles({ group }: { group: Group }) {
-	const isCreator = useTypedSelector(selectIsCreator);
+	const isCreator = useTypedSelector(state =>
+		selectIsCreator(state, group.id)
+	);
 
 	const { data: roles, isLoading, error } = useGetRolesInGroupQuery(group.id);
 	const {

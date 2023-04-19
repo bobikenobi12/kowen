@@ -21,7 +21,9 @@ import { selectIsCreator } from "../groupsSlice";
 export default function GroupOverview({ group }: { group: Group }) {
 	const bg = useColorModeValue("white", "gray.800");
 
-	const isCreator = useTypedSelector(selectIsCreator);
+	const isCreator = useTypedSelector(state =>
+		selectIsCreator(state, group.id)
+	);
 
 	const {
 		data: permissions,

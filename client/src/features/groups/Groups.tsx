@@ -1,7 +1,7 @@
 import { Flex, Avatar, Tooltip, useColorModeValue } from "@chakra-ui/react";
 
 import { useShowGroupsQuery } from "../../app/services/groups";
-import { Outlet, Link } from "react-router-dom";
+import { Outlet, Link, useNavigate } from "react-router-dom";
 
 import GroupModal from "./CreateGroup";
 
@@ -10,14 +10,13 @@ import { selectGroups } from "./groupsSlice";
 import { type Group } from "../../app/services/groups";
 
 export default function Groups() {
-	const dispatch = useAppDispatch();
+	const navigate = useNavigate();
 	const groups = useTypedSelector(selectGroups);
 	useShowGroupsQuery();
 
 	return (
 		<Flex w="full" h={"100vh"}>
 			<Flex
-				// width should fit the avatars size + padding
 				w={{ base: "80px", md: "110px" }}
 				direction={"column"}
 				alignItems={"center"}
@@ -41,12 +40,6 @@ export default function Groups() {
 								_hover={{
 									transform: "scale(1.1)",
 									borderRadius: "30%",
-								}}
-								onClick={() => {
-									dispatch({
-										type: "groups/setCurrentGroup",
-										payload: group,
-									});
 								}}
 							/>
 						</Link>

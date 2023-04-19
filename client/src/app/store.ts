@@ -16,6 +16,7 @@ import groupsReducer from "../features/groups/groupsSlice";
 import routerReducer from "../features/router/routerSlice";
 import foldersReducer from "../features/folders/foldersSlice";
 import documentReducer from "../features/documents/documentSlice";
+import chatSlice from "../features/chat/chatSlice";
 
 export const store = configureStore({
 	reducer: {
@@ -24,6 +25,7 @@ export const store = configureStore({
 		router: routerReducer,
 		folders: foldersReducer,
 		documents: documentReducer,
+		chat: chatSlice,
 		[authApi.reducerPath]: authApi.reducer,
 		[groupApi.reducerPath]: groupApi.reducer,
 		[folderApi.reducerPath]: folderApi.reducer,
@@ -38,6 +40,7 @@ export const store = configureStore({
 			groupApi.middleware,
 			folderApi.middleware,
 			documentsApi.middleware,
+			chatApi.middleware,
 			asyncFunctionMiddleware
 		),
 });
