@@ -10,6 +10,7 @@ import com.example.Kowen.service.chat.ChatRepo;
 import com.example.Kowen.service.group.GroupRepo;
 import com.example.Kowen.service.group.GroupService;
 import com.example.Kowen.service.user.UserRepository;
+import org.hibernate.dialect.Database;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -22,7 +23,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -59,12 +62,27 @@ public class ChatController {
         chatMessage.setChat(group.getGroupChat());
         chatMessage.setContent(message);
         chatMessage.setSender(user);
+        chatMessage.setPostedAt(LocalDateTime.now());
         messageRepo.save(chatMessage);
         List<Message> messages = group.getGroupChat().getMessages();
         messages.add(chatMessage);
         group.getGroupChat().setMessages(messages);
         groupRepo.save(group);
         return messages;
+    }
+
+    @GetMapping("/getMessages/{groupId}")
+    public List<Message> getMessages(@PathVariable Long groupId) throws Exception {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        User user = userRepository.findByEmail(principal.getUsername()).get(0);
+        UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
+
+        if (!group.getUsers().contains(user) && group.getCreator() != user) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not in this group!");
+        if (!groupService.checkForPermissions(user.getId(), groupId, PermissionsEnum.send_message)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You don't have permissions!");
+
+        return group.getGroupChat().getMessages();
+
     }
 
     @GetMapping("/clearChat/{groupId}")
