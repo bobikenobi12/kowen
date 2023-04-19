@@ -47,7 +47,7 @@ export const api = createApi({
 			query: ({ groupId, content }) => ({
 				url: `sendMessage/${groupId}`,
 				method: "POST",
-				params: { content },
+				params: { message: content },
 			}),
 			invalidatesTags: (result, error, { groupId }) => [
 				{ type: "Chat", id: groupId },
