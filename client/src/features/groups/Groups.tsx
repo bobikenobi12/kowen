@@ -22,6 +22,7 @@ export default function Groups() {
 				alignItems={"center"}
 				h={"100vh"}
 				gap={3}
+				pt={5}
 				overflowY={"scroll"}
 				overflowX={"hidden"}
 				bg={useColorModeValue("gray.100", "inherit")}>

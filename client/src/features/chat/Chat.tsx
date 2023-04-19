@@ -1,28 +1,4 @@
-import {
-	useGetMessagesQuery,
-	useSendMessageMutation,
-	useClearChatMutation,
-	useEditChatMessageMutation,
-	useDeleteChatMessageMutation,
-} from "../../app/services/chat";
-
-import { selectGroupById, selectIsCreator } from "../groups/groupsSlice";
-
-import { setChatMessage, selectChatMessage } from "./chatSlice";
-
-import { useTypedSelector } from "../../hooks/store";
-
-import type { Message } from "../../app/services/chat";
-
-import {
-	useGetUserPermissionsForGroupQuery,
-	Permission,
-} from "../../app/services/groups";
-
-import { selectCurrentUser } from "../auth/authSlice";
-
-import type { Group } from "../../app/services/groups";
-import type { User } from "../../app/services/auth";
+import * as React from "react";
 
 import {
 	Box,
@@ -36,16 +12,51 @@ import {
 	InputRightElement,
 	Text,
 	useColorModeValue,
+	VStack,
 } from "@chakra-ui/react";
 
 import { IoSend } from "react-icons/io5";
 import { BsFillTrashFill } from "react-icons/bs";
-import { MdEdit } from "react-icons/md";
 
 import { useParams } from "react-router-dom";
+import { BiMessageRoundedMinus } from "react-icons/bi";
+
+import {
+	useGetMessagesQuery,
+	useSendMessageMutation,
+	useClearChatMutation,
+	useEditChatMessageMutation,
+	useDeleteChatMessageMutation,
+} from "../../app/services/chat";
+
+import { selectGroupById, selectIsCreator } from "../groups/groupsSlice";
+
+import { setChatMessage, selectChatMessage } from "./chatSlice";
+
+import { useTypedSelector, useAppDispatch } from "../../hooks/store";
+
+import type { Message } from "../../app/services/chat";
+
+import {
+	useGetUserPermissionsForGroupQuery,
+	Permission,
+} from "../../app/services/groups";
+
+import { selectCurrentUser } from "../auth/authSlice";
+
+import type { Group } from "../../app/services/groups";
+import type { User } from "../../app/services/auth";
+
+import EditMessageModal from "./EditMessageModal";
 
 export default function Chat() {
 	const { groupId } = useParams<{ groupId: string }>();
+
+	const [hoveredMessage, setHoveredMessage] = React.useState<Message | null>(
+		null
+	);
+
+	const dispatch = useAppDispatch();
 
 	const currentGroup = useTypedSelector(state =>
 		selectGroupById(state, Number(groupId))
@@ -57,7 +68,7 @@ export default function Chat() {
 
 	const currentUser = useTypedSelector(selectCurrentUser) as User;
 
-	const message = useTypedSelector(selectChatMessage);
+	const currentChatMessage = useTypedSelector(selectChatMessage);
 
 	const { data: userPermissions, isLoading: isGettingUserPermissions } =
 		useGetUserPermissionsForGroupQuery(Number(groupId));
@@ -74,17 +85,21 @@ export default function Chat() {
 		useDeleteChatMessageMutation();
 
 	async function handleSendMessage() {
-		if (message) {
-			await sendMessage({
-				groupId: Number(groupId),
-				content: message.content,
-			});
-			setChatMessage(null);
+		if (currentChatMessage) {
+			try {
+				await sendMessage({
+					groupId: Number(groupId),
+					content: currentChatMessage,
+				}).unwrap();
+				dispatch(setChatMessage(""));
+			} catch (error) {
+				console.error(error);
+			}
 		}
 	}
 
 	async function handleClearChat() {
-		await clearChat(Number(groupId));
+		await clearChat(Number(groupId)).unwrap();
 	}
 
 	async function handleEditMessage(message: Message) {
@@ -92,14 +107,14 @@ export default function Chat() {
 			groupId: Number(groupId),
 			messageId: message.id,
 			content: message.content,
-		});
+		}).unwrap();
 	}
 
 	async function handleDeleteMessage(message: Message) {
 		await deleteChatMessage({
 			groupId: Number(groupId),
 			messageId: message.id,
-		});
+		}).unwrap();
 	}
 
 	if (isGettingMessages || isGettingUserPermissions) {
@@ -109,7 +124,6 @@ export default function Chat() {
 	if (!messages) {
 		return <Text>No messages</Text>;
 	}
-
 	return (
 		<Box flex={1}>
 			<Flex
@@ -143,57 +157,56 @@ export default function Chat() {
 							outline: "1px solid slategrey",
 						},
 					}}>
-					{messages?.map(message => (
-						<Flex
-							key={message.id}
-							direction="column"
-							align="flex-start"
-							justify="center"
-							w="100%"
-							p="2"
-							bg="gray.100"
-							borderRadius="md"
-							mb="2">
-							<Text fontWeight="bold">
-								{message.sender.username}
-							</Text>
-							<Text>{message.content}</Text>
-							<HStack>
-								{currentUser.id === message.sender.id ||
-									(userPermissions &&
-										(isCreator ||
-											userPermissions?.includes(
-												Permission.edit_messages
-											)) && (
-											<IconButton
-												aria-label="Edit message"
-												icon={<MdEdit />}
-												onClick={() =>
-													handleEditMessage(message)
-												}
-												isLoading={isEditingChatMessage}
-											/>
-										))}
-								{currentUser.id === message.sender.id ||
-									(userPermissions &&
-										(isCreator ||
-											userPermissions?.includes(
-												Permission.delete_messages
-											)) && (
+					{messages &&
+						messages.map(message => (
+							<Flex
+								key={message.id}
+								w="100%"
+								h="50px"
+								onMouseEnter={() => {
+									setHoveredMessage(message);
+								}}
+								onMouseLeave={() => {
+									setHoveredMessage(null);
+								}}
+								justifyContent="space-between"
+								alignItems="center"
+								p="2"
+								bg={useColorModeValue("gray.200", "gray.600")}
+								borderRadius="md"
+								mb="2">
+								<VStack>
+									<Text fontWeight="bold">
+										{/* {message.sender.username} */}
+									</Text>
+									<Text>{message.content}</Text>
+								</VStack>
+								{hoveredMessage &&
+									hoveredMessage.id === message.id && (
+										<HStack>
+											{isCreator && (
+												<EditMessageModal
+													content={message.content}
+													messageId={message.id}
+													groupId={Number(groupId)}
+												/>
+											)}
+
 											<IconButton
 												aria-label="Delete message"
+												variant="outline"
+												colorScheme="red"
 												icon={<BsFillTrashFill />}
-												onClick={() =>
-													handleDeleteMessage(message)
-												}
-												isLoading={
-													isDeletingChatMessage
-												}
+												onClick={async () => {
+													await handleDeleteMessage(
+														message
+													);
+												}}
 											/>
-										))}
-							</HStack>
-						</Flex>
-					))}
+										</HStack>
+									)}
+							</Flex>
+						))}
 				</Box>
 				<HStack w="100%" mt="4">
 					<InputGroup>
@@ -203,19 +216,18 @@ export default function Chat() {
 						/>
 						<Input
 							placeholder="Type a message..."
-							value={message?.content}
-							onChange={e =>
-								setChatMessage({
-									...message,
-									content: e.target.value,
-								})
-							}
+							value={currentChatMessage}
+							onChange={e => {
+								dispatch(setChatMessage(e.target.value));
+							}}
 						/>
 						<InputRightElement>
 							<IconButton
 								aria-label="Send message"
 								icon={<IoSend />}
-								onClick={handleSendMessage}
+								onClick={async () => {
+									await handleSendMessage();
+								}}
 								isLoading={isSendingMessage}
 							/>
 						</InputRightElement>
@@ -225,7 +237,9 @@ export default function Chat() {
 						variant={isClearingChat ? "solid" : "outline"}
 						colorScheme="red"
 						icon={<BsFillTrashFill />}
-						onClick={handleClearChat}
+						onClick={async () => {
+							await handleClearChat();
+						}}
 						isLoading={isClearingChat}
 					/>
 				</HStack>

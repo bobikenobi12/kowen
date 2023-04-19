@@ -4,12 +4,12 @@ import type { RootState } from "../../app/store";
 import { type Message } from "../../app/services/chat";
 
 interface ChatState {
-	message: Message | null;
+	message: string;
 	messages: Message[];
 }
 
 const initialState: ChatState = {
-	message: null,
+	message: "",
 	messages: [],
 };
 
