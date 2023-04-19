@@ -79,7 +79,7 @@ public class ChatController {
         UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
 
         if (!group.getUsers().contains(user) && group.getCreator() != user) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not in this group!");
-        if (!groupService.checkForPermissions(user.getId(), groupId, PermissionsEnum.send_message)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You don't have permissions!");
+//        if (!groupService.checkForPermissions(user.getId(), groupId, PermissionsEnum.send_message)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You don't have permissions!");
 
         return group.getGroupChat().getMessages();
 
