@@ -14,6 +14,9 @@ import {
 	FormErrorMessage,
 	Text,
 } from "@chakra-ui/react";
+
+import { useParams } from "react-router-dom";
+
 import { Formik, Form, FormikProps } from "formik";
 import { IoMdPersonAdd } from "react-icons/io";
 import {
@@ -21,15 +24,18 @@ import {
 	useAddUserToGroupMutation,
 } from "../../app/services/groups";
 import { useTypedSelector } from "../../hooks/store";
-import { selectCurrentGroup } from "./groupsSlice";
+import { selectGroupById } from "../groups/groupsSlice";
 
 import { AddUserToGroup } from "../../utils/ValidationSchemas";
 
 export default function AddUserToGroupModal() {
+	const { groupId } = useParams();
 	const toast = useToast();
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const [addUserToGroup] = useAddUserToGroupMutation();
-	const group = useTypedSelector(selectCurrentGroup) as Group;
+	const group = useTypedSelector(state =>
+		selectGroupById(state, Number(groupId))
+	) as Group;
 
 	return (
 		<>

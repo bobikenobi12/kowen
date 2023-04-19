@@ -17,26 +17,33 @@ import { Formik, Form, Field, FieldProps } from "formik";
 import { UploadDocumentSchema } from "../../utils/ValidationSchemas";
 
 import { useTypedSelector } from "../../hooks/store";
-import { selectCurrentGroup } from "../groups/groupsSlice";
-import { selectCurrentFolder } from "../folders/foldersSlice";
+import { selectGroupById } from "../groups/groupsSlice";
+import { selectFolderById } from "../folders/foldersSlice";
 
 import { useGetRolesInGroupQuery } from "../../app/services/groups";
 import { useSaveDocumentMutation } from "../../app/services/documents";
 
+import { useParams } from "react-router-dom";
 import DocumentDropzone from "./DocumentDropzone";
 
 export default function UploadDocument() {
+	const { groupId, folderId } = useParams();
+
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const toast = useToast();
 
-	const currentGroup = useTypedSelector(selectCurrentGroup);
-	const currentFolder = useTypedSelector(selectCurrentFolder);
+	const group = useTypedSelector(state =>
+		selectGroupById(state, Number(groupId))
+	);
+	const folder = useTypedSelector(state =>
+		selectFolderById(state, Number(folderId))
+	);
 
 	const {
 		data: roles,
 		isLoading: rolesLoading,
 		error: rolesError,
-	} = useGetRolesInGroupQuery(currentGroup!.id);
+	} = useGetRolesInGroupQuery(Number(groupId));
 	const [saveDocument, { isLoading }] = useSaveDocumentMutation();
 
 	if (rolesLoading) {
@@ -69,11 +76,11 @@ export default function UploadDocument() {
 								formData.append("file", values.file);
 								formData.append(
 									"folderId",
-									currentFolder!.id.toString()
+									folder!.id.toString()
 								);
 								formData.append(
 									"groupId",
-									currentGroup!.id.toString()
+									group!.id.toString()
 								);
 								try {
 									await saveDocument(formData).unwrap();

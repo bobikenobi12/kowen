@@ -15,9 +15,9 @@ import NotFound from "./components/common/NotFound";
 import Groups from "./features/groups/Groups";
 import Group from "./features/groups/Group";
 import Folder from "./features/folders/Folder";
+import Chat from "./features/chat/Chat";
 
 import UserSettings from "./features/auth/UserSettings";
-import GroupSettings from "./features/groups/GroupSettings/GroupSettings";
 
 function App() {
 	return (
@@ -27,10 +27,8 @@ function App() {
 					<Route element={<PrivateOutlet />}>
 						<Route path="groups" element={<Groups />}>
 							<Route path=":groupId" element={<Group />}>
-								<Route
-									path="folders/:folderId"
-									element={<Folder />}
-								/>
+								<Route element={<Folder />} path=":folderId" />
+								<Route element={<Chat />} path="chat" />
 							</Route>
 						</Route>
 						<Route

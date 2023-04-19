@@ -13,6 +13,8 @@ import {
 	Tooltip,
 } from "@chakra-ui/react";
 
+import { useParams } from "react-router-dom";
+
 import { MdEditDocument } from "react-icons/md";
 
 import { Field, FieldProps, Form, Formik } from "formik";
@@ -21,7 +23,7 @@ import type { Group } from "../../app/services/groups";
 
 import { useTypedSelector } from "../../hooks/store";
 
-import { selectCurrentGroup } from "../groups/groupsSlice";
+import { selectGroupById } from "../groups/groupsSlice";
 
 import { useSaveNewDocumentVersionMutation } from "../../app/services/documents";
 
@@ -32,10 +34,13 @@ export default function SaveNewDocumentVersion({
 }: {
 	documentId: number;
 }) {
+	const { groupId } = useParams();
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const toast = useToast();
 
-	const currentGroup = useTypedSelector(selectCurrentGroup) as Group;
+	const currentGroup = useTypedSelector(state =>
+		selectGroupById(state, Number(groupId))
+	) as Group;
 
 	const [saveNewDocumentVersion, { isLoading }] =
 		useSaveNewDocumentVersionMutation();

@@ -71,6 +71,8 @@ export enum Permission {
 	edit_document = "edit_document",
 	send_message = "send_message",
 	clear_chat = "clear_chat",
+	edit_messages = "edit_messages",
+	delete_messages = "delete_messages",
 }
 
 export interface saveGroupRoleRequest {

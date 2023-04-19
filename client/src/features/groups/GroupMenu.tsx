@@ -11,13 +11,16 @@ import {
 	useToast,
 	Button,
 } from "@chakra-ui/react";
+
+import { useParams } from "react-router-dom";
+
 import { BsBoxArrowLeft } from "react-icons/bs";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 
 import { useLeaveGroupMutation, Permission } from "../../app/services/groups";
 import { useTypedSelector } from "../../hooks/store";
 import {
-	selectCurrentGroup,
+	selectGroupById,
 	selectIsCreator,
 	selectCurrentGroupPermissions,
 } from "./groupsSlice";
@@ -27,10 +30,16 @@ import { useNavigate } from "react-router-dom";
 import AddUserToGroupModal from "./AddUserToGroupModal";
 
 export default function GroupMenu() {
+	const { groupId } = useParams();
 	const [leaveGroup] = useLeaveGroupMutation();
-	const group = useTypedSelector(selectCurrentGroup);
+	const group = useTypedSelector(state =>
+		selectGroupById(state, Number(groupId))
+	);
 	const permissions = useTypedSelector(selectCurrentGroupPermissions);
-	const isCreator = useTypedSelector(selectIsCreator);
+	const isCreator = useTypedSelector(state =>
+		selectIsCreator(state, Number(groupId))
+	);
+
 	if (!group) return null;
 
 	const toast = useToast();

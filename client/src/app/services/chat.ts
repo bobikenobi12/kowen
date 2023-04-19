@@ -33,7 +33,7 @@ export const api = createApi({
 	endpoints: builder => ({
 		getMessages: builder.query<Message[], number>({
 			query: groupId => ({
-				url: `group/${groupId}`,
+				url: `getMessages/${groupId}`,
 				method: "GET",
 			}),
 			providesTags: (result, error, groupId) => [
@@ -41,7 +41,7 @@ export const api = createApi({
 			],
 		}),
 		sendMessage: builder.mutation<
-			Message,
+			Message[],
 			{ groupId: number; content: string }
 		>({
 			query: ({ groupId, content }) => ({
@@ -63,7 +63,7 @@ export const api = createApi({
 			],
 		}),
 		editChatMessage: builder.mutation<
-			Message,
+			Message[],
 			{ groupId: number; messageId: number; content: string }
 		>({
 			query: ({ groupId, messageId, content }) => ({
@@ -76,7 +76,7 @@ export const api = createApi({
 			],
 		}),
 		deleteChatMessage: builder.mutation<
-			void,
+			Message[],
 			{ groupId: number; messageId: number }
 		>({
 			query: ({ groupId, messageId }) => ({
