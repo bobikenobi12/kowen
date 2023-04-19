@@ -1,0 +1,5 @@
+FROM mysql:8
+ENV MYSQL_ROOT_PASSWORD=mysecretpassword
+RUN mysql -uroot -p${MYSQL_ROOT_PASSWORD} -e "CREATE DATABASE kowenJava;"
+RUN mysql -uroot -p${MYSQL_ROOT_PASSWORD} -e "CREATE USER 'sammy' IDENTIFIED BY 'A4t474357oC5$77u5';"
+RUN mysql -uroot -p${MYSQL_ROOT_PASSWORD} -e "GRANT ALL PRIVILEGES ON kowenJava.* TO 'sammy';"
