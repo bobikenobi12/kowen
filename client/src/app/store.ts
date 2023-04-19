@@ -8,6 +8,7 @@ import { api as authApi } from "./services/auth";
 import { api as groupApi } from "./services/groups";
 import { api as folderApi } from "./services/folders";
 import { api as documentsApi } from "./services/documents";
+import { api as chatApi } from "./services/chat";
 
 // Reducers
 import authReducer from "../features/auth/authSlice";
@@ -27,6 +28,7 @@ export const store = configureStore({
 		[groupApi.reducerPath]: groupApi.reducer,
 		[folderApi.reducerPath]: folderApi.reducer,
 		[documentsApi.reducerPath]: documentsApi.reducer,
+		[chatApi.reducerPath]: chatApi.reducer,
 	},
 	middleware: getDefaultMiddleware =>
 		getDefaultMiddleware({
