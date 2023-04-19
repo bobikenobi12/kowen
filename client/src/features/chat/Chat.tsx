@@ -19,14 +19,13 @@ import { IoSend } from "react-icons/io5";
 import { BsFillTrashFill } from "react-icons/bs";
 
 import { useParams } from "react-router-dom";
-import { BiMessageRoundedMinus } from "react-icons/bi";
+
+import { FormatDate } from "../../utils/FormatDate";
 
 import {
 	useGetMessagesQuery,
 	useSendMessageMutation,
 	useClearChatMutation,
-	useEditChatMessageMutation,
-	useDeleteChatMessageMutation,
 } from "../../app/services/chat";
 
 import { selectGroupById, selectIsCreator } from "../groups/groupsSlice";
@@ -145,7 +144,7 @@ export default function Chat() {
 							<Flex
 								key={message.id}
 								w="100%"
-								h="50px"
+								p={4}
 								onMouseEnter={() => {
 									setHoveredMessage(message);
 								}}
@@ -153,15 +152,18 @@ export default function Chat() {
 									setHoveredMessage(null);
 								}}
 								justifyContent="space-between"
-								alignItems="center"
-								p="2"
 								bg={useColorModeValue("gray.200", "gray.600")}
 								borderRadius="md"
 								mb="2">
-								<VStack>
-									<Text fontWeight="bold">
-										{/* {message.sender.username} */}
-									</Text>
+								<VStack align="flex-start">
+									<HStack>
+										<Text fontWeight="bold">
+											{message.sender.username}
+										</Text>
+										<Text fontSize="xs">
+											{FormatDate(message.postedAt)}
+										</Text>
+									</HStack>
 									<Text>{message.content}</Text>
 								</VStack>
 								{hoveredMessage &&
@@ -228,19 +230,19 @@ export default function Chat() {
 							/>
 						</InputRightElement>
 					</InputGroup>
-					{isCreator ||
-						(userPermissions?.includes(Permission.clear_chat) && (
-							<IconButton
-								aria-label="Purge chat"
-								variant={isClearingChat ? "solid" : "outline"}
-								colorScheme="red"
-								icon={<BsFillTrashFill />}
-								onClick={async () => {
-									await handleClearChat();
-								}}
-								isLoading={isClearingChat}
-							/>
-						))}
+					{(isCreator ||
+						userPermissions?.includes(Permission.clear_chat)) && (
+						<IconButton
+							aria-label="Purge chat"
+							variant={isClearingChat ? "solid" : "outline"}
+							colorScheme="red"
+							icon={<BsFillTrashFill />}
+							onClick={async () => {
+								await handleClearChat();
+							}}
+							isLoading={isClearingChat}
+						/>
+					)}
 				</HStack>
 			</Flex>
 		</Box>

@@ -1,5 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-
+import { combineReducers } from "@reduxjs/toolkit";
 // Middleware
 import { asyncFunctionMiddleware } from "./middleware/asyncFucntionMiddleware";
 
@@ -18,20 +18,29 @@ import foldersReducer from "../features/folders/foldersSlice";
 import documentReducer from "../features/documents/documentSlice";
 import chatSlice from "../features/chat/chatSlice";
 
+const appReducer = combineReducers({
+	auth: authReducer,
+	groups: groupsReducer,
+	router: routerReducer,
+	folders: foldersReducer,
+	documents: documentReducer,
+	chat: chatSlice,
+	[authApi.reducerPath]: authApi.reducer,
+	[groupApi.reducerPath]: groupApi.reducer,
+	[folderApi.reducerPath]: folderApi.reducer,
+	[documentsApi.reducerPath]: documentsApi.reducer,
+	[chatApi.reducerPath]: chatApi.reducer,
+});
+
+const rootReducer = (state: any, action: any) => {
+	if (action.type === "auth/logout") {
+		state = undefined;
+	}
+	return appReducer(state, action);
+};
+
 export const store = configureStore({
-	reducer: {
-		auth: authReducer,
-		groups: groupsReducer,
-		router: routerReducer,
-		folders: foldersReducer,
-		documents: documentReducer,
-		chat: chatSlice,
-		[authApi.reducerPath]: authApi.reducer,
-		[groupApi.reducerPath]: groupApi.reducer,
-		[folderApi.reducerPath]: folderApi.reducer,
-		[documentsApi.reducerPath]: documentsApi.reducer,
-		[chatApi.reducerPath]: chatApi.reducer,
-	},
+	reducer: rootReducer,
 	middleware: getDefaultMiddleware =>
 		getDefaultMiddleware({
 			serializableCheck: false,
