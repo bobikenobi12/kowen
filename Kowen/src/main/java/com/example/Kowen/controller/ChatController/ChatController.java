@@ -113,7 +113,7 @@ public class ChatController {
         if (!group.getUsers().contains(user) && group.getCreator() != user) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not in this group!");
 
         Message message = messageRepo.findById(messageId).orElseThrow(Exception::new);
-        if (message.getSender() != user) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not the sender of the message!");
+        if (message.getSender() != user && !groupService.checkForPermissions(user.getId(), groupId, PermissionsEnum.delete_messages)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not the sender of the message!");
         if (!groupService.checkForPermissions(user.getId(), groupId, PermissionsEnum.send_message)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You don't have permissions!");
 
         group.getGroupChat().getMessages().remove(message);
@@ -134,7 +134,7 @@ public class ChatController {
         if (!groupService.checkForPermissions(user.getId(), groupId, PermissionsEnum.send_message)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You don't have permissions!");
 
         Message message = messageRepo.findById(messageId).orElseThrow(Exception::new);
-        if (message.getSender() != user) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not the sender of the message!");
+        if (message.getSender() != user && !groupService.checkForPermissions(user.getId(), groupId, PermissionsEnum.delete_messages)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not the sender of the message!");
 
         message.setContent(newMessage);
         messageRepo.save(message);

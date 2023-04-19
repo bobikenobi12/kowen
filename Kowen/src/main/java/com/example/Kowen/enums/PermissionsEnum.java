@@ -18,5 +18,7 @@ public enum PermissionsEnum {
     preview_document,
     edit_document,
     send_message,
-    clear_chat
+    clear_chat,
+    edit_messages,
+    delete_messages
 }
