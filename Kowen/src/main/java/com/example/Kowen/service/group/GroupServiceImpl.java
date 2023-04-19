@@ -156,58 +156,58 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public List<RoleWithUsers> getRolesWithUsers(Long groupId) throws Exception {
+        UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
+        List<RoleWithUsers> roleWithUsersList = new ArrayList<>();
+
+        for (User user : group.getUsers()){
+            RoleWithUsers roleWithUsers = new RoleWithUsers(user, null);
+            roleWithUsersList.add(roleWithUsers);
+        }
+
+        for (RoleWithUsers roleWithUsers : roleWithUsersList){
+            List<RoleInGroup> roles = new ArrayList<>();
+            for (RoleInGroup role : group.getRoleInGroup()){
+                if (role.getUserId().contains(roleWithUsers.getUser().getId())){
+                    roles.add(role);
+                    roleWithUsers.setRoles(roles);
+                }
+            }
+        }
+        return roleWithUsersList;
 //        UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
-//        List<RoleWithUsers> roleWithUsersList = new ArrayList<>();
+//        List<RoleWithUsers> resultList = new ArrayList<>();
 //
-//        for (User user : group.getUsers()){
-//            RoleWithUsers roleWithUsers = new RoleWithUsers(user, null);
-//            roleWithUsersList.add(roleWithUsers);
+//        for (RoleInGroup role : group.getRoleInGroup()){
+//            RoleWithUsers roleWithUsers = new RoleWithUsers();
+//            roleWithUsers.setRole(role);
+//            List<User> users = new ArrayList<>();
+//            for (Long userId : role.getUserId()){
+//                User user = userRepository.findById(userId).orElseThrow(Exception::new);
+//                users.add(user);
+//            }
+//            roleWithUsers.setUsers(users);
+//            resultList.add(roleWithUsers);
 //        }
 //
-//        for (RoleWithUsers roleWithUsers : roleWithUsersList){
-//            List<RoleInGroup> roles = new ArrayList<>();
+//
+//        RoleWithUsers usersWithoutRoles = new RoleWithUsers();
+//        usersWithoutRoles.setRole(null);
+//        usersWithoutRoles.setUsers(new ArrayList<>());
+//        for (User user : group.getUsers()){
+//            boolean checkContaining = true;
 //            for (RoleInGroup role : group.getRoleInGroup()){
-//                if (role.getUserId().contains(roleWithUsers.getUser().getId())){
-//                    roles.add(role);
-//                    roleWithUsers.setRoles(roles);
+//                if (!role.getUserId().contains(user.getId())){
+//                    checkContaining = false;
 //                }
+//                else checkContaining = true;
+//            }
+//            if (!checkContaining){
+//
+//                usersWithoutRoles.getUsers().add(user);
 //            }
 //        }
-//        return roleWithUsersList;
-        UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
-        List<RoleWithUsers> resultList = new ArrayList<>();
-
-        for (RoleInGroup role : group.getRoleInGroup()){
-            RoleWithUsers roleWithUsers = new RoleWithUsers();
-            roleWithUsers.setRole(role);
-            List<User> users = new ArrayList<>();
-            for (Long userId : role.getUserId()){
-                User user = userRepository.findById(userId).orElseThrow(Exception::new);
-                users.add(user);
-            }
-            roleWithUsers.setUsers(users);
-            resultList.add(roleWithUsers);
-        }
-
-
-        RoleWithUsers usersWithoutRoles = new RoleWithUsers();
-        usersWithoutRoles.setRole(null);
-        usersWithoutRoles.setUsers(new ArrayList<>());
-        for (User user : group.getUsers()){
-            boolean checkContaining = true;
-            for (RoleInGroup role : group.getRoleInGroup()){
-                if (!role.getUserId().contains(user.getId())){
-                    checkContaining = false;
-                }
-                else checkContaining = true;
-            }
-            if (!checkContaining){
-
-                usersWithoutRoles.getUsers().add(user);
-            }
-        }
-        resultList.add(usersWithoutRoles);
-        return resultList;
+//        resultList.add(usersWithoutRoles);
+//        return resultList;
     }
 
     @Override
