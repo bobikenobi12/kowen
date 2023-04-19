@@ -8,6 +8,8 @@ import com.example.Kowen.service.folder.FolderRepo;
 import com.example.Kowen.service.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -33,6 +35,9 @@ public class GroupServiceImpl implements GroupService {
 
     @Autowired
     private ChatRepo chatRepo;
+
+    @Autowired
+    JavaMailSender javaMailSender;
 
     @Override
     public UserGroup create(String name, String description, User user) {
@@ -82,12 +87,20 @@ public class GroupServiceImpl implements GroupService {
 
 
     @Override
-    public UserGroup addUserToGroup(User user, Long groupId) throws Exception {
+    public UserGroup addUserToGroup(User adder, User user, Long groupId) throws Exception {
         UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
         user.getUserGroups().add(group);
         group.getUsers().add(user);
         userRepository.save(user);
         groupRepo.save(group);
+
+        //Email sending
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("anton.m.stankov.2021@elsys-bg.org");
+        message.setTo(user.getEmail());
+        message.setSubject("Hello " + user.getUsername() + ", new group is waiting for you!");
+        message.setText("You have been added to group: " + group.getName() + " by " + adder.getFirstName() + " " + adder.getLastName() + "!");
+        javaMailSender.send(message);
         return group;
     }
 
@@ -108,7 +121,7 @@ public class GroupServiceImpl implements GroupService {
             waitingIds.remove(userId);
             group.setWaitingUsersId(waitingIds);
             User user = userRepository.findById(userId).orElseThrow(Exception::new);
-            return addUserToGroup(user, groupId);
+            return addUserToGroup(new User(), user, groupId);
         }
         else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no such user in waiting!");
     }

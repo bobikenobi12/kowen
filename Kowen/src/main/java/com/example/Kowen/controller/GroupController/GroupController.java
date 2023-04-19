@@ -233,7 +233,7 @@ public class GroupController {
         UserGroup group = groupRepo.findById(groupId.getGroupId()).orElseThrow(Exception::new);
 
         if (user == group.getCreator() || groupService.checkForPermissions(user.getId(), group.getId(), PermissionsEnum.add_user)) {
-            return groupService.addUserToGroup(userToAdd, groupId.getGroupId());
+            return groupService.addUserToGroup(user, userToAdd, groupId.getGroupId());
         } else
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "You are not creator of this group to add users!");
