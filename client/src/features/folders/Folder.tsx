@@ -145,15 +145,12 @@ export default function Folder() {
 															.length - 1
 													].version,
 											});
-											const file = new Blob(
-												[content.data as Blob],
-												{
-													type: content.data?.type,
-												}
+											const fileURL = URL.createObjectURL(
+												content.data as Blob
 											);
-											const fileURL =
-												URL.createObjectURL(file);
 											window.open(fileURL);
+
+											URL.revokeObjectURL(fileURL);
 										} catch (error) {
 											console.log(error);
 										}
@@ -204,10 +201,14 @@ export default function Folder() {
 																				.version,
 																	}
 																);
-																fileDownload(
-																	downloadedDocument.data as Blob,
-																	document.name
-																);
+																if (
+																	downloadedDocument.data
+																) {
+																	fileDownload(
+																		downloadedDocument.data as Blob,
+																		document.name
+																	);
+																}
 															} catch (error) {
 																console.log(
 																	error

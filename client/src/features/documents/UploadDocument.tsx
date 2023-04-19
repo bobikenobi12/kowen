@@ -65,7 +65,6 @@ export default function UploadDocument() {
 								values,
 								{ setSubmitting, resetForm }
 							) => {
-								console.log(values);
 								const formData = new FormData();
 								formData.append("file", values.file);
 								formData.append(

@@ -136,8 +136,7 @@ export default function GroupSettings() {
 								type: "groups/setSelectedSection",
 								payload: "overview",
 							});
-
-							navigate(`/groups/${group?.id}`);
+							navigate(-1);
 						}}
 					/>
 					<Text
