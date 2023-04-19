@@ -94,12 +94,12 @@ public class ChatController {
 
         if (!groupService.checkForPermissions(user.getId(), groupId, PermissionsEnum.clear_chat)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You don't have permissions!");
         for (Message message : group.getGroupChat().getMessages()){
-            message.setSender(null);
-            messageRepo.save(message);
+            message.setChat(null);
             messageRepo.delete(message);
         }
+        group.getGroupChat().getMessages().clear();
 
-        group.getGroupChat().setMessages(new ArrayList<>());
+//        group.getGroupChat().setMessages(new ArrayList<>());
         chatRepo.save(group.getGroupChat());
         groupRepo.save(group);
         return group.getGroupChat();
