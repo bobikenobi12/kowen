@@ -80,10 +80,6 @@ export default function Chat() {
 	const [sendMessage, { isLoading: isSendingMessage }] =
 		useSendMessageMutation();
 	const [clearChat, { isLoading: isClearingChat }] = useClearChatMutation();
-	const [editChatMessage, { isLoading: isEditingChatMessage }] =
-		useEditChatMessageMutation();
-	const [deleteChatMessage, { isLoading: isDeletingChatMessage }] =
-		useDeleteChatMessageMutation();
 
 	async function handleSendMessage() {
 		if (currentChatMessage) {
@@ -110,6 +106,7 @@ export default function Chat() {
 	if (!messages) {
 		return <Text>No messages</Text>;
 	}
+
 	return (
 		<Box flex={1}>
 			<Flex
@@ -170,19 +167,26 @@ export default function Chat() {
 								{hoveredMessage &&
 									hoveredMessage.id === message.id && (
 										<HStack>
-											{isCreator && (
-												<EditMessageModal
-													content={message.content}
-													messageId={message.id}
-													groupId={Number(groupId)}
-												/>
-											)}
-											{isCreator && (
-												<DeleteMessageAlertDialog
-													groupId={Number(groupId)}
-													messageId={message.id}
-												/>
-											)}
+											{currentUser.id ===
+												message.sender.id ||
+												isCreator ||
+												(userPermissions?.includes(
+													Permission.edit_messages
+												) && (
+													<EditMessageModal
+														content={
+															message.content
+														}
+														messageId={message.id}
+														groupId={Number(
+															groupId
+														)}
+													/>
+												))}
+											<DeleteMessageAlertDialog
+												groupId={Number(groupId)}
+												messageId={message.id}
+											/>
 										</HStack>
 									)}
 							</Flex>
@@ -205,6 +209,14 @@ export default function Chat() {
 							<IconButton
 								aria-label="Send message"
 								icon={<IoSend />}
+								disabled={
+									!isCreator ||
+									!userPermissions?.some(
+										permission =>
+											permission ===
+											Permission.send_message
+									)
+								}
 								onClick={async () => {
 									await handleSendMessage();
 								}}
@@ -212,16 +224,19 @@ export default function Chat() {
 							/>
 						</InputRightElement>
 					</InputGroup>
-					<IconButton
-						aria-label="Purge chat"
-						variant={isClearingChat ? "solid" : "outline"}
-						colorScheme="red"
-						icon={<BsFillTrashFill />}
-						onClick={async () => {
-							await handleClearChat();
-						}}
-						isLoading={isClearingChat}
-					/>
+					{isCreator ||
+						(userPermissions?.includes(Permission.clear_chat) && (
+							<IconButton
+								aria-label="Purge chat"
+								variant={isClearingChat ? "solid" : "outline"}
+								colorScheme="red"
+								icon={<BsFillTrashFill />}
+								onClick={async () => {
+									await handleClearChat();
+								}}
+								isLoading={isClearingChat}
+							/>
+						))}
 				</HStack>
 			</Flex>
 		</Box>
