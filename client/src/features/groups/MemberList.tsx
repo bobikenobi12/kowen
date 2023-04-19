@@ -55,6 +55,8 @@ export default function MemberList() {
 			bg={useColorModeValue("gray.100", "gray.700")}
 			gap={2}
 			alignItems="center"
+			ml={"auto"}
+			alignSelf={"flex-end"}
 			overflowY="scroll">
 			<Heading size="md">Creator</Heading>
 			<Box w="full" mt={2}>

@@ -81,14 +81,10 @@ export default function Group() {
 	}
 
 	return (
-		<Flex
-			direction="row"
-			w="full"
-			h="full"
-			bg={useColorModeValue("gray.100", "gray.700")}>
+		<>
 			<Flex
 				direction="column"
-				w="fit-content"
+				w={{ base: 250, md: 300 }}
 				h="full"
 				bg={useColorModeValue("gray.50", "inherit")}>
 				<GroupMenu />
@@ -256,6 +252,6 @@ export default function Group() {
 			</Flex>
 			<Outlet />
 			<MemberList />
-		</Flex>
+		</>
 	);
 }
