@@ -169,26 +169,29 @@ export default function Chat() {
 								{hoveredMessage &&
 									hoveredMessage.id === message.id && (
 										<HStack>
-											{currentUser.id ===
+											{(currentUser.id ===
 												message.sender.id ||
 												isCreator ||
-												(userPermissions?.includes(
+												userPermissions?.includes(
 													Permission.edit_messages
-												) && (
-													<EditMessageModal
-														content={
-															message.content
-														}
-														messageId={message.id}
-														groupId={Number(
-															groupId
-														)}
-													/>
-												))}
-											<DeleteMessageAlertDialog
-												groupId={Number(groupId)}
-												messageId={message.id}
-											/>
+												)) && (
+												<EditMessageModal
+													content={message.content}
+													messageId={message.id}
+													groupId={Number(groupId)}
+												/>
+											)}
+											{(currentUser.id ===
+												message.sender.id ||
+												isCreator ||
+												userPermissions?.includes(
+													Permission.delete_messages
+												)) && (
+												<DeleteMessageAlertDialog
+													groupId={Number(groupId)}
+													messageId={message.id}
+												/>
+											)}
 										</HStack>
 									)}
 							</Flex>
