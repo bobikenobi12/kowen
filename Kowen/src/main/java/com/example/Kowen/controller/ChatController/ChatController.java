@@ -85,4 +85,43 @@ public class ChatController {
         return group.getGroupChat();
     }
 
+    @GetMapping("/delete/message/{groupId}/{messageId}")
+    public List<Message> deleteMessage(@PathVariable Long groupId, @PathVariable Long messageId) throws Exception {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        User user = userRepository.findByEmail(principal.getUsername()).get(0);
+        UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
+
+        if (!group.getUsers().contains(user) && group.getCreator() != user) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not in this group!");
+
+        Message message = messageRepo.findById(messageId).orElseThrow(Exception::new);
+        if (message.getSender() != user) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not the sender of the message!");
+        if (!groupService.checkForPermissions(user.getId(), groupId, PermissionsEnum.send_message)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You don't have permissions!");
+
+        group.getGroupChat().getMessages().remove(message);
+        groupRepo.save(group);
+        messageRepo.delete(message);
+        return group.getGroupChat().getMessages();
+    }
+
+
+    @PostMapping("/edit/message/{groupId}/{messageId}")
+    public List<Message> editMessage(@PathVariable Long groupId, @PathVariable Long messageId, @RequestParam String newMessage) throws Exception {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        User user = userRepository.findByEmail(principal.getUsername()).get(0);
+        UserGroup group = groupRepo.findById(groupId).orElseThrow(Exception::new);
+
+        if (!group.getUsers().contains(user) && group.getCreator() != user) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not in this group!");
+        if (!groupService.checkForPermissions(user.getId(), groupId, PermissionsEnum.send_message)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You don't have permissions!");
+
+        Message message = messageRepo.findById(messageId).orElseThrow(Exception::new);
+        if (message.getSender() != user) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not the sender of the message!");
+
+        message.setContent(newMessage);
+        messageRepo.save(message);
+        groupRepo.save(group);
+    }
+
+
 }
