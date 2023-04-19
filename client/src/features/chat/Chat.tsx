@@ -48,6 +48,7 @@ import type { Group } from "../../app/services/groups";
 import type { User } from "../../app/services/auth";
 
 import EditMessageModal from "./EditMessageModal";
+import DeleteMessageAlertDialog from "./DeleteMessageAlertDialog";
 
 export default function Chat() {
 	const { groupId } = useParams<{ groupId: string }>();
@@ -100,21 +101,6 @@ export default function Chat() {
 
 	async function handleClearChat() {
 		await clearChat(Number(groupId)).unwrap();
-	}
-
-	async function handleEditMessage(message: Message) {
-		await editChatMessage({
-			groupId: Number(groupId),
-			messageId: message.id,
-			content: message.content,
-		}).unwrap();
-	}
-
-	async function handleDeleteMessage(message: Message) {
-		await deleteChatMessage({
-			groupId: Number(groupId),
-			messageId: message.id,
-		}).unwrap();
 	}
 
 	if (isGettingMessages || isGettingUserPermissions) {
@@ -191,18 +177,12 @@ export default function Chat() {
 													groupId={Number(groupId)}
 												/>
 											)}
-
-											<IconButton
-												aria-label="Delete message"
-												variant="outline"
-												colorScheme="red"
-												icon={<BsFillTrashFill />}
-												onClick={async () => {
-													await handleDeleteMessage(
-														message
-													);
-												}}
-											/>
+											{isCreator && (
+												<DeleteMessageAlertDialog
+													groupId={Number(groupId)}
+													messageId={message.id}
+												/>
+											)}
 										</HStack>
 									)}
 							</Flex>

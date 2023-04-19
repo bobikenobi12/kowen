@@ -31,7 +31,7 @@ export default function EditMessageModal({
 		useEditChatMessageMutation();
 	const [message, setMessage] = React.useState("");
 	const { isOpen, onOpen, onClose } = useDisclosure();
-	console.log(content);
+
 	return (
 		<>
 			<IconButton
