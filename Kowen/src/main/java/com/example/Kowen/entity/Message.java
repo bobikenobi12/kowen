@@ -26,7 +26,7 @@ public class Message {
     @JoinColumn(name = "chat_id", nullable = false)
     private GroupChat chat;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "sender_id")
     private User sender;
 
