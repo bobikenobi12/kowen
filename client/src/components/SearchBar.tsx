@@ -20,7 +20,7 @@ export default function SearchBar() {
 
 	useEffect(() => {
 		if (searchTerm === "") {
-			dispatch(filterDocuments(""));
+			return;
 		}
 
 		dispatch(filterDocuments(searchTerm));

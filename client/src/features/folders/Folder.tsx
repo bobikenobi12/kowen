@@ -9,7 +9,18 @@ import {
 	useColorModeValue,
 	Text,
 	Tooltip,
+	useToast,
+	Menu,
+	MenuButton,
+	MenuList,
+	MenuItem,
+	MenuItemOption,
+	MenuGroup,
+	MenuOptionGroup,
+	MenuDivider,
 } from "@chakra-ui/react";
+
+import { BsThreeDots } from "react-icons/bs";
 
 import { useParams } from "react-router-dom";
 
@@ -40,6 +51,9 @@ import SearchBar from "../../components/SearchBar";
 
 export default function Folder() {
 	const { groupId, folderId } = useParams();
+
+	const toast = useToast();
+
 	const group = useTypedSelector(state =>
 		selectGroupById(state, Number(groupId))
 	) as Group;
@@ -84,6 +98,7 @@ export default function Folder() {
 		return <Text>An error occurred.</Text>;
 	}
 
+	console.log(documents);
 	return (
 		<Flex
 			direction="column"
@@ -144,16 +159,19 @@ export default function Folder() {
 										size="md"
 										onClick={async () => {
 											try {
-												await getDocumentContent({
-													groupId: group.id,
-													folderId: folder!.id,
-													documentId: document.id,
-													version:
-														document.versions[
-															document.versions
-																.length - 1
-														].version,
-												});
+												if (!content.data) {
+													await getDocumentContent({
+														groupId: group.id,
+														folderId: folder!.id,
+														documentId: document.id,
+														version:
+															document.versions[
+																document
+																	.versions
+																	.length - 1
+															].version,
+													});
+												}
 												const fileURL =
 													URL.createObjectURL(
 														content.data as Blob
@@ -168,6 +186,71 @@ export default function Folder() {
 										{document.name}
 									</Text>
 									<HStack mr={4}>
+										<Menu key={document.id}>
+											<MenuButton
+												as={IconButton}
+												aria-label="Version"
+												colorScheme="blue"
+												icon={<Icon as={BsThreeDots} />}
+												variant="outline"
+											/>
+											<MenuList>
+												{document.versions.map(
+													version => {
+														return (
+															<MenuItem
+																key={
+																	version.version
+																}
+																onClick={async () => {
+																	try {
+																		await getDocumentContent(
+																			{
+																				groupId:
+																					group.id,
+																				folderId:
+																					folder!
+																						.id,
+																				documentId:
+																					document.id,
+																				version:
+																					version.version,
+																			}
+																		).unwrap();
+																		await downloadDocument(
+																			{
+																				groupId:
+																					group.id,
+																				folderId:
+																					folder!
+																						.id,
+																				documentId:
+																					document.id,
+																				version:
+																					version.version,
+																			}
+																		).unwrap();
+																	} catch (error) {
+																		toast({
+																			title: "Error",
+																			description:
+																				"Something went wrong",
+																			status: "error",
+																			duration: 9000,
+																			isClosable:
+																				true,
+																		});
+																	}
+																}}>
+																{
+																	version.version
+																}
+															</MenuItem>
+														);
+													}
+												)}
+											</MenuList>
+										</Menu>
 										{permissions &&
 											(permissions.includes(
 												Permission.download_document
@@ -191,29 +274,36 @@ export default function Folder() {
 															}
 															onClick={async () => {
 																try {
-																	await downloadDocument(
-																		{
-																			groupId:
-																				group.id,
-																			folderId:
-																				folder!
-																					.id,
-																			documentId:
-																				document.id,
-																			version:
-																				document
-																					.versions[
+																	if (
+																		!downloadedDocument.data
+																	) {
+																		await downloadDocument(
+																			{
+																				groupId:
+																					group.id,
+																				folderId:
+																					folder!
+																						.id,
+																				documentId:
+																					document.id,
+																				version:
 																					document
-																						.versions
-																						.length -
-																						1
-																				]
-																					.version,
-																		}
-																	);
+																						.versions[
+																						document
+																							.versions
+																							.length -
+																							1
+																					]
+																						.version,
+																			}
+																		);
+																	}
 																	if (
 																		downloadedDocument.data
 																	) {
+																		console.log(
+																			downloadedDocument
+																		);
 																		fileDownload(
 																			downloadedDocument.data as Blob,
 																			document.name
@@ -280,16 +370,19 @@ export default function Folder() {
 										size="md"
 										onClick={async () => {
 											try {
-												await getDocumentContent({
-													groupId: group.id,
-													folderId: folder!.id,
-													documentId: document.id,
-													version:
-														document.versions[
-															document.versions
-																.length - 1
-														].version,
-												});
+												if (!content.data) {
+													await getDocumentContent({
+														groupId: group.id,
+														folderId: folder!.id,
+														documentId: document.id,
+														version:
+															document.versions[
+																document
+																	.versions
+																	.length - 1
+															].version,
+													});
+												}
 												const fileURL =
 													URL.createObjectURL(
 														content.data as Blob
@@ -304,6 +397,71 @@ export default function Folder() {
 										{document.name}
 									</Text>
 									<HStack mr={4}>
+										<Menu key={document.id}>
+											<MenuButton
+												as={IconButton}
+												aria-label="Version"
+												colorScheme="blue"
+												icon={<Icon as={BsThreeDots} />}
+												variant="outline"
+											/>
+											<MenuList>
+												{document.versions.map(
+													version => {
+														return (
+															<MenuItem
+																key={
+																	version.version
+																}
+																onClick={async () => {
+																	try {
+																		await getDocumentContent(
+																			{
+																				groupId:
+																					group.id,
+																				folderId:
+																					folder!
+																						.id,
+																				documentId:
+																					document.id,
+																				version:
+																					version.version,
+																			}
+																		).unwrap();
+																		await downloadDocument(
+																			{
+																				groupId:
+																					group.id,
+																				folderId:
+																					folder!
+																						.id,
+																				documentId:
+																					document.id,
+																				version:
+																					version.version,
+																			}
+																		).unwrap();
+																	} catch (error) {
+																		toast({
+																			title: "Error",
+																			description:
+																				"Something went wrong",
+																			status: "error",
+																			duration: 9000,
+																			isClosable:
+																				true,
+																		});
+																	}
+																}}>
+																{
+																	version.version
+																}
+															</MenuItem>
+														);
+													}
+												)}
+											</MenuList>
+										</Menu>
 										{permissions &&
 											(permissions.includes(
 												Permission.download_document
@@ -327,29 +485,36 @@ export default function Folder() {
 															}
 															onClick={async () => {
 																try {
-																	await downloadDocument(
-																		{
-																			groupId:
-																				group.id,
-																			folderId:
-																				folder!
-																					.id,
-																			documentId:
-																				document.id,
-																			version:
-																				document
-																					.versions[
+																	if (
+																		!downloadedDocument.data
+																	) {
+																		await downloadDocument(
+																			{
+																				groupId:
+																					group.id,
+																				folderId:
+																					folder!
+																						.id,
+																				documentId:
+																					document.id,
+																				version:
 																					document
-																						.versions
-																						.length -
-																						1
-																				]
-																					.version,
-																		}
-																	);
+																						.versions[
+																						document
+																							.versions
+																							.length -
+																							1
+																					]
+																						.version,
+																			}
+																		);
+																	}
 																	if (
 																		downloadedDocument.data
 																	) {
+																		console.log(
+																			downloadedDocument
+																		);
 																		fileDownload(
 																			downloadedDocument.data as Blob,
 																			document.name
