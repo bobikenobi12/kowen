@@ -65,7 +65,7 @@ public class DocumentController {
         byte[] fileBytes = file.getBytes();
 
         Document document = new Document();
-        document.setName(file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf('.')));
+        document.setName(file.getOriginalFilename().substring(0, file.getOriginalFilename().lastIndexOf('.')));
         document.setPublisher(user);
         // document.setPublishingDate(new Date());
 
