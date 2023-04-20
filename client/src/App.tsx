@@ -19,6 +19,8 @@ import Chat from "./features/chat/Chat";
 
 import UserSettings from "./features/auth/UserSettings";
 
+import Features from "./components/Features";
+
 function App() {
 	return (
 		<Box>
@@ -45,6 +47,8 @@ function App() {
 						<Route path="login" element={<Login />} />
 						<Route path="register" element={<Register />} />
 					</Route>
+					<Route path="features" element={<Features />} />
+					<Route path="*" element={<NotFound />} />
 				</Routes>
 			</Router>
 		</Box>

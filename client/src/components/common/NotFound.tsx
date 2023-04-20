@@ -31,8 +31,8 @@ export default function NotFound() {
 					bgGradient="linear(to-r, teal.400, teal.500, teal.600)"
 					color="white"
 					variant="solid">
-					<Link to="/" state={{ from: "not-found" }}>
-						Go Home
+					<Link to="/groups" state={{ from: "not-found" }}>
+						Go To Groups
 					</Link>
 				</Button>
 			</Flex>
