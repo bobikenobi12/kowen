@@ -85,7 +85,7 @@ export default function DeleteDocumentDialog({
 											groupId: group.id,
 											folderId: folder.id,
 											documentId: document.id,
-										});
+										}).unwrap();
 										toast({
 											title: "Document deleted from group",
 											description: `The document ${document.name} and all its versions have been deleted from the group ${group.name}`,

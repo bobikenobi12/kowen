@@ -63,7 +63,7 @@ export default function SaveFolderToGroup({ groupId }: { groupId: number }) {
 									await saveFolderToGroup({
 										groupId,
 										name: values.name as string,
-									});
+									}).unwrap();
 									toast({
 										title: "Folder saved to group",
 										status: "success",

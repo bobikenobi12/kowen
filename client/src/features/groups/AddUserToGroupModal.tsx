@@ -63,11 +63,11 @@ export default function AddUserToGroupModal() {
 						}}
 						validationSchema={AddUserToGroup}
 						onSubmit={async (values, { setSubmitting }) => {
-							if (group) {
+							try {
 								await addUserToGroup({
 									groupId: group.id,
 									username: values.username,
-								});
+								}).unwrap();
 								toast({
 									title: "User added to group.",
 									status: "success",
@@ -75,6 +75,14 @@ export default function AddUserToGroupModal() {
 									isClosable: true,
 								});
 								onClose();
+							} catch (err: any) {
+								toast({
+									title: "Error adding user to group.",
+									description: JSON.stringify(err.data),
+									status: "error",
+									duration: 9000,
+									isClosable: true,
+								});
 							}
 						}}>
 						{(props: FormikProps<{ username: string }>) => (

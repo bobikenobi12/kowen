@@ -112,13 +112,25 @@ export default function Group() {
 							<CreateFolder groupId={group.id} />
 						)}
 				</Flex>
-
 				<VStack
 					w="full"
 					h="full"
 					gap={2}
 					bg={useColorModeValue("gray.100", "gray.700")}
-					overflowY="scroll">
+					overflowY="scroll"
+					css={{
+						"&::-webkit-scrollbar": {
+							width: "0.5em",
+						},
+						"&::-webkit-scrollbar-track": {
+							"-webkit-box-shadow":
+								"inset 0 0 6px rgba(0,0,0,0.00)",
+						},
+						"&::-webkit-scrollbar-thumb": {
+							backgroundColor: "rgba(0,0,0,.1)",
+						},
+					}}
+					spacing={0}>
 					<Flex
 						direction="row"
 						alignItems={"center"}

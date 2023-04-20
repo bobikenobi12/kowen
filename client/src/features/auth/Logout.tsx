@@ -16,7 +16,7 @@ export default function Logout() {
 			<Button
 				onClick={async () => {
 					try {
-						await logout();
+						await logout().unwrap();
 						dispatch({ type: "auth/logout" });
 						toast({
 							title: "Logout successful",

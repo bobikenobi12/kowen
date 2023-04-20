@@ -71,7 +71,7 @@ export default function EditFolder({
 										groupId,
 										folderId,
 										name: values.name as string,
-									});
+									}).unwrap();
 									toast({
 										title: "Folder name changed",
 										status: "success",

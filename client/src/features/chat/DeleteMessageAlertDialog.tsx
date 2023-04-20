@@ -10,6 +10,7 @@ import {
 	Button,
 	IconButton,
 	useDisclosure,
+	useToast,
 } from "@chakra-ui/react";
 
 import { BsFillTrashFill } from "react-icons/bs";
@@ -26,6 +27,8 @@ export default function DeleteMessageAlertDialog({
 	const [deleteChatMessage, { isLoading: isDeletingChatMessage }] =
 		useDeleteChatMessageMutation();
 	const { isOpen, onOpen, onClose } = useDisclosure();
+
+	const toast = useToast();
 
 	return (
 		<>
@@ -57,11 +60,23 @@ export default function DeleteMessageAlertDialog({
 							<Button
 								colorScheme="red"
 								onClick={async () => {
-									await deleteChatMessage({
-										groupId,
-										messageId,
-									});
-									onClose();
+									try {
+										await deleteChatMessage({
+											groupId,
+											messageId,
+										}).unwrap();
+										onClose();
+									} catch (error: any) {
+										toast({
+											title: "Error",
+											description: JSON.stringify(
+												error.data
+											),
+											status: "error",
+											duration: 5000,
+											isClosable: true,
+										});
+									}
 								}}
 								ml={3}>
 								Delete

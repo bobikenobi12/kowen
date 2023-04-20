@@ -19,14 +19,13 @@ import { IoSend } from "react-icons/io5";
 import { BsFillTrashFill } from "react-icons/bs";
 
 import { useParams } from "react-router-dom";
-import { BiMessageRoundedMinus } from "react-icons/bi";
+
+import { FormatDate } from "../../utils/FormatDate";
 
 import {
 	useGetMessagesQuery,
 	useSendMessageMutation,
 	useClearChatMutation,
-	useEditChatMessageMutation,
-	useDeleteChatMessageMutation,
 } from "../../app/services/chat";
 
 import { selectGroupById, selectIsCreator } from "../groups/groupsSlice";
@@ -75,7 +74,9 @@ export default function Chat() {
 		useGetUserPermissionsForGroupQuery(Number(groupId));
 
 	const { data: messages, isLoading: isGettingMessages } =
-		useGetMessagesQuery(Number(groupId));
+		useGetMessagesQuery(Number(groupId), {
+			pollingInterval: 1000,
+		});
 
 	const [sendMessage, { isLoading: isSendingMessage }] =
 		useSendMessageMutation();
@@ -145,7 +146,7 @@ export default function Chat() {
 							<Flex
 								key={message.id}
 								w="100%"
-								h="50px"
+								p={4}
 								onMouseEnter={() => {
 									setHoveredMessage(message);
 								}}
@@ -153,40 +154,46 @@ export default function Chat() {
 									setHoveredMessage(null);
 								}}
 								justifyContent="space-between"
-								alignItems="center"
-								p="2"
 								bg={useColorModeValue("gray.200", "gray.600")}
 								borderRadius="md"
 								mb="2">
-								<VStack>
-									<Text fontWeight="bold">
-										{/* {message.sender.username} */}
-									</Text>
+								<VStack align="flex-start">
+									<HStack>
+										<Text fontWeight="bold">
+											{message.sender.username}
+										</Text>
+										<Text fontSize="xs">
+											{FormatDate(message.postedAt)}
+										</Text>
+									</HStack>
 									<Text>{message.content}</Text>
 								</VStack>
 								{hoveredMessage &&
 									hoveredMessage.id === message.id && (
 										<HStack>
-											{currentUser.id ===
+											{(currentUser.id ===
 												message.sender.id ||
 												isCreator ||
-												(userPermissions?.includes(
+												userPermissions?.includes(
 													Permission.edit_messages
-												) && (
-													<EditMessageModal
-														content={
-															message.content
-														}
-														messageId={message.id}
-														groupId={Number(
-															groupId
-														)}
-													/>
-												))}
-											<DeleteMessageAlertDialog
-												groupId={Number(groupId)}
-												messageId={message.id}
-											/>
+												)) && (
+												<EditMessageModal
+													content={message.content}
+													messageId={message.id}
+													groupId={Number(groupId)}
+												/>
+											)}
+											{(currentUser.id ===
+												message.sender.id ||
+												isCreator ||
+												userPermissions?.includes(
+													Permission.delete_messages
+												)) && (
+												<DeleteMessageAlertDialog
+													groupId={Number(groupId)}
+													messageId={message.id}
+												/>
+											)}
 										</HStack>
 									)}
 							</Flex>
@@ -209,14 +216,18 @@ export default function Chat() {
 							<IconButton
 								aria-label="Send message"
 								icon={<IoSend />}
-								disabled={
-									!isCreator ||
+								isDisabled={
+									!isCreator &&
 									!userPermissions?.some(
 										permission =>
 											permission ===
 											Permission.send_message
 									)
 								}
+								_disabled={{
+									bg: "gray.400",
+									cursor: "not-allowed",
+								}}
 								onClick={async () => {
 									await handleSendMessage();
 								}}
@@ -224,19 +235,19 @@ export default function Chat() {
 							/>
 						</InputRightElement>
 					</InputGroup>
-					{isCreator ||
-						(userPermissions?.includes(Permission.clear_chat) && (
-							<IconButton
-								aria-label="Purge chat"
-								variant={isClearingChat ? "solid" : "outline"}
-								colorScheme="red"
-								icon={<BsFillTrashFill />}
-								onClick={async () => {
-									await handleClearChat();
-								}}
-								isLoading={isClearingChat}
-							/>
-						))}
+					{(isCreator ||
+						userPermissions?.includes(Permission.clear_chat)) && (
+						<IconButton
+							aria-label="Purge chat"
+							variant={isClearingChat ? "solid" : "outline"}
+							colorScheme="red"
+							icon={<BsFillTrashFill />}
+							onClick={async () => {
+								await handleClearChat();
+							}}
+							isLoading={isClearingChat}
+						/>
+					)}
 				</HStack>
 			</Flex>
 		</Box>

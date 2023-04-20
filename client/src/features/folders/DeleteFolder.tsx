@@ -74,7 +74,7 @@ export default function DeleteFolder({
 										await deleteFolder({
 											groupId,
 											folderId,
-										});
+										}).unwrap();
 										toast({
 											title: "Folder deleted",
 											status: "info",
