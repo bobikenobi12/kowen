@@ -71,7 +71,7 @@ export default function RemoveRoleFromGroupDialog({
 										await removeRoleFromGroup({
 											roleId: role.id,
 											groupId: group.id,
-										});
+										}).unwrap();
 										toast({
 											title: "Role removed from group",
 											description: `The role ${role.name} has been removed from ${group.name}`,

@@ -12,6 +12,7 @@ import {
 	Input,
 	useDisclosure,
 	IconButton,
+	useToast,
 } from "@chakra-ui/react";
 
 import { MdEdit } from "react-icons/md";
@@ -31,6 +32,8 @@ export default function EditMessageModal({
 		useEditChatMessageMutation();
 	const [message, setMessage] = React.useState("");
 	const { isOpen, onOpen, onClose } = useDisclosure();
+
+	const toast = useToast();
 
 	return (
 		<>
@@ -58,12 +61,22 @@ export default function EditMessageModal({
 							colorScheme="blue"
 							mr={3}
 							onClick={async () => {
-								await editChatMessage({
-									groupId,
-									messageId,
-									content: message,
-								});
-								onClose();
+								try {
+									await editChatMessage({
+										groupId,
+										messageId,
+										content: message,
+									}).unwrap;
+									onClose();
+								} catch (error: any) {
+									toast({
+										title: "Error",
+										description: JSON.stringify(error.data),
+										status: "error",
+										duration: 9000,
+										isClosable: true,
+									});
+								}
 							}}
 							isLoading={isEditingChatMessage}>
 							Save

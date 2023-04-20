@@ -13,7 +13,6 @@ import { api as chatApi } from "./services/chat";
 // Reducers
 import authReducer from "../features/auth/authSlice";
 import groupsReducer from "../features/groups/groupsSlice";
-import routerReducer from "../features/router/routerSlice";
 import foldersReducer from "../features/folders/foldersSlice";
 import documentReducer from "../features/documents/documentSlice";
 import chatSlice from "../features/chat/chatSlice";
@@ -21,7 +20,6 @@ import chatSlice from "../features/chat/chatSlice";
 const appReducer = combineReducers({
 	auth: authReducer,
 	groups: groupsReducer,
-	router: routerReducer,
 	folders: foldersReducer,
 	documents: documentReducer,
 	chat: chatSlice,

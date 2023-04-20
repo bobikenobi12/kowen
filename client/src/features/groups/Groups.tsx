@@ -10,7 +10,6 @@ import { selectGroups } from "./groupsSlice";
 import { type Group } from "../../app/services/groups";
 
 export default function Groups() {
-	const navigate = useNavigate();
 	const groups = useTypedSelector(selectGroups);
 	useShowGroupsQuery();
 

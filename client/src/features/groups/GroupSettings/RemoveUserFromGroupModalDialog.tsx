@@ -70,7 +70,7 @@ export default function RemoveUserFromGroupModal({
 										await removeUserFromGroup({
 											userId: parseInt(user.id),
 											groupId: group.id,
-										});
+										}).unwrap();
 										toast({
 											title: "User removed from group",
 											description:

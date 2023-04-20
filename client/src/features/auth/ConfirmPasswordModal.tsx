@@ -71,21 +71,23 @@ export default function EditProfile({
 								await changeUsername({
 									username: props.username,
 									password: values.password as string,
-								});
+								}).unwrap();
 
 								await changeFirstName({
 									firstName: props.firstName,
 									password: values.password as string,
-								});
+								}).unwrap();
 
 								await changeLastName({
 									lastName: props.lastName,
 									password: values.password as string,
-								});
+								}).unwrap();
+
 								await changeEmail({
 									email: props.email,
 									password: values.password as string,
-								});
+								}).unwrap();
+
 								toast({
 									title: "Profile changes confirmed",
 									status: "success",
