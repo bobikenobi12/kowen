@@ -23,9 +23,20 @@ export default function Groups() {
 				h={"100vh"}
 				gap={3}
 				pt={5}
+				css={{
+					"&::-webkit-scrollbar": {
+						width: "0.5em",
+					},
+					"&::-webkit-scrollbar-track": {
+						"-webkit-box-shadow": "inset 0 0 6px rgba(0,0,0,0.00)",
+					},
+					"&::-webkit-scrollbar-thumb": {
+						backgroundColor: "none",
+					},
+				}}
 				overflowY={"scroll"}
 				overflowX={"hidden"}
-				bg={useColorModeValue("gray.100", "inherit")}>
+				bg={useColorModeValue("gray.100", "gray.900")}>
 				{groups.map((group: Group) => (
 					<Tooltip
 						key={group.id}

@@ -54,8 +54,23 @@ export default function MemberList() {
 			alignItems="center"
 			ml={"auto"}
 			alignSelf={"flex-end"}
-			overflowY="scroll">
-			<Heading size="lg">Creator</Heading>
+			overflowY="scroll"
+			css={{
+				"&::-webkit-scrollbar": {
+					width: "0.5em",
+				},
+				"&::-webkit-scrollbar-track": {
+					"-webkit-box-shadow": "inset 0 0 6px rgba(0,0,0,0.00)",
+				},
+				"&::-webkit-scrollbar-thumb": {
+					backgroundColor: "rgba(0,0,0,.1)",
+					outline: "1px solid slategrey",
+				},
+			}}
+			shadow="md">
+			<Heading size="lg" mt={6}>
+				Creator
+			</Heading>
 			<Box w="full" mt={2}>
 				<Popover placement="left">
 					<PopoverTrigger>
@@ -209,7 +224,18 @@ export default function MemberList() {
 											)}
 										</Text>
 									</HStack>
-									<HStack>
+									<Flex
+										mt={2}
+										w="full"
+										h="full"
+										bg={useColorModeValue(
+											"gray.100",
+											"gray.700"
+										)}
+										gap={2}
+										justifyContent="center"
+										alignItems="center"
+										wrap="wrap">
 										{userWithRoles.roles &&
 											userWithRoles.roles.map(role => (
 												<RoleBadge
@@ -223,10 +249,12 @@ export default function MemberList() {
 													)}
 													groupId={group?.id}
 													roleId={role.id}
-													roleName={role.name}
+													roleName={
+														role.roleUser.name
+													}
 												/>
 											))}
-									</HStack>
+									</Flex>
 								</Box>
 							</PopoverBody>
 						</PopoverContent>
