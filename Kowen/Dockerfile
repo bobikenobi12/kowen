@@ -1,4 +1,4 @@
-FROM openjdk:17-jdk-slim
+FROM openjdk:17-jdk-alpine3.14
 COPY target/Kowen-0.0.1-SNAPSHOT.jar /app.jar
 ENV SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/kowenJava
 ENV SPRING_DATASOURCE_USERNAME=sammy

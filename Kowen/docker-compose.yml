@@ -3,7 +3,7 @@ services:
   mysql:
     image: mysql:8
     environment:
-      MYSQL_ROOT_PASSWORD: mynewpassword
+      MYSQL_ROOT_PASSWORD: 1234
     volumes:
       - mysql-data:/var/lib/mysql
     ports:
@@ -15,7 +15,7 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/kowenJava
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysqlcontainer:3306/kowenJava
       SPRING_DATASOURCE_USERNAME: sammy
       SPRING_DATASOURCE_PASSWORD: A4t474357oC5$77u5
     ports:
