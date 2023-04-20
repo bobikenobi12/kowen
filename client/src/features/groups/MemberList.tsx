@@ -33,10 +33,7 @@ export default function MemberList() {
 	const { groupId } = useParams();
 
 	const group = useTypedSelector(state =>
-		selectGroupById(
-			state,
-			parseInt(useParams<{ groupId: string }>().groupId as string)
-		)
+		selectGroupById(state, Number(groupId))
 	);
 
 	const { data, isLoading, error } = useGetRolesWithUsersQuery(
@@ -58,7 +55,7 @@ export default function MemberList() {
 			ml={"auto"}
 			alignSelf={"flex-end"}
 			overflowY="scroll">
-			<Heading size="md">Creator</Heading>
+			<Heading size="lg">Creator</Heading>
 			<Box w="full" mt={2}>
 				<Popover placement="left">
 					<PopoverTrigger>
@@ -215,11 +212,19 @@ export default function MemberList() {
 									<HStack>
 										{userWithRoles.roles &&
 											userWithRoles.roles.map(role => (
-												<Badge
+												<RoleBadge
 													key={role.id}
-													colorScheme="green">
-													{role.name}
-												</Badge>
+													username={
+														userWithRoles.user
+															.username
+													}
+													userId={Number(
+														userWithRoles.user.id
+													)}
+													groupId={group?.id}
+													roleId={role.id}
+													roleName={role.name}
+												/>
 											))}
 									</HStack>
 								</Box>

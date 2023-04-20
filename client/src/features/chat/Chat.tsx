@@ -74,7 +74,9 @@ export default function Chat() {
 		useGetUserPermissionsForGroupQuery(Number(groupId));
 
 	const { data: messages, isLoading: isGettingMessages } =
-		useGetMessagesQuery(Number(groupId));
+		useGetMessagesQuery(Number(groupId), {
+			pollingInterval: 1000,
+		});
 
 	const [sendMessage, { isLoading: isSendingMessage }] =
 		useSendMessageMutation();
