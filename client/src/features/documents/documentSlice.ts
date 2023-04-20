@@ -5,16 +5,26 @@ import { Document } from "../../app/services/documents";
 
 interface DocumentsState {
 	documents: Document[];
+	filteredDocuments: Document[];
 }
 
 const initialState: DocumentsState = {
 	documents: [],
+	filteredDocuments: [],
 };
 
 export const documentsSlice = createSlice({
 	name: "documents",
 	initialState,
-	reducers: {},
+	reducers: {
+		filterDocuments: (state, action: PayloadAction<string>) => {
+			state.filteredDocuments = state.documents.filter(document =>
+				document.name
+					.toLowerCase()
+					.includes(action.payload.toLowerCase())
+			);
+		},
+	},
 	extraReducers: builder => {
 		builder.addMatcher(
 			api.endpoints.getDocumentsInGroup.matchFulfilled,
@@ -28,4 +38,8 @@ export const documentsSlice = createSlice({
 
 export default documentsSlice.reducer;
 
+export const { filterDocuments } = documentsSlice.actions;
+
 export const selectDocuments = (state: RootState) => state.documents.documents;
+export const selectFilteredDocuments = (state: RootState) =>
+	state.documents.filteredDocuments;

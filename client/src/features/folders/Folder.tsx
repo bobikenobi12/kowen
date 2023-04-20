@@ -17,6 +17,9 @@ import { BsCloudDownload } from "react-icons/bs";
 import { useTypedSelector } from "../../hooks/store";
 import { selectGroupById, selectIsCreator } from "../groups/groupsSlice";
 import { useGetFolderInGroupQuery } from "../../app/services/folders";
+
+import { selectFilteredDocuments } from "../documents/documentSlice";
+
 import { type Folder } from "../../app/services/folders";
 import {
 	type Group,
@@ -33,6 +36,8 @@ import UploadDocument from "../documents/UploadDocument";
 import SaveNewDocumentVersion from "../documents/SaveNewDocumentVersion";
 import DeleteDocumentDialog from "../documents/DeleteDocumentDialog";
 
+import SearchBar from "../../components/SearchBar";
+
 export default function Folder() {
 	const { groupId, folderId } = useParams();
 	const group = useTypedSelector(state =>
@@ -41,6 +46,8 @@ export default function Folder() {
 	const isCreator = useTypedSelector(state =>
 		selectIsCreator(state, Number(groupId))
 	);
+
+	const filteredDocuments = useTypedSelector(selectFilteredDocuments);
 
 	const {
 		data: folder,
@@ -82,10 +89,11 @@ export default function Folder() {
 			direction="column"
 			flex={1}
 			h="full"
-			bg={useColorModeValue("gray.100", "inherit")}>
+			bg={useColorModeValue("gray.100", "gray.700")}>
 			<Flex
 				direction="row"
 				w="full"
+				p={2}
 				alignItems={"center"}
 				justifyContent={"space-between"}
 				bg={useColorModeValue("gray.100", "gray.700")}
@@ -104,143 +112,284 @@ export default function Folder() {
 							isCreator) && <UploadDocument />}
 				</HStack>
 			</Flex>
+			<SearchBar />
 			<Flex
 				direction="column"
 				w="full"
 				h="full"
 				bg={useColorModeValue("gray.100", "inherit")}>
-				{documents &&
-					documents.map(document => {
-						return (
-							<HStack
-								key={document.id}
-								w="full"
-								p={2}
-								alignItems={"center"}
-								justifyContent={"space-between"}
-								bg={useColorModeValue("gray.100", "gray.700")}
-								cursor="pointer"
-								_hover={{
-									bg: useColorModeValue(
-										"gray.200",
-										"gray.600"
-									),
-								}}
-								shadow="md">
-								<Text
-									ml={4}
-									size="md"
-									onClick={async () => {
-										try {
-											await getDocumentContent({
-												groupId: group.id,
-												folderId: folder!.id,
-												documentId: document.id,
-												version:
-													document.versions[
-														document.versions
-															.length - 1
-													].version,
-											});
-											const fileURL = URL.createObjectURL(
-												content.data as Blob
-											);
-											window.open(fileURL);
+				{filteredDocuments.length !== 0
+					? filteredDocuments.map(document => {
+							return (
+								<HStack
+									key={document.id}
+									w="full"
+									p={2}
+									alignItems={"center"}
+									justifyContent={"space-between"}
+									bg={useColorModeValue(
+										"gray.100",
+										"gray.700"
+									)}
+									cursor="pointer"
+									_hover={{
+										bg: useColorModeValue(
+											"gray.200",
+											"gray.600"
+										),
+									}}
+									shadow="md">
+									<Text
+										ml={4}
+										size="md"
+										onClick={async () => {
+											try {
+												await getDocumentContent({
+													groupId: group.id,
+													folderId: folder!.id,
+													documentId: document.id,
+													version:
+														document.versions[
+															document.versions
+																.length - 1
+														].version,
+												});
+												const fileURL =
+													URL.createObjectURL(
+														content.data as Blob
+													);
+												window.open(fileURL);
 
-											URL.revokeObjectURL(fileURL);
-										} catch (error) {
-											console.log(error);
-										}
-									}}>
-									{document.name}
-								</Text>
-								<HStack mr={4}>
-									{permissions &&
-										(permissions.includes(
-											Permission.download_document
-										) ||
-											isCreator) && (
-											<>
-												<Tooltip
-													label={`Download ${document.name}`}
-													aria-label={`Download ${document.name}`}
-													hasArrow>
-													<IconButton
-														aria-label="Download Document"
-														colorScheme={"blue"}
-														variant={"outline"}
-														icon={
-															<Icon
-																as={
-																	BsCloudDownload
-																}
-															/>
-														}
-														onClick={async () => {
-															try {
-																await downloadDocument(
-																	{
-																		groupId:
-																			group.id,
-																		folderId:
-																			folder!
-																				.id,
-																		documentId:
-																			document.id,
-																		version:
-																			document
-																				.versions[
-																				document
-																					.versions
-																					.length -
-																					1
-																			]
-																				.version,
+												URL.revokeObjectURL(fileURL);
+											} catch (error) {
+												console.log(error);
+											}
+										}}>
+										{document.name}
+									</Text>
+									<HStack mr={4}>
+										{permissions &&
+											(permissions.includes(
+												Permission.download_document
+											) ||
+												isCreator) && (
+												<>
+													<Tooltip
+														label={`Download ${document.name}`}
+														aria-label={`Download ${document.name}`}
+														hasArrow>
+														<IconButton
+															aria-label="Download Document"
+															colorScheme={"blue"}
+															variant={"outline"}
+															icon={
+																<Icon
+																	as={
+																		BsCloudDownload
 																	}
-																);
-																if (
-																	downloadedDocument.data
-																) {
-																	fileDownload(
-																		downloadedDocument.data as Blob,
-																		document.name
+																/>
+															}
+															onClick={async () => {
+																try {
+																	await downloadDocument(
+																		{
+																			groupId:
+																				group.id,
+																			folderId:
+																				folder!
+																					.id,
+																			documentId:
+																				document.id,
+																			version:
+																				document
+																					.versions[
+																					document
+																						.versions
+																						.length -
+																						1
+																				]
+																					.version,
+																		}
+																	);
+																	if (
+																		downloadedDocument.data
+																	) {
+																		fileDownload(
+																			downloadedDocument.data as Blob,
+																			document.name
+																		);
+																	}
+																} catch (error) {
+																	console.log(
+																		error
 																	);
 																}
-															} catch (error) {
-																console.log(
-																	error
-																);
-															}
-														}}
-													/>
-												</Tooltip>
-											</>
-										)}
-									{permissions &&
-										(permissions.includes(
-											Permission.save_new_document_version
-										) ||
-											isCreator) && (
-											<SaveNewDocumentVersion
-												documentId={document.id}
-											/>
-										)}
+															}}
+														/>
+													</Tooltip>
+												</>
+											)}
+										{permissions &&
+											(permissions.includes(
+												Permission.save_new_document_version
+											) ||
+												isCreator) && (
+												<SaveNewDocumentVersion
+													documentId={document.id}
+												/>
+											)}
 
-									{permissions &&
-										(permissions.includes(
-											Permission.remove_document
-										) ||
-											isCreator) && (
-											<DeleteDocumentDialog
-												group={group}
-												folder={folder!}
-												document={document}
-											/>
-										)}
+										{permissions &&
+											(permissions.includes(
+												Permission.remove_document
+											) ||
+												isCreator) && (
+												<DeleteDocumentDialog
+													group={group}
+													folder={folder!}
+													document={document}
+												/>
+											)}
+									</HStack>
 								</HStack>
-							</HStack>
-						);
-					})}
+							);
+					  })
+					: documents &&
+					  documents.map(document => {
+							return (
+								<HStack
+									key={document.id}
+									w="full"
+									p={2}
+									alignItems={"center"}
+									justifyContent={"space-between"}
+									bg={useColorModeValue(
+										"gray.100",
+										"gray.700"
+									)}
+									cursor="pointer"
+									_hover={{
+										bg: useColorModeValue(
+											"gray.200",
+											"gray.600"
+										),
+									}}
+									shadow="md">
+									<Text
+										ml={4}
+										size="md"
+										onClick={async () => {
+											try {
+												await getDocumentContent({
+													groupId: group.id,
+													folderId: folder!.id,
+													documentId: document.id,
+													version:
+														document.versions[
+															document.versions
+																.length - 1
+														].version,
+												});
+												const fileURL =
+													URL.createObjectURL(
+														content.data as Blob
+													);
+												window.open(fileURL);
+
+												URL.revokeObjectURL(fileURL);
+											} catch (error) {
+												console.log(error);
+											}
+										}}>
+										{document.name}
+									</Text>
+									<HStack mr={4}>
+										{permissions &&
+											(permissions.includes(
+												Permission.download_document
+											) ||
+												isCreator) && (
+												<>
+													<Tooltip
+														label={`Download ${document.name}`}
+														aria-label={`Download ${document.name}`}
+														hasArrow>
+														<IconButton
+															aria-label="Download Document"
+															colorScheme={"blue"}
+															variant={"outline"}
+															icon={
+																<Icon
+																	as={
+																		BsCloudDownload
+																	}
+																/>
+															}
+															onClick={async () => {
+																try {
+																	await downloadDocument(
+																		{
+																			groupId:
+																				group.id,
+																			folderId:
+																				folder!
+																					.id,
+																			documentId:
+																				document.id,
+																			version:
+																				document
+																					.versions[
+																					document
+																						.versions
+																						.length -
+																						1
+																				]
+																					.version,
+																		}
+																	);
+																	if (
+																		downloadedDocument.data
+																	) {
+																		fileDownload(
+																			downloadedDocument.data as Blob,
+																			document.name
+																		);
+																	}
+																} catch (error) {
+																	console.log(
+																		error
+																	);
+																}
+															}}
+														/>
+													</Tooltip>
+												</>
+											)}
+										{permissions &&
+											(permissions.includes(
+												Permission.save_new_document_version
+											) ||
+												isCreator) && (
+												<SaveNewDocumentVersion
+													documentId={document.id}
+												/>
+											)}
+
+										{permissions &&
+											(permissions.includes(
+												Permission.remove_document
+											) ||
+												isCreator) && (
+												<DeleteDocumentDialog
+													group={group}
+													folder={folder!}
+													document={document}
+												/>
+											)}
+									</HStack>
+								</HStack>
+							);
+					  })}
 			</Flex>
 		</Flex>
 	);
