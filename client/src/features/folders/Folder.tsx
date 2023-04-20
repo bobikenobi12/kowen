@@ -98,7 +98,6 @@ export default function Folder() {
 		return <Text>An error occurred.</Text>;
 	}
 
-	console.log(documents);
 	return (
 		<Flex
 			direction="column"
@@ -180,7 +179,14 @@ export default function Folder() {
 
 												URL.revokeObjectURL(fileURL);
 											} catch (error) {
-												console.log(error);
+												toast({
+													title: "Error",
+													description:
+														"An error occurred.",
+													status: "error",
+													duration: 5000,
+													isClosable: true,
+												});
 											}
 										}}>
 										{document.name}

@@ -20,11 +20,11 @@ export default function SearchBar() {
 
 	useEffect(() => {
 		if (searchTerm === "") {
-			return;
+			dispatch(filterDocuments(""));
 		}
 
 		dispatch(filterDocuments(searchTerm));
-	}, [searchTerm]);
+	}, [searchTerm, dispatch]);
 
 	return (
 		<VStack>
