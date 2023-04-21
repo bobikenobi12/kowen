@@ -95,9 +95,9 @@ export default function GroupSettings() {
 					}}>
 					Members
 				</Button>
-				<Button variant="ghost" colorScheme="blue" width="100%" mb={4}>
+				{/* <Button variant="ghost" colorScheme="blue" width="100%" mb={4}>
 					Invites
-				</Button>
+				</Button> */}
 			</Flex>
 			<Flex direction="column" bg={bg} p={4} width="60%" height="100vh">
 				{group && selectedSection === "overview" && (
