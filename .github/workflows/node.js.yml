@@ -1,0 +1,29 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      
+    - name: Install dependencies
+      run: |
+        sudo npm install -g pnpm
+        pnpm install
+
+    - name: Build and Test
+      run: pnpm run build
+
+    - name: Deploy
+      uses: easingthemes/ssh-deploy@v2.2.9
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+        args: "-rltgoDzvO --delete"
+        local-dir: build/
+        remote-dir: /var/www/html/
