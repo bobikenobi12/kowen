@@ -95,12 +95,12 @@ public class GroupServiceImpl implements GroupService {
         groupRepo.save(group);
 
         //Email sending
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("anton.m.stankov.2021@elsys-bg.org");
-        message.setTo(user.getEmail());
-        message.setSubject("Hello " + user.getUsername() + ", new group is waiting for you!");
-        message.setText("You have been added to group: " + group.getName() + " by " + adder.getFirstName() + " " + adder.getLastName() + "!");
-        javaMailSender.send(message);
+//        SimpleMailMessage message = new SimpleMailMessage();
+//        message.setFrom("anton.m.stankov.2021@elsys-bg.org");
+//        message.setTo(user.getEmail());
+//        message.setSubject("Hello " + user.getUsername() + ", new group is waiting for you!");
+//        message.setText("You have been added to group: " + group.getName() + " by " + adder.getFirstName() + " " + adder.getLastName() + "!");
+//        javaMailSender.send(message);
         return group;
     }
 
