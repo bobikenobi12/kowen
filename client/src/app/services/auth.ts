@@ -56,6 +56,19 @@ export const api = createApi({
 				method: "POST",
 				body: credentials,
 			}),
+			transformResponse: (response: Response) => {
+				const cookies = response.headers.get("set-cookie");
+				if (cookies) {
+					const token = cookies
+						.split(";")
+						.find(cookie => cookie.startsWith("user-token="))
+						?.split("=")[1];
+					if (token) {
+						localStorage.setItem("token", token);
+					}
+				}
+				return response.json();
+			},
 		}),
 		register: builder.mutation<void, RegisterRequest>({
 			query: credentials => ({
@@ -134,6 +147,13 @@ export const api = createApi({
 			query: () => ({
 				url: "getMe",
 				method: "GET",
+			}),
+		}),
+		refreshToken: builder.mutation<any, void>({
+			query: () => ({
+				url: "refresh",
+				method: "POST",
+				credentials: "include",
 			}),
 		}),
 	}),

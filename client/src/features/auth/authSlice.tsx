@@ -28,6 +28,9 @@ const slice = createSlice({
 			state.token = null;
 			localStorage.clear();
 		},
+		setToken: (state, { payload }) => {
+			state.token = payload;
+		},
 		setUserProfileMode: (state, { payload }) => {
 			state.userProfileMode = payload;
 		},
@@ -102,4 +105,5 @@ export const selectToken = (state: RootState) => state.auth.token;
 export const selectCurrentUser = (state: RootState) => state.auth.user;
 export const selectUserProfileMode = (state: RootState) =>
 	state.auth.userProfileMode;
+export const setToken = slice.actions.setToken;
 export const logout = slice.actions.logout;
