@@ -125,7 +125,7 @@ export const authApiSlice = apiSlice.injectEndpoints({
 				method: "GET",
 			}),
 		}),
-		refreshToken: builder.mutation<string, string>({
+		refreshToken: builder.mutation<{token:string}, string>({
 			query: email => ({
 				url: "user/refresh",
 				method: "POST",

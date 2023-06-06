@@ -4,7 +4,7 @@ import { authApiSlice } from "./auth";
 import { RootState } from "../store";
 
 const baseQuery = fetchBaseQuery({
-	baseUrl: "localhost:8080/",
+	baseUrl: "http://localhost:8080/",
 	prepareHeaders: (headers, { getState }) => {
 		const token = (getState() as RootState).auth.token;
 		if (token) {
@@ -22,11 +22,12 @@ const baseQueryWithReauth = async (args: any, api: any, extraOptions: any) => {
 		const refreshResult = await api.dispatch(
 			authApiSlice.endpoints.refreshToken.initiate(email as string)
 		);
-		if (refreshResult.error || !refreshResult.data) {
+		console.log(refreshResult)
+		if (refreshResult.error) {
 			api.dispatch(logout());
 			return result;
 		}
-		const token = refreshResult.data;
+		const {token} = refreshResult.data;
 		api.dispatch(setToken(token));
 		return baseQuery(args, api, extraOptions);
 	}
