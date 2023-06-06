@@ -176,39 +176,24 @@ public class UserController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity refreshToken(@RequestBody UserDto user){
+    public ResponseEntity<Object> refreshToken(@RequestBody UserDto user){
         User user1 = userRepository.findByEmail(user.getEmail()).get(0);
 //        System.out.println(user.getToken());
-        if (jwtTokenService.isTokenExpired(user.getToken())){
-            String refreshToken = jwtTokenService.generateToken(user.getEmail());
+        String refreshToken = jwtTokenService.generateToken(user.getEmail());
 
 //            return new AuthResponse("token", refreshToken, user1);
-            ResponseCookie springCookie = ResponseCookie.from("user-token", refreshToken)
-                    .httpOnly(true)
-                    .secure(true)
-                    .path("/")
-                    .maxAge(60)
-                    .domain("example.com")
-                    .build();
-            return ResponseEntity
-                    .ok()
-                    .header(HttpHeaders.SET_COOKIE, springCookie.toString())
-                    .build();
-        }
-        else{
-//            return new AuthResponse("Already logged in", user.getToken(), user1);
-            ResponseCookie springCookie = ResponseCookie.from("user-token", user.getToken())
-                    .httpOnly(true)
-                    .secure(true)
-                    .path("/")
-                    .maxAge(60)
-                    .domain("example.com")
-                    .build();
-            return ResponseEntity
-                    .ok()
-                    .header(HttpHeaders.SET_COOKIE, springCookie.toString())
-                    .build();
-        }
+        ResponseCookie springCookie = ResponseCookie.from("user-token", refreshToken)
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(60)
+                .domain("example.com")
+                .build();
+        return ResponseEntity
+                .ok()
+                .header(HttpHeaders.SET_COOKIE, springCookie.toString())
+                .build();
+
     }
 
     @GetMapping("/getMe")
