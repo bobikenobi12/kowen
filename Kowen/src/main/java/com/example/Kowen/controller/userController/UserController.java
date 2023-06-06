@@ -124,7 +124,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Object> login(@RequestBody AuthRequest authRequest) {
+    public AuthResponse login(@RequestBody AuthRequest authRequest) {
         if (userRepository.findByEmail(authRequest.getEmail()).isEmpty() ||
                 !passwordEncoder.matches(authRequest.getPassword(), userRepository
                         .findByEmail(authRequest.getEmail())
@@ -144,26 +144,27 @@ public class UserController {
             userRepository.save(user);
             UserMapper mapper = new UserMapper();
 //            return new AuthResponse("token", token, user);
-            ResponseCookie springCookie = ResponseCookie.from("user-token", token)
-                    .httpOnly(true)
-                    .secure(true)
-                    .path("/")
-                    .maxAge(60)
-                    .domain("example.com")
-                    .build();
+//            ResponseCookie springCookie = ResponseCookie.from("user-token", token)
+//                    .httpOnly(true)
+//                    .secure(true)
+//                    .path("/")
+//                    .maxAge(60)
+//                    .domain("example.com")
+//                    .build();
             String refreshToken = jwtTokenService.generateRefreshToken(user.getEmail());
-            ResponseCookie springCookie2 = ResponseCookie.from("refresh-token", refreshToken)
-                    .httpOnly(true)
-                    .secure(true)
-                    .path("/")
-                    .maxAge(60)
-                    .domain("example.com")
-                    .build();
-            return ResponseEntity
-                    .ok()
-                    .header(HttpHeaders.SET_COOKIE, springCookie.toString())
-                    .header(HttpHeaders.SET_COOKIE, springCookie2.toString())
-                    .build();
+//            ResponseCookie springCookie2 = ResponseCookie.from("refresh-token", refreshToken)
+//                    .httpOnly(true)
+//                    .secure(true)
+//                    .path("/")
+//                    .maxAge(60)
+//                    .domain("example.com")
+//                    .build();
+//            return ResponseEntity
+//                    .ok()
+//                    .header(HttpHeaders.SET_COOKIE, springCookie.toString())
+//                    .header(HttpHeaders.SET_COOKIE, springCookie2.toString())
+//                    .build();
+            return new AuthResponse("", token, refreshToken, user);
         }
 
     }
@@ -257,7 +258,7 @@ public class UserController {
             String newToken = jwtTokenService.generateToken(user.getEmail());
             String oldToken = jwtTokenService.getTokenFromRequest(request);
             blackListService.addTokenToBlacklist(oldToken);
-            return new AuthResponse("token", newToken, user);
+            return new AuthResponse("token", newToken,null, user);
 
         } else
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid password!");
