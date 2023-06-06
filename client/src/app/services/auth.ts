@@ -133,8 +133,8 @@ export const authApiSlice = apiSlice.injectEndpoints({
 					email,
 				},
 				headers: {
-					authorization: `Bearer ${localStorage.getItem(
-						"refreshToken"
+					authorization: `Bearer ${JSON.parse(
+						localStorage.getItem("refreshToken") || ""
 					)}`,
 				},
 			}),

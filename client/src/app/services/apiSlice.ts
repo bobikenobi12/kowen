@@ -22,7 +22,7 @@ const baseQueryWithReauth = async (args: any, api: any, extraOptions: any) => {
 		const refreshResult = await api.dispatch(
 			authApiSlice.endpoints.refreshToken.initiate(email as string)
 		);
-		if (refreshResult.error) {
+		if (refreshResult.error || !refreshResult.data) {
 			api.dispatch(logout());
 			return result;
 		}
