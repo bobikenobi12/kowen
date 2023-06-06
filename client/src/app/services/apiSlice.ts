@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { logout, setToken } from "../../features/auth/authSlice";
-import { api as authApi } from "./auth";
+import { authApiSlice } from "./auth";
 import { RootState } from "../store";
 
 const baseQuery = fetchBaseQuery({
@@ -19,7 +19,7 @@ const baseQueryWithReauth = async (args: any, api: any, extraOptions: any) => {
 
 	if (result.error?.status === 401) {
 		const refreshResult = await api.dispatch(
-			authApi.endpoints.refreshToken.initiate(
+			authApiSlice.endpoints.refreshToken.initiate(
 				localStorage.getItem("refreshToken") || ""
 			)
 		);
@@ -36,6 +36,15 @@ const baseQueryWithReauth = async (args: any, api: any, extraOptions: any) => {
 
 export const apiSlice = createApi({
 	baseQuery: baseQueryWithReauth,
-	tagTypes: ["Profile"],
+	tagTypes: [
+		"Profile",
+		"Chat",
+		"Document",
+		"Folder",
+		"Group",
+		"Roles",
+		"Folder",
+		"Documents",
+	],
 	endpoints: () => ({}),
 });

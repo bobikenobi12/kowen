@@ -1,5 +1,4 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { RootState } from "../store";
+import { apiSlice } from "./apiSlice";
 import { type getRolesInGroupResponse, type Ids } from "./groups";
 
 export interface getDocuments {
@@ -36,19 +35,7 @@ export interface Document {
 	roles: getRolesInGroupResponse[];
 }
 
-export const api = createApi({
-	reducerPath: "documentsApi",
-	baseQuery: fetchBaseQuery({
-		baseUrl: "http://localhost:8080/",
-		prepareHeaders: (headers, { getState }) => {
-			const token = (getState() as RootState).auth.token;
-			if (token) {
-				headers.set("authorization", `Bearer ${token}`);
-			}
-			return headers;
-		},
-	}),
-	tagTypes: ["Documents"],
+export const api = apiSlice.injectEndpoints({
 	endpoints: builder => ({
 		getDocumentsInGroup: builder.query<Document[], Ids>({
 			query: ({ groupId, folderId }) => ({
@@ -69,7 +56,7 @@ export const api = createApi({
 			query: ({ groupId, folderId, documentId, version }) => ({
 				url: `document/download/${groupId}/${folderId}/${documentId}/${version}`,
 				method: "GET",
-				responseHandler: response => {
+				responseHandler: (response: any) => {
 					return response.blob();
 				},
 			}),
@@ -115,7 +102,7 @@ export const api = createApi({
 			query: ({ groupId, folderId, documentId, version }) => ({
 				url: `document/getContent/${groupId}/${folderId}/${documentId}/${version}`,
 				method: "GET",
-				responseHandler: response => {
+				responseHandler: (response: any) => {
 					return response.blob();
 				},
 			}),

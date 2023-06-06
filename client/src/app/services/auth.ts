@@ -1,5 +1,4 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { RootState } from "../store";
+import { apiSlice } from "./apiSlice";
 
 export interface User {
 	id: string;
@@ -38,18 +37,7 @@ export interface ChangePasswordRequest {
 	confirmNewPassword: string;
 }
 
-export const api = createApi({
-	reducerPath: "authApi",
-	baseQuery: fetchBaseQuery({
-		baseUrl: "http://localhost:8080/user/",
-		prepareHeaders: (headers, { getState }) => {
-			const token = (getState() as RootState).auth.token;
-			if (token) {
-				headers.set("authorization", `Bearer ${token}`);
-			}
-			return headers;
-		},
-	}),
+export const authApiSlice = apiSlice.injectEndpoints({
 	endpoints: builder => ({
 		login: builder.mutation<LoginResponse, LoginRequest>({
 			query: credentials => ({
@@ -166,4 +154,4 @@ export const {
 	useChangeEmailMutation,
 	useChangePasswordMutation,
 	useGetUserQuery,
-} = api;
+} = authApiSlice;

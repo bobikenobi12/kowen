@@ -1,5 +1,4 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { RootState } from "../store";
+import { apiSlice } from "./apiSlice";
 
 export interface saveFolderToGroupRequest {
 	groupId: number;
@@ -11,19 +10,7 @@ export interface Folder {
 	name: string;
 }
 
-export const api = createApi({
-	reducerPath: "foldersApi",
-	baseQuery: fetchBaseQuery({
-		baseUrl: "http://localhost:8080/folder/",
-		prepareHeaders: (headers, { getState }) => {
-			const token = (getState() as RootState).auth.token;
-			if (token) {
-				headers.set("authorization", `Bearer ${token}`);
-			}
-			return headers;
-		},
-	}),
-	tagTypes: ["Folder"],
+export const api = apiSlice.injectEndpoints({
 	endpoints: builder => ({
 		saveFolderToGroup: builder.mutation<Folder, saveFolderToGroupRequest>({
 			query: ({ groupId, name }) => ({

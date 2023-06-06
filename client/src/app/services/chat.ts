@@ -1,5 +1,4 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { RootState } from "../store";
+import { apiSlice } from "./apiSlice";
 import type { User } from "./auth";
 import type { Group } from "./groups";
 
@@ -17,19 +16,7 @@ export interface GroupChat {
 	messages: Message[];
 }
 
-export const api = createApi({
-	reducerPath: "chatApi",
-	baseQuery: fetchBaseQuery({
-		baseUrl: "http://localhost:8080/chat/",
-		prepareHeaders: (headers, { getState }) => {
-			const token = (getState() as RootState).auth.token;
-			if (token) {
-				headers.set("authorization", `Bearer ${token}`);
-			}
-			return headers;
-		},
-	}),
-	tagTypes: ["Chat"],
+export const api = apiSlice.injectEndpoints({
 	endpoints: builder => ({
 		getMessages: builder.query<Message[], number>({
 			query: groupId => ({

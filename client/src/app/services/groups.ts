@@ -1,5 +1,4 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { RootState } from "../store";
+import { apiSlice } from "./apiSlice";
 import { type User } from "./auth";
 
 export interface CreateGroupRequest {
@@ -99,19 +98,7 @@ export interface getRolesWithUsers {
 	roles: getRolesInGroupResponse[];
 }
 
-export const api = createApi({
-	reducerPath: "groupsApi",
-	baseQuery: fetchBaseQuery({
-		baseUrl: "http://localhost:8080/group/",
-		prepareHeaders: (headers, { getState }) => {
-			const token = (getState() as RootState).auth.token;
-			if (token) {
-				headers.set("authorization", `Bearer ${token}`);
-			}
-			return headers;
-		},
-	}),
-	tagTypes: ["Group", "Roles", "Folder", "Document"],
+export const api = apiSlice.injectEndpoints({
 	endpoints: builder => ({
 		createGroup: builder.mutation<void, CreateGroupRequest>({
 			query: group => ({
