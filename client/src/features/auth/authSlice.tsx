@@ -30,6 +30,7 @@ const slice = createSlice({
 		},
 		setToken: (state, { payload }) => {
 			state.token = payload;
+			localStorage.setItem("token", JSON.stringify(payload));
 		},
 		setUserProfileMode: (state, { payload }) => {
 			state.userProfileMode = payload;
@@ -41,15 +42,12 @@ const slice = createSlice({
 			(state, { payload }) => {
 				state.user = payload.user;
 				state.token = payload.token;
+				localStorage.setItem(
+					"refreshToken",
+					JSON.stringify(payload.refreshToken)
+				);
 				localStorage.setItem("token", JSON.stringify(payload.token));
 				localStorage.setItem("user", JSON.stringify(payload.user));
-			}
-		);
-		builder.addMatcher(
-			api.endpoints.login.matchRejected,
-			(state, { payload }) => {
-				console.log("login rejected");
-				console.log(payload);
 			}
 		);
 		builder.addMatcher(

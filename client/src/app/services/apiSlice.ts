@@ -19,15 +19,16 @@ const baseQueryWithReauth = async (args: any, api: any, extraOptions: any) => {
 
 	if (result.error?.status === 401) {
 		const refreshResult = await api.dispatch(
-			authApi.endpoints.refreshToken.initiate(undefined)
+			authApi.endpoints.refreshToken.initiate(
+				localStorage.getItem("refreshToken") || ""
+			)
 		);
 		if (refreshResult.error) {
 			api.dispatch(logout());
 			return result;
 		}
-		const { AccessToken, IdToken } = refreshResult.data.tokens;
-		api.dispatch(setToken(AccessToken));
-		localStorage.setItem("idToken", IdToken);
+		const token = refreshResult.data;
+		api.dispatch(setToken(token));
 		return baseQuery(args, api, extraOptions);
 	}
 	return result;

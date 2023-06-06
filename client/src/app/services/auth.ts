@@ -16,6 +16,7 @@ export interface User {
 export interface LoginResponse {
 	user: User;
 	token: string;
+	refreshToken: string;
 }
 
 export interface LoginRequest {
@@ -56,19 +57,6 @@ export const api = createApi({
 				method: "POST",
 				body: credentials,
 			}),
-			transformResponse: (response: Response) => {
-				const cookies = response.headers.get("set-cookie");
-				if (cookies) {
-					const token = cookies
-						.split(";")
-						.find(cookie => cookie.startsWith("user-token="))
-						?.split("=")[1];
-					if (token) {
-						localStorage.setItem("token", token);
-					}
-				}
-				return response.json();
-			},
 		}),
 		register: builder.mutation<void, RegisterRequest>({
 			query: credentials => ({
@@ -149,26 +137,19 @@ export const api = createApi({
 				method: "GET",
 			}),
 		}),
-		refreshToken: builder.mutation<any, void>({
-			query: () => ({
+		refreshToken: builder.mutation<string, string>({
+			query: email => ({
 				url: "refresh",
 				method: "POST",
-				credentials: "include",
+				body: {
+					email,
+				},
+				headers: {
+					authorization: `Bearer ${localStorage.getItem(
+						"refreshToken"
+					)}`,
+				},
 			}),
-			transformResponse: (response: Response) => {
-				const cookies = response.headers.get("set-cookie");
-				if (cookies) {
-					const token = cookies
-						.split(";")
-						.find(cookie => cookie.startsWith("user-token="))
-						?.split("=")[1];
-					if (token) {
-						console.log(token);
-						localStorage.setItem("token", token);
-					}
-				}
-				return response.json();
-			},
 		}),
 	}),
 });
