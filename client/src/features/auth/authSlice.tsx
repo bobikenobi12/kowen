@@ -99,6 +99,7 @@ const slice = createSlice({
 
 export default slice.reducer;
 
+export const selectEmail = (state: RootState) => state.auth.user?.email;
 export const selectToken = (state: RootState) => state.auth.token;
 export const selectCurrentUser = (state: RootState) => state.auth.user;
 export const selectUserProfileMode = (state: RootState) =>

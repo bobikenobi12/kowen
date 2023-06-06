@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { logout, setToken } from "../../features/auth/authSlice";
+import { logout, setToken, selectEmail } from "../../features/auth/authSlice";
 import { authApiSlice } from "./auth";
 import { RootState } from "../store";
 
@@ -18,10 +18,9 @@ const baseQueryWithReauth = async (args: any, api: any, extraOptions: any) => {
 	const result = await baseQuery(args, api, extraOptions);
 
 	if (result.error?.status === 403) {
+		const email = selectEmail(api.getState());
 		const refreshResult = await api.dispatch(
-			authApiSlice.endpoints.refreshToken.initiate(
-				localStorage.getItem("refreshToken") || ""
-			)
+			authApiSlice.endpoints.refreshToken.initiate(email as string)
 		);
 		if (refreshResult.error) {
 			api.dispatch(logout());
