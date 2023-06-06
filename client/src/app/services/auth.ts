@@ -48,27 +48,27 @@ export const authApiSlice = apiSlice.injectEndpoints({
 		}),
 		register: builder.mutation<void, RegisterRequest>({
 			query: credentials => ({
-				url: "register",
+				url: "user/register",
 				method: "POST",
 				body: credentials,
 			}),
 		}),
 		logout: builder.mutation<void, void>({
 			query: () => ({
-				url: "logout",
+				url: "user/logout",
 				method: "POST",
 			}),
 		}),
 		setProfilePicture: builder.mutation<User, FormData>({
 			query: FormData => ({
-				url: "setProfilePic",
+				url: "user/setProfilePic",
 				method: "POST",
 				body: FormData,
 			}),
 		}),
 		downloadProfilePicture: builder.query<File, void>({
 			query: () => ({
-				url: "getProfilePic",
+				url: "user/getProfilePic",
 				method: "GET",
 			}),
 		}),
@@ -77,7 +77,7 @@ export const authApiSlice = apiSlice.injectEndpoints({
 			{ username: string; password: string }
 		>({
 			query: ({ username, password }) => ({
-				url: "changeUsername",
+				url: "user/changeUsername",
 				method: "POST",
 				body: { username, password },
 			}),
@@ -87,7 +87,7 @@ export const authApiSlice = apiSlice.injectEndpoints({
 			{ firstName: string; password: string }
 		>({
 			query: ({ firstName, password }) => ({
-				url: "changeFirstName",
+				url: "user/changeFirstName",
 				method: "POST",
 				body: { firstName, password },
 			}),
@@ -97,7 +97,7 @@ export const authApiSlice = apiSlice.injectEndpoints({
 			{ lastName: string; password: string }
 		>({
 			query: ({ lastName, password }) => ({
-				url: "changeLastName",
+				url: "user/changeLastName",
 				method: "POST",
 				body: { lastName, password },
 			}),
@@ -107,27 +107,27 @@ export const authApiSlice = apiSlice.injectEndpoints({
 			{ email: string; password: string }
 		>({
 			query: ({ email, password }) => ({
-				url: "changeEmail",
+				url: "user/changeEmail",
 				method: "POST",
 				body: { email, password },
 			}),
 		}),
 		changePassword: builder.mutation<User, ChangePasswordRequest>({
 			query: ({ password, newPassword, confirmNewPassword }) => ({
-				url: "changePassword",
+				url: "user/changePassword",
 				method: "POST",
 				body: { password, newPassword, confirmNewPassword },
 			}),
 		}),
 		getUser: builder.query<User, void>({
 			query: () => ({
-				url: "getMe",
+				url: "user/getMe",
 				method: "GET",
 			}),
 		}),
 		refreshToken: builder.mutation<string, string>({
 			query: email => ({
-				url: "refresh",
+				url: "user/refresh",
 				method: "POST",
 				body: {
 					email,

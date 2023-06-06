@@ -102,7 +102,7 @@ export const api = apiSlice.injectEndpoints({
 	endpoints: builder => ({
 		createGroup: builder.mutation<void, CreateGroupRequest>({
 			query: group => ({
-				url: "create",
+				url: "group/create",
 				method: "POST",
 				body: group,
 			}),
@@ -110,21 +110,21 @@ export const api = apiSlice.injectEndpoints({
 		}),
 		showGroups: builder.query<Group[], void>({
 			query: () => ({
-				url: "showGroups",
+				url: "group/showGroups",
 				method: "GET",
 			}),
 			providesTags: ["Group"],
 		}),
 		showGroup: builder.query<Group, number>({
 			query: groupId => ({
-				url: `showGroup/${groupId}`,
+				url: `group/showGroup/${groupId}`,
 				method: "GET",
 			}),
 			providesTags: ["Group"],
 		}),
 		setGroupPicture: builder.mutation<void, setGroupPictureRequest>({
 			query: ({ groupId, picture }) => ({
-				url: "setGroupPicture",
+				url: "group/setGroupPicture",
 				method: "POST",
 				params: { groupId, picture },
 			}),
@@ -132,7 +132,7 @@ export const api = apiSlice.injectEndpoints({
 		}),
 		getRolesWithUsers: builder.query<getRolesWithUsers[], number>({
 			query: groupId => ({
-				url: `getRolesWithUsers/${groupId}`,
+				url: `group/getRolesWithUsers/${groupId}`,
 				method: "GET",
 			}),
 			providesTags: ["Roles", "Group"],
@@ -142,7 +142,7 @@ export const api = apiSlice.injectEndpoints({
 			saveGroupRoleRequest
 		>({
 			query: role => ({
-				url: "saveGroupRole",
+				url: "group/saveGroupRole",
 				method: "POST",
 				body: role,
 			}),
@@ -153,7 +153,7 @@ export const api = apiSlice.injectEndpoints({
 			{ groupId: number; roleId: number; permission: Permission }
 		>({
 			query: ({ groupId, roleId, permission }) => ({
-				url: `removePermissionFromRole/${groupId}/${roleId}`,
+				url: `group/removePermissionFromRole/${groupId}/${roleId}`,
 				method: "POST",
 				params: { permission },
 			}),
@@ -164,7 +164,7 @@ export const api = apiSlice.injectEndpoints({
 			{ groupId: number; roleId: number; permission: Permission }
 		>({
 			query: ({ groupId, roleId, permission }) => ({
-				url: `addPermissionToRole/${groupId}/${roleId}`,
+				url: `group/addPermissionToRole/${groupId}/${roleId}`,
 				method: "POST",
 				params: { permission },
 			}),
@@ -172,7 +172,7 @@ export const api = apiSlice.injectEndpoints({
 		}),
 		setGroupRoleToUser: builder.mutation<void, SetGroupRoleToUserRequest>({
 			query: role => ({
-				url: "setGroupRoleToUser",
+				url: "group/setGroupRoleToUser",
 				method: "POST",
 				body: role,
 			}),
@@ -180,7 +180,7 @@ export const api = apiSlice.injectEndpoints({
 		}),
 		getRolesInGroup: builder.query<getRolesInGroupResponse[], number>({
 			query: groupId => ({
-				url: `getRoles/${groupId}`,
+				url: `group/getRoles/${groupId}`,
 				method: "GET",
 			}),
 			providesTags: ["Roles"],
@@ -190,7 +190,7 @@ export const api = apiSlice.injectEndpoints({
 			{ groupId: number; roleId: number }
 		>({
 			query: ({ groupId, roleId }) => ({
-				url: "removeRole",
+				url: "group/removeRole",
 				method: "POST",
 				params: { groupId, roleId },
 			}),
@@ -201,7 +201,7 @@ export const api = apiSlice.injectEndpoints({
 			{ groupId: number; userId: number; roleId: number }
 		>({
 			query: ({ groupId, userId, roleId }) => ({
-				url: "removeRoleFromUser",
+				url: "group/removeRoleFromUser",
 				method: "POST",
 				params: { groupId, userId, roleId },
 			}),
@@ -212,7 +212,7 @@ export const api = apiSlice.injectEndpoints({
 			{ groupId: number; username: string }
 		>({
 			query: ({ groupId, username }) => ({
-				url: "addUserToGroup",
+				url: "group/addUserToGroup",
 				method: "POST",
 				body: { groupId, username },
 			}),
@@ -220,21 +220,21 @@ export const api = apiSlice.injectEndpoints({
 		}),
 		requestToJoinToGroup: builder.query<void, number>({
 			query: groupId => ({
-				url: "requestGroup",
+				url: "group/requestGroup",
 				method: "POST",
 				body: groupId,
 			}),
 		}),
 		acceptUserToGroup: builder.mutation<void, number[]>({
 			query: ids => ({
-				url: "acceptUser",
+				url: "group/acceptUser",
 				method: "POST",
 				body: ids,
 			}),
 		}),
 		declineUserToGroup: builder.mutation<void, number[]>({
 			query: ids => ({
-				url: "declineUser",
+				url: "group/declineUser",
 				method: "POST",
 				body: ids,
 			}),
@@ -244,7 +244,7 @@ export const api = apiSlice.injectEndpoints({
 			{ groupId: number; userId: number }
 		>({
 			query: ({ groupId, userId }) => ({
-				url: "removeUser",
+				url: "group/removeUser",
 				method: "POST",
 				params: { groupId, userId },
 			}),
@@ -252,26 +252,26 @@ export const api = apiSlice.injectEndpoints({
 		}),
 		getWaitingUsers: builder.query<User[], number>({
 			query: groupId => ({
-				url: `getWaitingUsers/${groupId}`,
+				url: `group/getWaitingUsers/${groupId}`,
 				method: "GET",
 			}),
 		}),
 		getUsersInGroup: builder.query<User[], number>({
 			query: groupId => ({
-				url: `getUsersInGroup/${groupId}`,
+				url: `group/getUsersInGroup/${groupId}`,
 				method: "GET",
 			}),
 		}),
 		leaveGroup: builder.mutation<void, number>({
 			query: groupId => ({
-				url: `leaveGroup/${groupId}`,
+				url: `group/leaveGroup/${groupId}`,
 				method: "POST",
 			}),
 			invalidatesTags: ["Group"],
 		}),
 		getUserPermissionsForGroup: builder.query<Permission[], number>({
 			query: groupId => ({
-				url: `getPermissionsInGroup/${groupId}`,
+				url: `group/getPermissionsInGroup/${groupId}`,
 				method: "GET",
 			}),
 		}),

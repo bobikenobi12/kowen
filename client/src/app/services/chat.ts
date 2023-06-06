@@ -20,7 +20,7 @@ export const api = apiSlice.injectEndpoints({
 	endpoints: builder => ({
 		getMessages: builder.query<Message[], number>({
 			query: groupId => ({
-				url: `getMessages/${groupId}`,
+				url: `chat/getMessages/${groupId}`,
 				method: "GET",
 			}),
 			providesTags: (result, error, groupId) => [
@@ -32,7 +32,7 @@ export const api = apiSlice.injectEndpoints({
 			{ groupId: number; content: string }
 		>({
 			query: ({ groupId, content }) => ({
-				url: `sendMessage/${groupId}`,
+				url: `chat/sendMessage/${groupId}`,
 				method: "POST",
 				params: { message: content },
 			}),
@@ -42,7 +42,7 @@ export const api = apiSlice.injectEndpoints({
 		}),
 		clearChat: builder.mutation<void, number>({
 			query: groupId => ({
-				url: `clearChat/${groupId}`,
+				url: `chat/clearChat/${groupId}`,
 				method: "GET",
 			}),
 			invalidatesTags: (result, error, groupId) => [
@@ -54,7 +54,7 @@ export const api = apiSlice.injectEndpoints({
 			{ groupId: number; messageId: number; content: string }
 		>({
 			query: ({ groupId, messageId, content }) => ({
-				url: `edit/message/${groupId}/${messageId}`,
+				url: `chat/edit/message/${groupId}/${messageId}`,
 				method: "POST",
 				params: { newMessage: content },
 			}),
@@ -67,7 +67,7 @@ export const api = apiSlice.injectEndpoints({
 			{ groupId: number; messageId: number }
 		>({
 			query: ({ groupId, messageId }) => ({
-				url: `delete/message/${groupId}/${messageId}`,
+				url: `chat/delete/message/${groupId}/${messageId}`,
 				method: "GET",
 			}),
 			invalidatesTags: (result, error, { groupId }) => [

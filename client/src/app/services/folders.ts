@@ -14,7 +14,7 @@ export const api = apiSlice.injectEndpoints({
 	endpoints: builder => ({
 		saveFolderToGroup: builder.mutation<Folder, saveFolderToGroupRequest>({
 			query: ({ groupId, name }) => ({
-				url: `saveTo/group/${groupId}`,
+				url: `folder/saveTo/group/${groupId}`,
 				method: "POST",
 				params: { name },
 			}),
@@ -22,7 +22,7 @@ export const api = apiSlice.injectEndpoints({
 		}),
 		getFoldersInGroup: builder.query<Folder[], number>({
 			query: groupId => ({
-				url: "getFoldersInGroup",
+				url: "folder/getFoldersInGroup",
 				method: "POST",
 				params: { groupId },
 			}),
@@ -33,7 +33,7 @@ export const api = apiSlice.injectEndpoints({
 			{ groupId: number; folderId: number }
 		>({
 			query: ({ groupId, folderId }) => ({
-				url: "getFolderInGroup",
+				url: "folder/getFolderInGroup",
 				method: "POST",
 				params: { groupId, folderId },
 			}),
@@ -44,7 +44,7 @@ export const api = apiSlice.injectEndpoints({
 			{ groupId: number; folderId: number; name: string }
 		>({
 			query: ({ groupId, folderId, name }) => ({
-				url: `changeName/${groupId}/${folderId}`,
+				url: `folder/changeName/${groupId}/${folderId}`,
 				method: "POST",
 				params: { name },
 			}),
@@ -55,7 +55,7 @@ export const api = apiSlice.injectEndpoints({
 			{ groupId: number; folderId: number }
 		>({
 			query: ({ groupId, folderId }) => ({
-				url: `delete`,
+				url: `folder/delete`,
 				method: "POST",
 				params: { groupId, folderId },
 			}),
