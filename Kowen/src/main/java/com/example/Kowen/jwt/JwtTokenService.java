@@ -38,10 +38,22 @@ public class JwtTokenService {
         return doGenerateToken(claims, email);
     }
 
+    public String generateRefreshToken(String email) {
+        Map<String, Object> claims = new HashMap<>();
+        return doGenerateRefreshToken(claims, email);
+    }
+
     private String doGenerateToken(Map<String, Object> claims, String subject) {
 
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
+                .signWith(SignatureAlgorithm.HS512, SECRET_KEY).compact();
+    }
+
+    private String doGenerateRefreshToken(Map<String, Object> claims, String subject) {
+
+        return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
                 .signWith(SignatureAlgorithm.HS512, SECRET_KEY).compact();
     }
 

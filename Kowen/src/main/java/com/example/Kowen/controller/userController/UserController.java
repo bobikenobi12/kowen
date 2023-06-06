@@ -151,9 +151,18 @@ public class UserController {
                     .maxAge(60)
                     .domain("example.com")
                     .build();
+            String refreshToken = jwtTokenService.generateRefreshToken(user.getEmail());
+            ResponseCookie springCookie2 = ResponseCookie.from("refresh-token", refreshToken)
+                    .httpOnly(true)
+                    .secure(true)
+                    .path("/")
+                    .maxAge(60)
+                    .domain("example.com")
+                    .build();
             return ResponseEntity
                     .ok()
                     .header(HttpHeaders.SET_COOKIE, springCookie.toString())
+                    .header(HttpHeaders.SET_COOKIE, springCookie2.toString())
                     .build();
         }
 
