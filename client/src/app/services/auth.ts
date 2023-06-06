@@ -155,6 +155,20 @@ export const api = createApi({
 				method: "POST",
 				credentials: "include",
 			}),
+			transformResponse: (response: Response) => {
+				const cookies = response.headers.get("set-cookie");
+				if (cookies) {
+					const token = cookies
+						.split(";")
+						.find(cookie => cookie.startsWith("user-token="))
+						?.split("=")[1];
+					if (token) {
+						console.log(token);
+						localStorage.setItem("token", token);
+					}
+				}
+				return response.json();
+			},
 		}),
 	}),
 });
