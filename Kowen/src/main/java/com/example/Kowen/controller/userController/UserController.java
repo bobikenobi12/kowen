@@ -177,23 +177,24 @@ public class UserController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<Object> refreshToken(@RequestBody UserDto user){
+    public String refreshToken(@RequestBody UserDto user){
         User user1 = userRepository.findByEmail(user.getEmail()).get(0);
 //        System.out.println(user.getToken());
         String refreshToken = jwtTokenService.generateToken(user.getEmail());
 
 //            return new AuthResponse("token", refreshToken, user1);
-        ResponseCookie springCookie = ResponseCookie.from("user-token", refreshToken)
-                .httpOnly(true)
-                .secure(true)
-                .path("/")
-                .maxAge(60)
-                .domain("example.com")
-                .build();
-        return ResponseEntity
-                .ok()
-                .header(HttpHeaders.SET_COOKIE, springCookie.toString())
-                .build();
+//        ResponseCookie springCookie = ResponseCookie.from("user-token", refreshToken)
+//                .httpOnly(true)
+//                .secure(true)
+//                .path("/")
+//                .maxAge(60)
+//                .domain("example.com")
+//                .build();
+//        return ResponseEntity
+//                .ok()
+//                .header(HttpHeaders.SET_COOKIE, springCookie.toString())
+//                .build();
+        return refreshToken;
 
     }
 
