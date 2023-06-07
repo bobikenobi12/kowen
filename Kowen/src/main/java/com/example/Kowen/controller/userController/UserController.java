@@ -2,6 +2,7 @@ package com.example.Kowen.controller.userController;
 
 import com.example.Kowen.controller.AuthRequest;
 import com.example.Kowen.controller.AuthResponse;
+import com.example.Kowen.controller.TokenResponse;
 import com.example.Kowen.dto.UserDto;
 import com.example.Kowen.entity.Role;
 import com.example.Kowen.entity.User;
@@ -177,7 +178,7 @@ public class UserController {
     }
 
     @PostMapping("/refresh")
-    public String refreshToken(@RequestBody UserDto user){
+    public TokenResponse refreshToken(@RequestBody UserDto user){
         User user1 = userRepository.findByEmail(user.getEmail()).get(0);
 //        System.out.println(user.getToken());
         String refreshToken = jwtTokenService.generateToken(user.getEmail());
@@ -194,7 +195,7 @@ public class UserController {
 //                .ok()
 //                .header(HttpHeaders.SET_COOKIE, springCookie.toString())
 //                .build();
-        return refreshToken;
+        return new TokenResponse(refreshToken);
 
     }
 
