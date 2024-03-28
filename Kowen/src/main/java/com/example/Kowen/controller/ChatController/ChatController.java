@@ -10,11 +10,14 @@ import com.example.Kowen.service.chat.ChatRepo;
 import com.example.Kowen.service.group.GroupRepo;
 import com.example.Kowen.service.group.GroupService;
 import com.example.Kowen.service.user.UserRepository;
+import lombok.AllArgsConstructor;
 import org.hibernate.dialect.Database;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+//@AllArgsConstructor
 @RestController
 @CrossOrigin
 @RequestMapping("/chat")
@@ -35,6 +39,9 @@ public class ChatController {
 
     @Autowired
     private ChatRepo chatRepo;
+
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
 
     @Autowired
     private GroupRepo groupRepo;
@@ -144,5 +151,18 @@ public class ChatController {
         return group.getGroupChat().getMessages();
     }
 
+    //---------------- Chat with WebSockets --------------------------------//
+
+//    @PostMapping("/send")
+    @MessageMapping("/send")
+    @SendTo("/topic/messages")
+    public String sendMessage(@RequestBody String message) {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        User user = userRepository.findByEmail(principal.getUsername()).get(0);
+//        messagingTemplate.convertAndSend("/topic/" + user.getId() + "_" + 5, message);
+        return message;
+    }
 
 }
