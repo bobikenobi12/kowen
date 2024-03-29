@@ -154,16 +154,16 @@ public class ChatController {
 
     //---------------- Chat with WebSockets --------------------------------//
 
-    @MessageMapping("/send")
+    @MessageMapping("/send/message/{myId}/{userId}")
 //    @PostMapping("/send")
     @SendTo("/topic/public/{myId}/{userId}")
-    public String sendMessage(@RequestParam String message, @RequestParam Long userId, @RequestParam Long myId) {
+    public User sendMessage(@RequestParam String message, @RequestParam Long userId, @RequestParam Long myId) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails principal = (UserDetails) authentication.getPrincipal();
         User user = userRepository.findByEmail(principal.getUsername()).get(0);
         messagingTemplate.convertAndSend("/topic/" + user.getId() + "_" + userId.toString(), message);
-        return message;
+        return user;
     }
 
 }

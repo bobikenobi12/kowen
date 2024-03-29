@@ -17,7 +17,7 @@ import java.nio.channels.*;
 @EnableWebSocket
 public class WebSocketConfig implements WebSocketConfigurer {
 
-    private final static String CHAT_ENDPOINT = "/chat/send";
+    private final static String CHAT_ENDPOINT = "/chat/send/message/**";
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry webSocketHandlerRegistry) {
