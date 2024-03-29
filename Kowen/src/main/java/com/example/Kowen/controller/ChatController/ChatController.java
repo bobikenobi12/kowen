@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.Authentication;
@@ -153,15 +154,15 @@ public class ChatController {
 
     //---------------- Chat with WebSockets --------------------------------//
 
-//    @PostMapping("/send")
     @MessageMapping("/send")
-    @SendTo("/topic/messages")
-    public String sendMessage(@RequestBody String message) {
+//    @PostMapping("/send")
+    @SendTo("/topic/public/{myId}/{userId}")
+    public String sendMessage(@RequestParam String message, @RequestParam Long userId, @RequestParam Long myId) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails principal = (UserDetails) authentication.getPrincipal();
         User user = userRepository.findByEmail(principal.getUsername()).get(0);
-//        messagingTemplate.convertAndSend("/topic/" + user.getId() + "_" + 5, message);
+        messagingTemplate.convertAndSend("/topic/" + user.getId() + "_" + userId.toString(), message);
         return message;
     }
 
