@@ -4,7 +4,7 @@ import { authApiSlice } from "./auth";
 import { RootState } from "../store";
 
 const baseQuery = fetchBaseQuery({
-	baseUrl: "https://143.198.28.79:443",
+	baseUrl: "https://server.kowen.tech/",
 	prepareHeaders: (headers, { getState }) => {
 		const token = (getState() as RootState).auth.token;
 		if (token) {
