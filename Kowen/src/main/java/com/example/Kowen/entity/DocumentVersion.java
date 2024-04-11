@@ -29,7 +29,7 @@ public class DocumentVersion {
     private String type; //
 
     @Lob
-    @Column(columnDefinition="BLOB", nullable = false)
+    @Column(columnDefinition="BLOB", nullable = true)
     private byte[] documentContent;
 
     @JsonIgnore

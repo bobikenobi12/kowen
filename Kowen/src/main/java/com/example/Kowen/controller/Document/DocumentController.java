@@ -12,6 +12,8 @@ import com.example.Kowen.service.role.RoleRepository;
 import com.example.Kowen.service.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -25,6 +27,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -65,13 +70,13 @@ public class DocumentController {
         byte[] fileBytes = file.getBytes();
 
         Document document = new Document();
-        document.setName(file.getOriginalFilename().substring(0, file.getOriginalFilename().lastIndexOf('.')));
+        document.setName(file.getOriginalFilename());
         document.setPublisher(user);
         // document.setPublishingDate(new Date());
 
-        // document.setDocumentContent(fileBytes);
+        // document.se  tDocumentContent(fileBytes);
         DocumentVersion version = new DocumentVersion();
-        version.setDocumentContent(fileBytes);
+//        version.setDocumentContent(fileBytes); //TODO: check if I should comment it
         version.setType(file.getContentType());
         version.setVersion(1L);
         version.setDocument(document);
@@ -109,7 +114,25 @@ public class DocumentController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "there is no such folder in this group");
 
 
-        documentRepo.save(document);
+        try {
+            byte[] bytes = file.getBytes();
+
+            String originalFileName = file.getOriginalFilename();
+            int lastIndex = originalFileName.lastIndexOf('.');
+            String fileNameWithoutExtension = originalFileName.substring(0, lastIndex);
+            String fileExtension = originalFileName.substring(lastIndex);
+            String newFileName = fileNameWithoutExtension + "_" + documentRepo.save(document).getId() + "_1" + fileExtension;
+
+            Path path = Paths.get("/var/www/html/" + newFileName);
+
+
+            Files.write(path, bytes);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error uploading the document!");
+        }
+         //TODO: check if I should comment it
+
         List<Document> docs = folder.getDocuments();
         docs.add(document);
         folder.setDocuments(docs);
@@ -119,7 +142,7 @@ public class DocumentController {
     }
 
     @GetMapping("/download/{groupId}/{folderId}/{documentId}/{version}")
-    public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable Long groupId, @PathVariable("documentId") Long documentId,
+    public ResponseEntity<Resource> downloadFile(@PathVariable Long groupId, @PathVariable("documentId") Long documentId,
             @PathVariable("version") Long version, @PathVariable("folderId") Long folderId) throws Exception {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails principal = (UserDetails) authentication.getPrincipal();
@@ -134,17 +157,33 @@ public class DocumentController {
 
         if (!groupService.checkForPermissions(user.getId(), groupId, PermissionsEnum.download_document)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You don't have permissions!");
         byte[] fileBytes = document.getVersions().get((int) (version - 1)).getDocumentContent();
-        ByteArrayResource resource = new ByteArrayResource(fileBytes);
+//        ByteArrayResource resource = new ByteArrayResource(fileBytes);
         HttpHeaders headers = new HttpHeaders();
+        Resource resource;
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        headers.setContentLength(fileBytes.length);
+//        headers.setContentLength(fileBytes.length);
 
         headers.setContentDispositionFormData("attachment", document.getName());
 
+        String originalFileName = document.getName();
+        int lastIndex = originalFileName.lastIndexOf('.');
+        String fileNameWithoutExtension = originalFileName.substring(0, lastIndex);
+        String fileExtension = originalFileName.substring(lastIndex);
+        String newFileName = fileNameWithoutExtension + "_" + documentId + "_" + version.toString() + fileExtension;
+
+        Path path = Paths.get("/var/www/html/" + newFileName);
+
+
+        try {
+            resource = new UrlResource(path.toUri());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.notFound().build();
+        }
+
         return ResponseEntity.ok()
-                .headers(headers)
-                .contentLength(fileBytes.length)
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
                 .body(resource);
 
 
@@ -202,7 +241,26 @@ public class DocumentController {
                         "You don't have permissions to save new version if this document!");
         }
         DocumentVersion version = new DocumentVersion();
-        version.setDocumentContent(fileBytes);
+        version.setVersion(document.getVersions().get(document.getVersions().size() - 1).getVersion() + 1);
+
+//        version.setDocumentContent(fileBytes); //TODO: check if I should commnt it
+        try {
+            byte[] bytes = file.getBytes();
+
+            String originalFileName = document.getName();
+            int lastIndex = originalFileName.lastIndexOf('.');
+            String fileNameWithoutExtension = originalFileName.substring(0, lastIndex);
+            String fileExtension = originalFileName.substring(lastIndex);
+            String newFileName = fileNameWithoutExtension + "_" + documentId + "_" + version.getVersion().toString() + fileExtension;
+
+            Path path = Paths.get("/var/www/html/" + newFileName);
+
+            Files.write(path, bytes);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         version.setVersion(document.getVersions().get(document.getVersions().size() - 1).getVersion() + 1);
         version.setType(file.getContentType());
         version.setDocument(document);
@@ -236,7 +294,7 @@ public class DocumentController {
         if (errorFlag) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You don't have permissions!");
         for (DocumentVersion documentVersion : document.getVersions()){
             if (documentVersion.getVersion().longValue() == version){
-                return new String(documentVersion.getDocumentContent(), StandardCharsets.UTF_8);
+                return "hello";
             }
         }
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no such version 2");

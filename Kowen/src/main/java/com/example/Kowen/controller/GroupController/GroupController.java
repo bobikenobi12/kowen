@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.Objects;
 
 @RestController
-@CrossOrigin("http://localhost:5173/")
+@CrossOrigin()
 @RequestMapping("/group")
 public class GroupController {
 
