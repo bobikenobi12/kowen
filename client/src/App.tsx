@@ -1,4 +1,4 @@
-import { HashRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Box } from "@chakra-ui/react";
 
 import { PrivateOutlet } from "./utils/PrivateOutlet";
@@ -43,7 +43,7 @@ function App() {
 					</Route>
 
 					<Route element={<PublicOutlet />}>
-						<Route path="/" element={<Hero />} />
+						<Route path="" element={<Hero />} />
 						<Route path="login" element={<Login />} />
 						<Route path="register" element={<Register />} />
 					</Route>

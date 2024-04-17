@@ -193,7 +193,6 @@ export default function Login() {
 						<Link
 							as={ReactRouterLink}
 							to="/register"
-							state={{ from: location }}
 							color={"twitter.400"}>
 							Sign Up
 						</Link>

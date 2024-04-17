@@ -25,7 +25,6 @@ import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { Formik, FormikProps } from "formik";
 
 import { useNavigate, Link as ReactRouterLink } from "react-router-dom";
-import { useDispatch } from "react-redux";
 
 import { useRegisterMutation } from "../../app/services/auth";
 import type { RegisterRequest } from "../../app/services/auth";
@@ -322,7 +321,6 @@ export default function Register() {
 								<Link
 									as={ReactRouterLink}
 									to="/login"
-									state={{ from: location }}
 									color={"twitter.400"}>
 									Sign In
 								</Link>

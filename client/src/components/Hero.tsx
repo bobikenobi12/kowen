@@ -49,14 +49,10 @@ export default function CallToActionWithAnnotation() {
 						_hover={{
 							bg: "teal.500",
 						}}>
-						<Link to="/register" state={{ from: "hero" }}>
-							Get started
-						</Link>
+						<Link to="/register">Get started</Link>
 					</Button>
 					<Button variant={"link"} colorScheme={"cyan"} size={"sm"}>
-						<Link to="/features" state={{ from: "hero" }}>
-							Learn more
-						</Link>
+						<Link to="/features">Learn more</Link>
 					</Button>
 					<Box>
 						<Icon
