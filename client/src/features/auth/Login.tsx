@@ -27,7 +27,7 @@ import type { LoginRequest } from "../../app/services/auth";
 
 import { LoginSchema } from "../../utils/ValidationSchemas";
 
-export default function Register() {
+export default function Login() {
 	const [showPassword, setShowPassword] = React.useState(false);
 	const navigate = useNavigate();
 	const toast = useToast();
